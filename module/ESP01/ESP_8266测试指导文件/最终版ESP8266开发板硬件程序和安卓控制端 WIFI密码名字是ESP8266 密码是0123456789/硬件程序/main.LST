@@ -1,0 +1,293 @@
+C51 COMPILER V9.53.0.0   MAIN                                                              09/24/2014 15:04:18 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c LARGE BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /*************  ±¾µØ³£Á¿ÉùÃ÷  **************/
+   2          #define MAIN_Fosc   22118400L //¶¨ÒåÖ÷Ê±ÖÓ
+   3          #define RX1_Lenth   32      //´®¿Ú½ÓÊÕ»º³å³¤¶È
+   4          #define BaudRate1   115200UL  //Ñ¡Ôñ²¨ÌØÂÊ
+   5          #define Timer1_Reload (65536UL -(MAIN_Fosc / 4 / BaudRate1))    //Timer 1 ÖØ×°Öµ£¬ ¶ÔÓ¦300KHZ
+   6          #define Timer2_Reload (65536UL -(MAIN_Fosc / 4 / BaudRate1))    //Timer 2 ÖØ×°Öµ£¬ ¶ÔÓ¦300KHZ
+   7          #include  "STC15Fxxxx.H"
+   8          /*************  ±¾µØ±äÁ¿ÉùÃ÷  **************/
+   9          u8  idata RX1_Buffer[RX1_Lenth];  //½ÓÊÕ»º³å
+  10          u8  TX1_Cnt;  //·¢ËÍ¼ÆÊý
+  11          u8  RX1_Cnt;  //½ÓÊÕ¼ÆÊý
+  12          bit B_TX1_Busy; //·¢ËÍÃ¦±êÖ¾
+  13          /*************  ¶Ë¿ÚÒý½Å¶¨Òå  **************/
+  14          sbit LED1=P1^0;//LED1
+  15          sbit LED2=P1^1;//LED2
+  16          sbit LED3=P3^7;//LED3
+  17          sbit DK1=P3^3;//¼ÌµçÆ÷
+  18          sbit BEEP=P3^4;//·äÃùÆ÷
+  19          sbit K1=P1^3;//°´¼ü1
+  20          sbit K2=P1^2;//°´¼ü2
+  21          sbit K3=P1^4;//°´¼ü3
+  22          char led1bl,led2bl,led3bl;
+  23          unsigned char LYMS[13]={0x41,0x54,0x2B,0x43,0x57,0x4D,0x4F,0x44,0x45,0x3D,0x32,0x0D,0x0A};//AT+CWMODE=2 Éè
+             -ÖÃ³ÉÂ·ÓÉÄ£Ê½
+  24          unsigned char SZLY[38]={0x41,0x54,0x2B,0x43,0x57,0x53,0x41,0x50,0x3D,0x22,0x45,0x53,0x50,0x38,0x32,0x36,0x
+             -36,0x22,0x2C,0x22,0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x22,0x2C,0x31,0x31,0x2C,0x33,0x0D,0x0A};//AT+CWSAP=
+             -"ESP8266","0123456789",11,0 ÉèÖÃÂ·ÓÉ
+  25          unsigned char RST[8]={0x41,0x54,0x2B,0x52,0x53,0x54,0x0D,0x0A};//AT+RST ÖØÆô
+  26          unsigned char SZDLJ[13]={0x41,0x54,0x2B,0x43,0x49,0x50,0x4D,0x55,0x58,0x3D,0x31,0x0D,0x0A};//AT+CIPMUX=1 É
+             -èÖÃ³É¶àÁ¬½Ó
+  27          unsigned char KQFU[21]={0x41,0x54,0x2B,0x43,0x49,0x50,0x53,0x45,0x52,0x56,0x45,0x52,0x3D,0x31,0x2C,0x35,0x
+             -30,0x30,0x30,0x0D,0x0A};//AT+CIPSERVER=1,5000 ¿ªÆôTCP·þÎñ¶Ë¿Ú
+  28          unsigned char FSSJ[11]={0x41,0x54,0x2B,0x43,0x49,0x50,0x53,0x45,0x4E,0x44,0x3D};//AT+CIPSEND= ·¢ËÍÊý¾Ý
+  29          void Delay1(unsigned long ms)
+  30          {
+  31   1        unsigned char i, j,k;
+  32   1        for(k=0;k<ms;k++)
+  33   1        {
+  34   2          _nop_();
+  35   2          _nop_();
+  36   2          i = 22;
+  37   2          j = 128;
+  38   2          do
+  39   2          {
+  40   3            while (--j);
+  41   3          } while (--i);
+  42   2        }
+  43   1      }
+  44          void Delay2(unsigned long cnt)
+  45          {
+  46   1        long i;
+  47   1        for(i=0;i<cnt*100;i++);
+  48   1      }
+  49          void main(void)
+  50          {
+C51 COMPILER V9.53.0.0   MAIN                                                              09/24/2014 15:04:18 PAGE 2   
+
+  51   1        char i=0;
+  52   1        B_TX1_Busy = 0;
+  53   1        RX1_Cnt = 0;
+  54   1        TX1_Cnt = 0;
+  55   1        S1_8bit();        //8Î»Êý¾Ý
+  56   1        S1_USE_P30P31();    //UART1 Ê¹ÓÃP30 P31¿Ú Ä¬ÈÏ
+  57   1        AUXR &= ~(1<<4);  //Timer stop    ²¨ÌØÂÊÊ¹ÓÃTimer2²úÉú
+  58   1        AUXR |= 0x01;   //S1 BRT Use Timer2;
+  59   1        AUXR |=  (1<<2);  //Timer2 set as 1T mode
+  60   1        TH2 = (u8)(Timer2_Reload >> 8);
+  61   1        TL2 = (u8)Timer2_Reload;
+  62   1        AUXR |=  (1<<4);  //Timer run enable
+  63   1        REN = 1;  //ÔÊÐí½ÓÊÕ
+  64   1        ES  = 1;  //ÔÊÐíÖÐ¶Ï
+  65   1        EA = 1;   //ÔÊÐíÈ«¾ÖÖÐ¶Ï
+  66   1        P3M1 = 0x00;
+  67   1        P3M0 = 0xFF;
+  68   1        RX1_Cnt=0;
+  69   1        DK1=0;
+  70   1        BEEP=0;
+  71   1        Delay2(1000);
+  72   1        for(i=0;i<13;i++)//AT+CWMODE=2 ÉèÖÃ³ÉÂ·ÓÉÄ£Ê½
+  73   1        {
+  74   2          SBUF=LYMS[i];Delay1(1);
+  75   2        }
+  76   1        Delay2(1000);
+  77   1        for(i=0;i<38;i++)//AT+CWSAP="ESP8266","0123456789",11,0 ÉèÖÃÂ·ÓÉ
+  78   1        {
+  79   2          SBUF=SZLY[i];Delay1(1);
+  80   2        }
+  81   1        Delay2(1000);
+  82   1        for(i=0;i<8;i++)//AT+RST ÖØÆô
+  83   1        {
+  84   2          SBUF=RST[i];Delay1(1);
+  85   2        }
+  86   1        Delay2(5000);
+  87   1        for(i=0;i<13;i++)//AT+CIPMUX=1 ÉèÖÃ³É¶àÁ¬½Ó
+  88   1        {
+  89   2          SBUF=SZDLJ[i];Delay1(1);
+  90   2        }
+  91   1        Delay2(2000);
+  92   1        for(i=0;i<21;i++)//AT+CIPSERVER=1,5000 ¿ªÆôTCP·þÎñ¶Ë¿Ú
+  93   1        {
+  94   2          SBUF=KQFU[i];Delay1(1);
+  95   2        }
+  96   1        Delay2(2000);
+  97   1        while (1)
+  98   1        {
+  99   2          if(K1==0)
+ 100   2          {
+ 101   3            Delay1(1);
+ 102   3            if(K1==0)
+ 103   3            {
+ 104   4              LED1=!LED1;
+ 105   4            }
+ 106   3            while(K1==0);
+ 107   3          }
+ 108   2          if(K2==0)
+ 109   2          {
+ 110   3            Delay1(1);
+ 111   3            if(K2==0)
+ 112   3            {
+C51 COMPILER V9.53.0.0   MAIN                                                              09/24/2014 15:04:18 PAGE 3   
+
+ 113   4              LED2=!LED2;
+ 114   4            }
+ 115   3            while(K2==0);
+ 116   3          }
+ 117   2          if(K3==0)
+ 118   2          {
+ 119   3            Delay1(1);
+ 120   3            if(K3==0)
+ 121   3            {
+ 122   4              LED3=!LED3;
+ 123   4            }
+ 124   3            while(K3==0);
+ 125   3          }
+ 126   2        }
+ 127   1      }
+ 128          
+ 129          /********************* UART1ÖÐ¶Ïº¯Êý************************/
+ 130          void UART1_int (void) interrupt UART1_VECTOR
+ 131          {
+ 132   1        char i,a,b,c;
+ 133   1        if(RI)
+ 134   1        {
+ 135   2          RI = 0;
+ 136   2          RX1_Buffer[RX1_Cnt] = SBUF;   //±£´æÒ»¸ö×Ö½Ú
+ 137   2          if(RX1_Buffer[0]==0x45)
+ 138   2          {
+ 139   3            RX1_Cnt++;
+ 140   3          }
+ 141   2          else
+ 142   2          {
+ 143   3            RX1_Cnt=0;
+ 144   3          }
+ 145   2          if(RX1_Cnt>=10)
+ 146   2          {
+ 147   3            if(RX1_Buffer[0]==0x45&&RX1_Buffer[1]==0x53&&RX1_Buffer[2]==0x50)
+ 148   3            {
+ 149   4              if(RX1_Buffer[4]==0x4C&&RX1_Buffer[5]==0x45&&RX1_Buffer[6]==0x44)//ÅÐ¶ÏLED
+ 150   4              {
+ 151   5                if(RX1_Buffer[7]==0x31)//ÅÐ¶ÏLED1
+ 152   5                {
+ 153   6                  if(RX1_Buffer[3]==0x4B)//ÅÐ¶Ï¿ª
+ 154   6                  {
+ 155   7                    LED1=0;
+ 156   7                  }
+ 157   6                  if(RX1_Buffer[3]==0x47)//ÅÐ¶Ï¹Ø
+ 158   6                  {
+ 159   7                    LED1=1;
+ 160   7                  }
+ 161   6                }
+ 162   5                if(RX1_Buffer[7]==0x32)//ÅÐ¶ÏLED2
+ 163   5                {
+ 164   6                  if(RX1_Buffer[3]==0x4B)//ÅÐ¶Ï¿ª
+ 165   6                  {
+ 166   7                    LED2=0;
+ 167   7                  }
+ 168   6                  if(RX1_Buffer[3]==0x47)//ÅÐ¶Ï¹Ø
+ 169   6                  {
+ 170   7                    LED2=1;
+ 171   7                  }
+ 172   6                }
+ 173   5                if(RX1_Buffer[7]==0x33)//ÅÐ¶ÏLED3
+ 174   5                {
+C51 COMPILER V9.53.0.0   MAIN                                                              09/24/2014 15:04:18 PAGE 4   
+
+ 175   6                  if(RX1_Buffer[3]==0x4B)//ÅÐ¶Ï¿ª
+ 176   6                  {
+ 177   7                    LED3=0;
+ 178   7                  }
+ 179   6                  if(RX1_Buffer[3]==0x47)//ÅÐ¶Ï¹Ø
+ 180   6                  {
+ 181   7                    LED3=1;
+ 182   7                  }
+ 183   6                }
+ 184   5              }
+ 185   4              if(RX1_Buffer[4]==0x4A&&RX1_Buffer[5]==0x44&&RX1_Buffer[6]==0x51)//ÅÐ¶Ï¼ÌµçÆ÷
+ 186   4              {
+ 187   5                if(RX1_Buffer[7]==0x31)//ÅÐ¶ÏLED1
+ 188   5                {
+ 189   6                  if(RX1_Buffer[3]==0x4B)//ÅÐ¶Ï¿ª
+ 190   6                  {
+ 191   7                    DK1=1;
+ 192   7                  }
+ 193   6                  if(RX1_Buffer[3]==0x47)//ÅÐ¶Ï¹Ø
+ 194   6                  {
+ 195   7                    DK1=0;
+ 196   7                  }
+ 197   6                }
+ 198   5              }
+ 199   4              if(RX1_Buffer[3]==0x46&&RX1_Buffer[4]==0x4D&&RX1_Buffer[5]==0x51&&RX1_Buffer[6]==0x43&&RX1_Buffer[7]==
+             -0x53)//ÅÐ¶Ï·äÃùÆ÷
+ 200   4              {
+ 201   5                BEEP=1;Delay2(100);BEEP=0;Delay2(100);BEEP=1;Delay2(100);BEEP=0;Delay2(100);
+ 202   5              }
+ 203   4              if(RX1_Buffer[3]==0x43&&RX1_Buffer[4]==0x58&&RX1_Buffer[5]==0x53&&RX1_Buffer[6]==0x4A)//²éÑ¯Êý¾Ý
+ 204   4              {
+ 205   5                if(LED1==0){a=0x4B;}else{a=0x47;}
+ 206   5                if(LED2==0){b=0x4B;}else{b=0x47;}
+ 207   5                if(LED3==0){c=0x4B;}else{c=0x47;}
+ 208   5                for(i=0;i<11;i++)//AT+CIPSEND= ·¢ËÍÊý¾Ý
+ 209   5                {
+ 210   6                  SBUF=FSSJ[i];Delay1(1);
+ 211   6                }
+ 212   5                SBUF=0x30;Delay1(1);
+ 213   5                SBUF=0x2C;Delay1(1);
+ 214   5                SBUF=0x32;Delay1(1);
+ 215   5                SBUF=0x32;Delay1(1);
+ 216   5                SBUF=0x0D;Delay1(1);
+ 217   5                SBUF=0x0A;Delay1(1);
+ 218   5                
+ 219   5                SBUF=0x45;Delay1(1);
+ 220   5                SBUF=0x53;Delay1(1);
+ 221   5                SBUF=0x50;Delay1(1);
+ 222   5                SBUF=0x4C;Delay1(1);
+ 223   5                SBUF=0x45;Delay1(1);
+ 224   5                SBUF=0x44;Delay1(1);
+ 225   5                SBUF=0x31;Delay1(1);
+ 226   5                SBUF=a;Delay1(1);
+ 227   5                SBUF=0x4C;Delay1(1);
+ 228   5                SBUF=0x45;Delay1(1);
+ 229   5                SBUF=0x44;Delay1(1);
+ 230   5                SBUF=0x32;Delay1(1);
+ 231   5                SBUF=b;Delay1(1);
+ 232   5                SBUF=0x4C;Delay1(1);
+ 233   5                SBUF=0x45;Delay1(1);
+ 234   5                SBUF=0x44;Delay1(1);
+ 235   5                SBUF=0x33;Delay1(1);
+C51 COMPILER V9.53.0.0   MAIN                                                              09/24/2014 15:04:18 PAGE 5   
+
+ 236   5                SBUF=c;Delay1(1);
+ 237   5                SBUF=0x50;Delay1(1);
+ 238   5                SBUF=0x53;Delay1(1);
+ 239   5                SBUF=0x45;Delay1(1);
+ 240   5                //45 53 50 4C 45 44 31 4B 4C 45 44 32 4B 4C 45 44 33 4B 50 53 45 
+ 241   5              }
+ 242   4              RX1_Cnt=0;
+ 243   4            }
+ 244   3            else
+ 245   3            {
+ 246   4              RX1_Cnt=0;
+ 247   4            }
+ 248   3            RX1_Cnt=0;
+ 249   3          }
+ 250   2        }
+ 251   1        if(TI)
+ 252   1        {
+ 253   2          TI = 0;
+ 254   2          B_TX1_Busy = 0;   //Çå³ý·¢ËÍÃ¦±êÖ¾
+ 255   2        }
+ 256   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1132    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =    109      18
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =     32    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,14 @@
+视频清晰度1080p太高，视频大概要占用20G左右空间，本店不再提供视频源文件。
+因此本店已经把所有超清视频1080P格式的上传到淘宝教育公开课中。供大家免费查阅观看。
+
+
+GPS功能基础教程：
+https://i.xue.taobao.com/detail.htm?spm=a2174.7765247.0.0.yFdV0L&courseId=79182
+
+
+扩展应用：
+SIM868模块扩展例程 基于51单片机，ARDUINO,STM32，网页地图和手机app地图显示视频教程地址：
+https://i.xue.taobao.com/detail.htm?spm=a2174.7765247.0.0.yFdV0L&courseId=78915
+
+GSM/GPRS功能基础教程：
+https://i.xue.taobao.com/detail.htm?spm=a2174.7765247.0.0.yFdV0L&courseId=79181
