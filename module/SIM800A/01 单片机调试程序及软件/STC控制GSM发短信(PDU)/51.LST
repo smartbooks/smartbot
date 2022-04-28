@@ -1,0 +1,176 @@
+C51 COMPILER V8.08   51                                                                    05/14/2011 12:07:43 PAGE 1   
+
+
+C51 COMPILER V8.08, COMPILATION OF MODULE 51
+OBJECT MODULE PLACED IN 51.OBJ
+COMPILER INVOKED BY: D:\Program Files\keil\C51\BIN\C51.EXE 51.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          //*****************STC控制GSM发送短信*************************************/
+   2          //发送PDU的按键对应开发板的5-P1^7，关于PDU代码：利用我们的资料的测试软件Ggsmmoden生成
+   3          //你所要发送的短信内容，直接调入Byte_num[]        Sms2_Pdu[] 数组中就可以的
+   4          //*************************************************************************
+   5          #include <reg52.h>
+   6          #include <absacc.h>
+   7          #include <stdio.h>
+   8          #include <math.h>
+   9          #include <stdlib.h>
+  10          #include <intrins.h>
+  11          #define uint unsigned int
+  12          #define uchar unsigned char
+  13          #define Phone_connection  1    //正在打电话状态标志
+  14          #define Clear_Connect     0    //电话已挂断状态标志
+  15          uchar code SMS_send[]= "AT+CMGS=";  
+  16          sbit Send_SMS_PDU_key=P1^7;     //发PDU格式短信按键
+  17          uchar code SMS_PDU[]= "AT+CMGF=0";//发送数据为PDU格式 
+  18          uchar Byte_num[]="32";                     //
+  19          uchar code Sms2_Pdu[]="0891683108200205F011000B815129220665F60008A7128BF76CE8610FFF0C6E295EA68FC79AD8FF01"
+             -; //内容是：您好
+  20          
+  21          void delay(uint ms)// 延时子程序
+  22          {      
+  23   1      uchar i;                                     
+  24   1      while(ms--)
+  25   1      {
+  26   2        for(i=0;i<120;i++);
+  27   2      }
+  28   1      }
+  29          
+  30          /*********************************************************** 
+  31          函数名称：Print_Char 
+  32          函数功能：发送单个字符     
+  33                    入口参数:ch      出口参数：无 
+  34          ***********************************************************/
+  35          void Print_Char(uchar ch)//发送单个字符
+  36          {
+  37   1      SBUF=ch; //送入缓冲区
+  38   1      while(TI==0); //等待发送完毕
+  39   1      TI=0; //软件清零
+  40   1      }
+  41          
+  42          /*********************************************************** 
+  43          函数名称：Print_Str 
+  44          函数功能：发送字符串     
+  45                    入口参数:*str    出口参数：无 
+  46          ***********************************************************/
+  47          Print_Str(uchar *str)//发送字符串
+  48          {
+  49   1      
+  50   1      while(*str!='\0') 
+  51   1      {
+  52   2      Print_Char(*str++);
+  53   2      
+  54   2          }
+C51 COMPILER V8.08   51                                                                    05/14/2011 12:07:43 PAGE 2   
+
+  55   1      
+  56   1      }
+  57          /*Print_Str(uchar *str,uint len)//发送字符串,调用Send_Char() len字符串长度
+  58          {
+  59          
+  60          while(len--)
+  61          {
+  62          Print_Char(*str++);
+  63              }
+  64          
+  65          }*/
+  66          
+  67           
+  68          /*********************************************************** 
+  69          函数名称：Ini_UART 
+  70          函数功能：串口初始化、定时器初始化     
+  71                    入口参数:无     出口参数：无 
+  72          ***********************************************************/ 
+  73          Ini_UART(void)//串口初始化、定时器初始化
+  74          {
+  75   1      TMOD = 0x20;      //T1方式2,用于UART波特率 
+  76   1      TH1 = 0xFD;       //UART波特率设置:9600 
+  77   1      TL1 = 0xFD;
+  78   1      SCON = 0x50;  ////UART方式1:8位UART;   REN=1:允许接收 
+  79   1      PCON = 0x00;
+  80   1      
+  81   1      TF1 = 1;     // 中断标志位
+  82   1      TR1 = 1;    // 启动定时器1    
+  83   1      ES=1;       //启动串行口中断
+  84   1      ET0=1;      //启动中断功能
+  85   1      EA=1;
+  86   1      }
+  87           
+  88          
+  89          
+  90          
+  91          /*********************************************************** 
+  92          函数名称：GSM_PDU
+  93          函数功能：设置发送数据为PDU格式       
+  94                    入口参数:无     出口参数：无 
+  95          ***********************************************************/ 
+  96           
+  97          void GSM_PDU()    //设置GSM为PDU格式
+  98           {
+  99   1           Print_Str(SMS_PDU);  //发送设置指令
+ 100   1           Print_Str("\r\n");   //发送回车
+ 101   1            ES=1;
+ 102   1           delay(1000); 
+ 103   1           delay(1000);
+ 104   1           delay(1000);
+ 105   1               delay(1000);
+ 106   1        }
+ 107          
+ 108          /*********************************************************** 
+ 109          函数名称：GSM_PDU_SMS
+ 110          函数功能：发送数据为PDU格式的短信内容       
+ 111                    入口参数:无     出口参数：无 
+ 112          ***********************************************************/ 
+ 113          void GSM_PDU_SMS()  //发送PDU格式内容
+ 114          {   
+ 115   1                 
+ 116   1           Print_Str(SMS_send);
+C51 COMPILER V8.08   51                                                                    05/14/2011 12:07:43 PAGE 3   
+
+ 117   1           Print_Str(Byte_num);  
+ 118   1              // Print_Str(PhoneCall);
+ 119   1           Print_Str("\r\n"); //发送回车
+ 120   1                delay(900);
+ 121   1           Print_Str(Sms2_Pdu);
+ 122   1           Print_Char(0x1a);  //发送短息内容结束符对应的ASCII为0x1a
+ 123   1                 ES=1;
+ 124   1           delay(5000);
+ 125   1           delay(5000);   
+ 126   1      }
+ 127          
+ 128          
+ 129          /*********************************************************** 
+ 130          函数名称：main
+ 131          函数功能：主函数
+ 132          ***********************************************************/ 
+ 133          void main()
+ 134          { 
+ 135   1      Ini_UART();
+ 136   1      while(1)
+ 137   1      {  
+ 138   2      
+ 139   2         if(!Send_SMS_PDU_key)  //挂电话按键是否按下
+ 140   2              {
+ 141   3                 GSM_PDU();
+ 142   3                         //delay(500);
+ 143   3               GSM_PDU_SMS();   
+ 144   3                }
+ 145   2        
+ 146   2            
+ 147   2      }
+ 148   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    205    ----
+   CONSTANT SIZE    =    105    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

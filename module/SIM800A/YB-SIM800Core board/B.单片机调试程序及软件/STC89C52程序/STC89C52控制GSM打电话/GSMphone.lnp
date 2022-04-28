@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"GSMphone.obj" 
+TO "GSMphone" 
+RAMSIZE(256) 

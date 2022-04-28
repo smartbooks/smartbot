@@ -1,0 +1,109 @@
+keil c 编译之后的中文字符为GB编码，例如：“一”的GB码为：D2BB；“丁”的GB码为：B6A1。但是发送给sim300模块的并不是D2BBB6A1，而是“一丁”对应的位Unicode码，即：4E004E01.因此在KEIL C程序中需要一个GB码到Unicode 码的转换函数：
+
+
+GB 到Unicode 的转换
+1． 转换程序
+/**************************************************************************
+* 函数说明：
+*功能：
+* 将GB 码转换成Unicode 码。
+*参数：
+* GBCode：16 位的标准GB 码。
+*返回：
+* 16 位的标准Unicode 码。
+*注：
+* 此函数只在GBCode 值大于127 时被调用，当此值小于128 时，可直接转换成Unicode 码。
+**************************************************************************/
+Int16 GB2Unicode(Int16 GBCode)
+{
+WORD unicode;
+BYTE high, low;
+high = (GBCode & 0xff00)>>8;
+low = GBCode & 0x00ff;
+unicode = GB_TO_UNICODE_TABLE[(high - 0xa0) * 100 + (low - 0xa0) - 101];
+return(unicode);
+}
+2． 转换实例（仅针对GB 码大于127 的值）
+0x0D2BB (GB 码) 对应 0x4E00(Unicode 码)
+0x0B6A1 (GB 码) 对应 0x4E01(Unicode 码)
+0x0C6DF(GB 码) 对应 0x4E03(Unicode 码)
+
+
+
+同理，当模块发送信息到信息到单片机的时候，也需要Unicode 到GB 的转换，然后再通过液晶显示出来。
+
+1． 转换程序
+/**************************************************************************
+* 函数说明：
+*功能：
+* 将Unicode 码转换成GB 码。
+*参数：
+* Unicode：16 位的标准Unicode 码。
+*返回：
+* 16 位的标准GB 码。
+**************************************************************************/
+第 9 页 共 12 页
+ITM100_SMS APP V01.01 SIMCOM
+Int16 Unicode2GB(WORD Unicode)
+{
+WORD QWCode, GBCode;
+BYTE hi, low;
+if(Unicode >= 0x4e00)
+{
+if(Unicode == 65306) // 修正冒号的GB码
+{
+GBCode = 41914;
+}
+else if(Unicode == 65307) // 修正中文分号；的GB码
+{
+GBCode = 41915;
+}
+else if(Unicode == 65281) // 修正感叹号的GB码
+{
+GBCode = 41889;
+}
+else if((Unicode <= 0xFF5E) && (Unicode >= 0xFF01)) // 对应于ASCII码范围0x21~0x7E
+{
+GBCode = Unicode - 0xFEE0;
+}
+else
+{
+Unicode = Unicode - 0x4e00;
+QWCode = UNICODE_To_GB_Table[Unicode];
+hi = QWCode / 100 + 0xa0;
+low = QWCode % 100 + 0xa0;
+GBCode = (hi << 8) + low;
+}
+return(GBCode);
+}
+else
+{
+/* 校正符号编码 */
+if(Unicode == 12290) // 返回句号
+{
+return(41379);
+}
+else if(Unicode == 12288) // 修正0xA1字符的显示,返回空格
+{
+return(32);
+}
+第 10 页 共 12 页
+ITM100_SMS APP V01.01 SIMCOM
+else if(Unicode == 0x300e) // 修正『字符的显示
+{
+return(41402);
+}
+else if(Unicode == 0x300F) // 修正』字符的显示
+{
+return(41403);
+}
+else
+{
+return Unicode;
+}
+}
+}
+2． 转换实例
+0x4E00(Unicode 码) 对应 0x0D2BB(GB 码)
+0x4E01(Unicode 码) 对应 0x0B6A1(GB 码)
+0x4E03 (Unicode 码) 对应 0x0C6DF(GB 码)

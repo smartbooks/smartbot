@@ -1,0 +1,259 @@
+BL51 BANKED LINKER/LOCATER V5.12                                                        04/27/2011  21:54:45  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V5.12, INVOKED BY:
+D:\KEIL\C51\BIN\BL51.EXE STARTUP.obj, GSMphone.obj TO GSMphone RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  STARTUP.obj (?C_STARTUP)
+  GSMphone.obj (GSMPHONE)
+  D:\KEIL\C51\LIB\C51S.LIB (?C_INIT)
+  D:\KEIL\C51\LIB\C51S.LIB (?C?CLDPTR)
+
+
+LINK MAP OF MODULE:  GSMphone (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0003H     UNIT         _DATA_GROUP_
+            DATA    000BH     0001H     UNIT         ?DT?GSMPHONE
+            IDATA   000CH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     008CH     UNIT         ?C_C51STARTUP
+            CODE    008FH     0046H     UNIT         ?PR?MAIN?GSMPHONE
+            CODE    00D5H     0025H     UNIT         ?PR?_PRINT_STR?GSMPHONE
+            CODE    00FAH     0023H     UNIT         ?PR?PHONE?GSMPHONE
+            CODE    011DH     001AH     UNIT         ?PR?INI_UART?GSMPHONE
+            CODE    0137H     0019H     UNIT         ?C?LIB_CODE
+            CODE    0150H     0017H     UNIT         ?CO?GSMPHONE
+            CODE    0167H     0016H     UNIT         ?PR?_DELAY?GSMPHONE
+            CODE    017DH     0012H     UNIT         ?PR?GSM_ATH?GSMPHONE
+            CODE    018FH     0008H     UNIT         ?PR?_PRINT_CHAR?GSMPHONE
+            CODE    0197H     0004H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   GSMphone (?C_STARTUP)
+
+
+SEGMENT                            DATA_GROUP 
+  +--> CALLED SEGMENT            START    LENGTH
+------------------------------------------------
+?C_C51STARTUP                    -----    -----
+  +--> ?PR?MAIN?GSMPHONE
+  +--> ?C_INITSEG
+
+?PR?MAIN?GSMPHONE                -----    -----
+  +--> ?PR?INI_UART?GSMPHONE
+  +--> ?PR?_DELAY?GSMPHONE
+  +--> ?PR?GSM_ATH?GSMPHONE
+  +--> ?PR?PHONE?GSMPHONE
+
+BL51 BANKED LINKER/LOCATER V5.12                                                      04/27/2011  21:54:45  PAGE 2
+
+
+?PR?GSM_ATH?GSMPHONE             -----    -----
+  +--> ?CO?GSMPHONE
+  +--> ?PR?_PRINT_STR?GSMPHONE
+
+?PR?_PRINT_STR?GSMPHONE          0008H    0003H
+  +--> ?PR?_PRINT_CHAR?GSMPHONE
+
+?PR?PHONE?GSMPHONE               -----    -----
+  +--> ?CO?GSMPHONE
+  +--> ?PR?_PRINT_STR?GSMPHONE
+  +--> ?PR?_PRINT_CHAR?GSMPHONE
+
+
+
+SYMBOL TABLE OF MODULE:  GSMphone (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:0003H         SEGMENT       ?C_C51STARTUP
+  I:000CH         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:0006H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0003H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:0003H         LINE#         133
+  C:0005H         LINE#         134
+  C:0006H         LINE#         135
+  C:0007H         LINE#         136
+  C:0009H         LINE#         185
+  C:000CH         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        GSMPHONE
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+BL51 BANKED LINKER/LOCATER V5.12                                                      04/27/2011  21:54:45  PAGE 3
+
+
+  D:00B0H         PUBLIC        P3
+  B:0080H.0       PUBLIC        LED0
+  B:00A8H.7       PUBLIC        EA
+  C:00D5H         PUBLIC        _Print_Str
+  D:00A8H         PUBLIC        IE
+  B:00A8H.4       PUBLIC        ES
+  D:00B8H         PUBLIC        IP
+  C:00FAH         PUBLIC        phone
+  B:0098H.1       PUBLIC        TI
+  C:017DH         PUBLIC        GSM_ATH
+  C:008FH         PUBLIC        main
+  D:0099H         PUBLIC        SBUF
+  D:0087H         PUBLIC        PCON
+  D:000BH         PUBLIC        Calls_State_Flag
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  C:011DH         PUBLIC        Ini_UART
+  B:0090H.1       PUBLIC        Hang_up
+  B:00A8H.1       PUBLIC        ET0
+  B:0088H.7       PUBLIC        TF1
+  D:008DH         PUBLIC        TH1
+  C:018FH         PUBLIC        _Print_Char
+  D:008BH         PUBLIC        TL1
+  B:0088H.6       PUBLIC        TR1
+  C:0163H         PUBLIC        ATH
+  B:0090H.0       PUBLIC        Phone_Call_Key
+  D:00C8H         PUBLIC        T2CON
+  C:0167H         PUBLIC        _delay
+  D:00D0H         PUBLIC        PSW
+  C:0157H         PUBLIC        PhoneCall
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        ms
+  -------         DO            
+  D:0005H         SYMBOL        i
+  -------         ENDDO         
+  C:0167H         LINE#         26
+  C:0167H         LINE#         27
+  C:0167H         LINE#         29
+  C:0171H         LINE#         30
+  C:0171H         LINE#         31
+  C:017CH         LINE#         32
+  C:017CH         LINE#         33
+  -------         ENDPROC       _DELAY
+  -------         PROC          _PRINT_CHAR
+  D:0007H         SYMBOL        ch
+  C:018FH         LINE#         40
+  C:018FH         LINE#         41
+  C:018FH         LINE#         42
+  C:0191H         LINE#         43
+  C:0194H         LINE#         44
+  C:0196H         LINE#         45
+  -------         ENDPROC       _PRINT_CHAR
+  -------         PROC          _PRINT_STR
+  D:0008H         SYMBOL        str
+  C:00D5H         LINE#         52
+  C:00DBH         LINE#         53
+BL51 BANKED LINKER/LOCATER V5.12                                                      04/27/2011  21:54:45  PAGE 4
+
+
+  C:00DBH         LINE#         55
+  C:00E6H         LINE#         56
+  C:00E6H         LINE#         57
+  C:00F7H         LINE#         58
+  C:00F9H         LINE#         60
+  -------         ENDPROC       _PRINT_STR
+  -------         PROC          INI_UART
+  C:011DH         LINE#         77
+  C:011DH         LINE#         78
+  C:011DH         LINE#         79
+  C:0120H         LINE#         80
+  C:0123H         LINE#         81
+  C:0126H         LINE#         82
+  C:0129H         LINE#         83
+  C:012CH         LINE#         85
+  C:012EH         LINE#         86
+  C:0130H         LINE#         87
+  C:0132H         LINE#         88
+  C:0134H         LINE#         89
+  C:0136H         LINE#         90
+  -------         ENDPROC       INI_UART
+  -------         PROC          GSM_ATH
+  C:017DH         LINE#         97
+  C:017DH         LINE#         98
+  C:017DH         LINE#         99
+  C:0186H         LINE#         100
+  -------         ENDPROC       GSM_ATH
+  -------         PROC          PHONE
+  C:00FAH         LINE#         111
+  C:00FAH         LINE#         112
+  C:00FAH         LINE#         113
+  C:0103H         LINE#         114
+  C:010CH         LINE#         115
+  C:0111H         LINE#         116
+  C:011AH         LINE#         117
+  C:011CH         LINE#         118
+  -------         ENDPROC       PHONE
+  -------         PROC          MAIN
+  C:008FH         LINE#         123
+  C:008FH         LINE#         124
+  C:008FH         LINE#         125
+  C:0092H         LINE#         127
+  C:0092H         LINE#         128
+  C:0092H         LINE#         130
+  C:0095H         LINE#         131
+  C:0095H         LINE#         132
+  C:009FH         LINE#         133
+  C:009FH         LINE#         134
+  C:00A2H         LINE#         135
+  C:00A4H         LINE#         136
+  C:00ABH         LINE#         137
+  C:00AEH         LINE#         138
+  C:00B0H         LINE#         139
+  C:00B7H         LINE#         140
+  C:00BDH         LINE#         141
+  C:00C4H         LINE#         142
+  C:00C4H         LINE#         143
+BL51 BANKED LINKER/LOCATER V5.12                                                      04/27/2011  21:54:45  PAGE 5
+
+
+  C:00C7H         LINE#         145
+  C:00C9H         LINE#         146
+  C:00D0H         LINE#         147
+  C:00D3H         LINE#         148
+  C:00D3H         LINE#         149
+  C:00D3H         LINE#         152
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        GSMPHONE
+
+  -------         MODULE        ?C?CLDPTR
+  C:0137H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+Program Size: data=13.0 xdata=0 code=411
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

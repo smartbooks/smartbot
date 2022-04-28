@@ -1,0 +1,299 @@
+BL51 BANKED LINKER/LOCATER V5.12                                                        04/28/2011  21:01:46  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V5.12, INVOKED BY:
+D:\KEIL\C51\BIN\BL51.EXE STARTUP.obj, GSM.obj TO 51GSM_SMS RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  STARTUP.obj (?C_STARTUP)
+  GSM.obj (GSM)
+  D:\KEIL\C51\LIB\C51S.LIB (?C?CLDPTR)
+
+
+LINK MAP OF MODULE:  51GSM_SMS (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0074H     UNIT         ?CO?GSM
+            CODE    0077H     0025H     UNIT         ?PR?GSM_TEXT_SMS?GSM
+            CODE    009CH     0025H     UNIT         ?PR?GSM_PDU_SMS?GSM
+            CODE    00C1H     0024H     UNIT         ?PR?_DELAY?GSM
+            CODE    00E5H     001DH     UNIT         ?PR?MAIN?GSM
+            CODE    0102H     001CH     UNIT         ?PR?_PRINT_STR?GSM
+            CODE    011EH     0019H     UNIT         ?C?LIB_CODE
+            CODE    0137H     0014H     UNIT         ?PR?INI_UART?GSM
+            CODE    014BH     0010H     UNIT         ?PR?GSM_TEXT?GSM
+            CODE    015BH     0010H     UNIT         ?PR?GSM_PDU?GSM
+            CODE    016BH     000CH     UNIT         ?C_C51STARTUP
+            CODE    0177H     0008H     UNIT         ?PR?_PRINT_CHAR?GSM
+
+
+
+OVERLAY MAP OF MODULE:   51GSM_SMS (?C_STARTUP)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?GSM
+
+?PR?MAIN?GSM
+  +--> ?PR?INI_UART?GSM
+  +--> ?PR?GSM_TEXT?GSM
+  +--> ?PR?GSM_TEXT_SMS?GSM
+  +--> ?PR?GSM_PDU?GSM
+  +--> ?PR?GSM_PDU_SMS?GSM
+
+?PR?GSM_TEXT?GSM
+  +--> ?CO?GSM
+BL51 BANKED LINKER/LOCATER V5.12                                                      04/28/2011  21:01:46  PAGE 2
+
+
+  +--> ?PR?_PRINT_STR?GSM
+  +--> ?PR?_DELAY?GSM
+
+?PR?_PRINT_STR?GSM
+  +--> ?CO?GSM
+  +--> ?PR?_PRINT_CHAR?GSM
+
+?PR?_DELAY?GSM
+  +--> ?PR?_PRINT_STR?GSM
+  +--> ?PR?_PRINT_CHAR?GSM
+
+?PR?GSM_TEXT_SMS?GSM
+  +--> ?CO?GSM
+  +--> ?PR?_PRINT_STR?GSM
+  +--> ?PR?_DELAY?GSM
+
+?PR?GSM_PDU?GSM
+  +--> ?CO?GSM
+  +--> ?PR?_PRINT_STR?GSM
+  +--> ?PR?_DELAY?GSM
+
+?PR?GSM_PDU_SMS?GSM
+  +--> ?CO?GSM
+  +--> ?PR?_PRINT_STR?GSM
+  +--> ?PR?_DELAY?GSM
+
+
+
+SYMBOL TABLE OF MODULE:  51GSM_SMS (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:016BH         SEGMENT       ?C_C51STARTUP
+  I:0008H         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:016EH         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0000H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:016BH         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+BL51 BANKED LINKER/LOCATER V5.12                                                      04/28/2011  21:01:46  PAGE 3
+
+
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         92
+  C:016BH         LINE#         99
+  C:016DH         LINE#         100
+  C:016EH         LINE#         101
+  C:016FH         LINE#         102
+  C:0171H         LINE#         151
+  C:0174H         LINE#         155
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        GSM
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  C:0012H         PUBLIC        SMS_send
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  B:0080H.0       PUBLIC        LED0
+  C:009CH         PUBLIC        GSM_PDU_SMS
+  B:0080H.1       PUBLIC        LED1
+  C:010BH         PUBLIC        _Print_Str
+  D:00A8H         PUBLIC        IE
+  C:014BH         PUBLIC        GSM_TEXT
+  B:0090H.0       PUBLIC        Send_SMS_Text_key
+  B:00A8H.4       PUBLIC        ES
+  D:00B8H         PUBLIC        IP
+  C:001BH         PUBLIC        SMS_TXET
+  B:0098H.1       PUBLIC        TI
+  C:00E5H         PUBLIC        main
+  D:0099H         PUBLIC        SBUF
+  D:0087H         PUBLIC        PCON
+  C:015BH         PUBLIC        GSM_PDU
+  C:002FH         PUBLIC        Sms
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  C:0025H         PUBLIC        SMS_PDU
+  C:0137H         PUBLIC        Ini_UART
+  C:0039H         PUBLIC        Byte_num
+  D:008DH         PUBLIC        TH1
+  C:0177H         PUBLIC        _Print_Char
+  B:0090H.1       PUBLIC        Send_SMS_PDU_key
+  B:0088H.6       PUBLIC        TR1
+  C:0077H         PUBLIC        GSM_TEXT_SMS
+  D:00C8H         PUBLIC        T2CON
+  C:00CFH         PUBLIC        _delay
+  C:003CH         PUBLIC        Sms2_Pdu
+  D:00D0H         PUBLIC        PSW
+  C:0006H         PUBLIC        PhoneCall
+  -------         PROC          L?0027
+  -------         ENDPROC       L?0027
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        ms
+  -------         DO            
+  D:0005H         SYMBOL        i
+  -------         ENDDO         
+  C:00CFH         LINE#         30
+  C:00CFH         LINE#         31
+BL51 BANKED LINKER/LOCATER V5.12                                                      04/28/2011  21:01:46  PAGE 4
+
+
+  C:00CFH         LINE#         33
+  C:00D9H         LINE#         34
+  C:00D9H         LINE#         35
+  C:00E4H         LINE#         36
+  C:00E4H         LINE#         37
+  -------         ENDPROC       _DELAY
+  -------         PROC          _PRINT_CHAR
+  D:0007H         SYMBOL        ch
+  C:0177H         LINE#         44
+  C:0177H         LINE#         45
+  C:0177H         LINE#         46
+  C:0179H         LINE#         47
+  C:017CH         LINE#         48
+  C:017EH         LINE#         49
+  -------         ENDPROC       _PRINT_CHAR
+  C:0104H         SYMBOL        L?0026
+  -------         PROC          L?0025
+  -------         ENDPROC       L?0025
+  C:0104H         SYMBOL        L?0026
+  -------         PROC          _PRINT_STR
+  D:0001H         SYMBOL        str
+  C:010BH         LINE#         56
+  C:010BH         LINE#         57
+  C:010BH         LINE#         59
+  C:0111H         LINE#         60
+  C:0111H         LINE#         61
+  C:0114H         LINE#         62
+  C:011BH         LINE#         63
+  C:011DH         LINE#         65
+  -------         ENDPROC       _PRINT_STR
+  -------         PROC          INI_UART
+  C:0137H         LINE#         73
+  C:0137H         LINE#         74
+  C:0137H         LINE#         75
+  C:013AH         LINE#         77
+  C:013DH         LINE#         79
+  C:0140H         LINE#         80
+  C:0143H         LINE#         81
+  C:0146H         LINE#         82
+  C:0148H         LINE#         83
+  C:014AH         LINE#         84
+  -------         ENDPROC       INI_UART
+  -------         PROC          GSM_TEXT
+  C:014BH         LINE#         91
+  C:014BH         LINE#         92
+  C:014BH         LINE#         93
+  C:014FH         LINE#         94
+  C:0152H         LINE#         95
+  C:0154H         LINE#         96
+  -------         ENDPROC       GSM_TEXT
+  -------         PROC          GSM_TEXT_SMS
+  C:0077H         LINE#         105
+  C:0077H         LINE#         106
+  C:0077H         LINE#         108
+  C:0080H         LINE#         109
+  C:0084H         LINE#         110
+  C:0087H         LINE#         111
+BL51 BANKED LINKER/LOCATER V5.12                                                      04/28/2011  21:01:46  PAGE 5
+
+
+  C:008EH         LINE#         112
+  C:0092H         LINE#         113
+  C:0092H         LINE#         114
+  C:0092H         LINE#         115
+  C:0095H         LINE#         116
+  -------         ENDPROC       GSM_TEXT_SMS
+  -------         PROC          GSM_PDU
+  C:015BH         LINE#         124
+  C:015BH         LINE#         125
+  C:015BH         LINE#         126
+  C:015FH         LINE#         127
+  C:0162H         LINE#         128
+  C:0164H         LINE#         129
+  -------         ENDPROC       GSM_PDU
+  -------         PROC          GSM_PDU_SMS
+  C:009CH         LINE#         137
+  C:009CH         LINE#         138
+  C:009CH         LINE#         140
+  C:00A5H         LINE#         141
+  C:00A9H         LINE#         142
+  C:00ACH         LINE#         143
+  C:00B3H         LINE#         144
+  C:00B7H         LINE#         146
+  C:00B7H         LINE#         147
+  C:00B7H         LINE#         148
+  C:00BAH         LINE#         149
+  -------         ENDPROC       GSM_PDU_SMS
+  -------         PROC          MAIN
+  C:00E5H         LINE#         157
+  C:00E5H         LINE#         158
+  C:00E5H         LINE#         159
+  C:00E8H         LINE#         160
+  C:00E8H         LINE#         161
+  C:00E8H         LINE#         162
+  C:00EBH         LINE#         163
+  C:00EBH         LINE#         164
+  C:00EEH         LINE#         165
+  C:00F1H         LINE#         166
+  C:00F3H         LINE#         167
+  C:00F5H         LINE#         169
+  C:00F8H         LINE#         170
+  C:00F8H         LINE#         171
+  C:00FBH         LINE#         172
+  C:00FEH         LINE#         173
+  C:0100H         LINE#         174
+  C:0100H         LINE#         176
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        GSM
+
+  -------         MODULE        ?C?CLDPTR
+  C:011EH         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+Program Size: data=9.0 xdata=0 code=383
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

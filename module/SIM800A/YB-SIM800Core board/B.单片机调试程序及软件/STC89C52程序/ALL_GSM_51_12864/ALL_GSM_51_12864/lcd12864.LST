@@ -1,0 +1,139 @@
+C51 COMPILER V7.50   LCD12864                                                              12/08/2012 23:52:18 PAGE 1   
+
+
+C51 COMPILER V7.50, COMPILATION OF MODULE LCD12864
+OBJECT MODULE PLACED IN lcd12864.OBJ
+COMPILER INVOKED BY: d:\Keil\C51\BIN\C51.EXE lcd12864.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include "reg52.h"
+   2          #include "intrins.h" 
+   3          
+   4          sbit io_LCD12864_RS = P3^5 ; 
+   5          sbit io_LCD12864_RW = P3^6 ; 
+   6          sbit io_LCD12864_EN = P3^4 ; 
+   7          
+   8          #define io_LCD12864_DATAPORT P0 
+   9          
+  10          #define SET_DATA io_LCD12864_RS = 1 ; 
+  11          #define SET_INC io_LCD12864_RS = 0 ; 
+  12          #define SET_READ io_LCD12864_RW = 1 ; 
+  13          #define SET_WRITE io_LCD12864_RW = 0 ; 
+  14          #define SET_EN io_LCD12864_EN = 1 ; 
+  15          #define CLR_EN io_LCD12864_EN = 0 ; 
+  16          
+  17          void v_Lcd12864CheckBusy_f( void ) //忙检测函数
+  18          { 
+  19   1          unsigned int nTimeOut = 0 ;
+  20   1          SET_INC;
+  21   1          SET_READ;
+  22   1          CLR_EN;
+  23   1          SET_EN;
+  24   1          while( ( io_LCD12864_DATAPORT & 0x80 ) && ( ++nTimeOut != 0 ) ) ;
+  25   1          CLR_EN;
+  26   1          SET_INC;
+  27   1          SET_READ;
+  28   1      }
+  29          void v_Lcd12864SendCmd_f( unsigned char byCmd ) //发送命令
+  30          { 
+  31   1          v_Lcd12864CheckBusy_f() ;
+  32   1          SET_INC;
+  33   1          SET_WRITE;
+  34   1          CLR_EN;
+  35   1          io_LCD12864_DATAPORT = byCmd ;
+  36   1          _nop_();
+  37   1          _nop_();
+  38   1          SET_EN;
+  39   1          _nop_();
+  40   1          _nop_();
+  41   1          CLR_EN;
+  42   1      
+  43   1          SET_READ;
+  44   1          SET_INC;
+  45   1      }
+  46          void v_Lcd12864SendData_f( unsigned char byData ) //发送数据
+  47          { 
+  48   1          v_Lcd12864CheckBusy_f() ;
+  49   1          SET_DATA;
+  50   1          SET_WRITE;
+  51   1          CLR_EN;
+  52   1          io_LCD12864_DATAPORT = byData ;
+  53   1          _nop_();
+  54   1          _nop_();
+  55   1          SET_EN;
+C51 COMPILER V7.50   LCD12864                                                              12/08/2012 23:52:18 PAGE 2   
+
+  56   1          _nop_();
+  57   1          _nop_();
+  58   1          CLR_EN;
+  59   1          SET_READ;
+  60   1          SET_INC;
+  61   1      }
+  62          
+  63          void v_DelayMs_f( unsigned int nDelay ) //延时
+  64          { 
+  65   1          unsigned int i ;
+  66   1          for( ; nDelay > 0 ; nDelay-- )
+  67   1          {
+  68   2              for( i = 225 ; i > 0 ; i-- ) ;
+  69   2          }
+  70   1      } 
+  71          
+  72          void v_Lcd12864Init_f( void ) //初始化
+  73          { 
+  74   1          v_Lcd12864SendCmd_f( 0x30 ) ; //基本指令集
+  75   1          v_DelayMs_f( 50 ) ;
+  76   1          v_Lcd12864SendCmd_f( 0x01 ) ; //清屏
+  77   1          v_DelayMs_f( 50 ) ;
+  78   1          v_Lcd12864SendCmd_f( 0x06 ) ; //光标右移
+  79   1          v_DelayMs_f( 50 ) ;
+  80   1          v_Lcd12864SendCmd_f( 0x0c ) ; //开显示
+  81   1      } 
+  82          
+  83          void v_Lcd12864SetAddress_f( unsigned char x, y ) //地址转换
+  84          { 
+  85   1          unsigned char byAddress ;
+  86   1          switch( y )
+  87   1          {
+  88   2      
+  89   2          case 0 : byAddress = 0x80 + x ;
+  90   2              break;
+  91   2          case 1 : byAddress = 0x90 + x ;
+  92   2              break ;
+  93   2          case 2 : byAddress = 0x88 + x ;
+  94   2              break ;
+  95   2          case 3 : byAddress = 0x98 + x ;
+  96   2              break ;
+  97   2          default :
+  98   2                  break ;
+  99   2      }
+ 100   1          v_Lcd12864SendCmd_f( byAddress ) ;
+ 101   1      } 
+ 102          
+ 103          void v_Lcd12864PutString_f( unsigned char x, unsigned char y, unsigned char *pData ) 
+ 104          { 
+ 105   1          v_Lcd12864SetAddress_f( x, y ) ;
+ 106   1          while( *pData != '\0' )
+ 107   1          {
+ 108   2              v_Lcd12864SendData_f( *pData++ ) ;
+ 109   2          }
+ 110   1      } 
+ 111          
+ 112          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    226    ----
+   CONSTANT SIZE    =   ----    ----
+C51 COMPILER V7.50   LCD12864                                                              12/08/2012 23:52:18 PAGE 3   
+
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

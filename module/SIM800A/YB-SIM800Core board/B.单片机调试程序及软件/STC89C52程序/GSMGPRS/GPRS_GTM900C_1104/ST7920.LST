@@ -1,0 +1,665 @@
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 1   
+
+
+C51 COMPILER V7.50, COMPILATION OF MODULE ST7920
+OBJECT MODULE PLACED IN ST7920.OBJ
+COMPILER INVOKED BY: D:\单片机\Keil2\C51\BIN\C51.EXE ST7920.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          
+   2          
+   3          #include "ST7920.h"
+*** WARNING C318 IN LINE 6 OF ST7920.h: can't open file 'avr/io.h'
+*** WARNING C318 IN LINE 7 OF ST7920.h: can't open file 'inttypes.h'
+*** WARNING C318 IN LINE 8 OF ST7920.h: can't open file 'util/delay.h'
+   4          
+   5          
+   6          #if PARALLEL != 1
+              
+              void LCD_SendByte(unsigned char a)
+              {
+                      unsigned char i,d;
+                      LCD_CS_HIGH();
+                      LCD_SIO_OUT();
+                      for(i=0;i<8;i++)
+                      {
+                              LCD_SCK_LOW();  //clrbit(LCD_CTRL,E);  
+                              d = a&0x80;
+                              if(d)
+                                      LCD_SIO_HIGH(); //setbit(LCD_CTRL,RW);
+                              else
+                                      LCD_SIO_LOW();  //clrbit(LCD_CTRL,RW);
+                              a<<=1;
+                              LCD_SCK_HIGH();  //setbit(LCD_CTRL,E); //上升弦发送
+                      }
+                      LCD_CS_LOW();
+              }
+              
+              
+              #endif
+  29          
+  30          
+  31          
+  32          //*******************************************
+  33          //*函数名称:void LCD_CheckBusy(void)    *
+  34          //*函数功能:并行方式查忙                                        *
+  35          //*形式参数:无                                                          *
+  36          //*形参说明:无                                                          *
+  37          //*返回参数:无                                                          *
+  38          //*使用说明:无                                                          *
+  39          //*******************************************
+  40          void LCD_CheckBusy(void)
+  41          {
+  42   1      #if PARALLEL == 1
+  43   1              unsigned char temp;
+  44   1              LCD_DATA_IN();  //P1 = 0xff;    //输入前置1
+*** ERROR C202 IN LINE 44 OF ST7920.C: 'DDRC': undefined identifier
+  45   1              LCD_RS_LOW();   //RS = 0;               //指令
+*** ERROR C202 IN LINE 45 OF ST7920.C: 'PORTA': undefined identifier
+  46   1              LCD_RW_HIGH();  //RW = 1;               //读模式
+*** ERROR C202 IN LINE 46 OF ST7920.C: 'PORTA': undefined identifier
+  47   1              _delay_us(5);   //延时
+  48   1              LCD_E_HIGH();   //E  = 1;        //使能
+  49   1              do
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 2   
+
+  50   1              {       
+  51   2                      temp = LCD_DATA_GET();  //temp = BUSY;
+  52   2              }
+  53   1              while( 0x80==(temp&0x80) );     //等待不忙,temp=0x00时不忙
+  54   1              
+  55   1              LCD_E_LOW();    //E  = 0;
+  56   1              //_delay_ms(20);
+  57   1      #else
+                      unsigned char temp = 0xFC,temp2;
+                      do
+                      {
+                              LCD_SendByte(temp);
+                              temp = LCD_ReceiveByte();
+                              temp2 = LCD_ReceiveByte();
+                              temp &= 0x80;
+                      }while( temp==0x80 );
+              #endif  //#if PARALLEL == 1
+  67   1      }
+  68          
+  69          
+  70          //************************************************************************************
+  71          //*函数名称:void LCD_Write(unsigned char Data_Command , unsigned char uc_Content ) *
+  72          //*函数功能:并行模式向LCD发送数据或指令                                                                                          *
+  73          //*形式参数:unsigned char Data_Command , unsigned char uc_Content                                        *
+  74          //*形参说明:数据或指令的标志位,指令或数据的内容                                                                          *
+  75          //*返回参数:无                                                                                                                                           *
+  76          //*使用说明:无                                                                                                                                           *
+  77          //************************************************************************************
+  78          void LCD_Write( unsigned char Data_Command , unsigned char uc_Content )
+  79          { 
+  80   1      #if PARALLEL == 1
+  81   1      
+  82   1              LCD_CheckBusy();
+  83   1              LCD_DATA_OUT();
+  84   1      
+  85   1              if(Data_Command)
+  86   1              {
+  87   2                      LCD_RS_HIGH();  //RS = 1;   //数据
+  88   2                      //LCD_RW_LOW(); //RW = 0;   //写模式
+  89   2              }
+  90   1              else 
+  91   1              {
+  92   2                      LCD_RS_LOW();   //RS = 0;       //指令
+  93   2                      //LCD_RW_LOW(); //RW = 0;   //写模式
+  94   2              }
+  95   1              LCD_RW_LOW();           //RW = 0;   //写模式
+  96   1      
+  97   1              LCD_DATA_PORT = uc_Content;//数据放到P1口上
+  98   1              LCD_E_HIGH();   //E = 1;
+  99   1              _delay_us(1);   //延时
+ 100   1              //_nop_();//很重要 
+ 101   1              //_nop_();
+ 102   1              //_nop_();
+ 103   1          LCD_E_LOW();        //E = 0;                
+ 104   1      #else
+                      unsigned char temp;
+              
+                      LCD_CheckBusy();
+                      
+                      if(Data_Command)
+                      {
+                              temp = 0xFA;    //RS = 1,数据; RW = 0,写模式
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 3   
+
+                      }
+                      else 
+                      {
+                              temp = 0xF8;    //RS = 0,指令; RW = 0,写模式
+                      }
+                      LCD_SendByte(temp);
+              
+                      temp = uc_Content&0xF0;
+                      LCD_SendByte(temp);
+              
+                      temp = (uc_Content<<4)&0xF0;
+                      LCD_SendByte(temp);
+              #endif  //#if PARALLEL == 1                                                                                             
+ 125   1      }
+ 126          
+ 127          
+ 128          //********************************************
+ 129          //*函数名称:LCD_ReadData                 *
+ 130          //*函数功能:并行读LCD数据                                        *
+ 131          //*形式参数:无                                                           *
+ 132          //*形参说明:无                                                           *
+ 133          //*返回参数:读回的数据                                           *
+ 134          //*使用说明:无                                                           *
+ 135          //********************************************
+ 136          unsigned char LCD_ReadData(void)
+ 137          {
+ 138   1      #if PARALLEL == 1
+ 139   1              unsigned char uc_Content;
+ 140   1              LCD_CheckBusy();
+ 141   1              //_delay_us(2);
+ 142   1      
+ 143   1              LCD_DATA_IN();  //P1 = 0xff;//输入前置1
+ 144   1          LCD_RS_HIGH();      //RS = 1;   //数据
+ 145   1          LCD_RW_HIGH();      //RW = 1;       //读模式
+ 146   1      
+ 147   1              LCD_E_HIGH();   //E = 1;        //使能
+ 148   1              _delay_us(1);   //延时很重要 
+ 149   1              uc_Content = LCD_DATA_GET();    //uc_Content = P1;    //P1口的内容放到变量中
+ 150   1              LCD_E_LOW();    //E = 0;
+ 151   1      
+ 152   1              _delay_us(1);   //延时很重要 
+ 153   1      
+ 154   1              return uc_Content;
+ 155   1      #endif  //#if PARALLEL == 1
+ 156   1      }
+ 157          
+ 158          
+ 159          
+ 160          
+ 161          
+ 162          //*************************************************************
+ 163          //*函数名称:void LCD_DDRAM_AddressSet(unsigned char ucDDramAdd) *
+ 164          //*函数功能:设定DDRAM(文本区)地址到地址计数器AC                           *
+ 165          //*形式参数:unsigned char ucDDramAdd                                                              *
+ 166          //*行参说明:具体地址                                                                              *
+ 167          //*格式说明:                                                                                              *
+ 168          //*             RS      RW      DB7     DB6     DB5     DB4     DB3     DB2     DB1     DB0                               *
+ 169          //*             0       0       1       AC6     AC5     AC4     AC3     AC2     AC1     AC0                               *
+ 170          //*返回参数:无                                                                                            *
+ 171          //*使用说明:                                                                                              *
+ 172          //*     第一行地址:80H~8FH                                                                                *
+ 173          //*     第二行地址:90H~9FH                                                                                *
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 4   
+
+ 174          //*     第三行地址:A0H~AFH                                                                                *
+ 175          //*     第四行地址:B0H~BFH                                                                                *
+ 176          //*************************************************************
+ 177          void LCD_DDRAM_AddressSet(unsigned char ucDDramAdd)
+ 178          {
+ 179   1              LCD_Write(LCD_COMMAND,LCD_BASIC_FUNCTION);                      //基本指令集
+ 180   1              LCD_Write(LCD_COMMAND,ucDDramAdd);                              //设定DDRAM地址到地址计数器AC
+ 181   1      }
+ 182          
+ 183          
+ 184          //*************************************************************
+ 185          //*函数名称:void LCD_CGRAM_AddressSet(unsigned char ucCGramAdd) *
+ 186          //*函数功能:设定CGRAM(自定义字库区)地址到地址计数器AC             *
+ 187          //*形式参数:unsigned char ucCGramAdd                                                              *
+ 188          //*形参说明:具体地址                                                                              *
+ 189          //*格式说明:                                                                                              *
+ 190          //*             RS      RW      DB7     DB6     DB5     DB4     DB3     DB2     DB1     DB0                               *
+ 191          //*             0       0       0       1       AC5     AC4     AC3     AC2     AC1     AC0                               *
+ 192          //*返回参数:无                                                                                            *
+ 193          //*使用说明:地址范围为40H~3FH                                                             *
+ 194          //*************************************************************
+ 195          void LCD_CGRAM_AddressSet(unsigned char ucCGramAdd)
+ 196          {
+ 197   1              LCD_Write(LCD_COMMAND,LCD_BASIC_FUNCTION);                      //基本指令集
+ 198   1              LCD_Write(LCD_COMMAND,ucCGramAdd);                              //设定CGRAM地址到地址计数器AC
+ 199   1      }
+ 200          
+ 201          
+ 202          //*******************************************************************************
+ 203          //*函数名称:void LCD_GDRAM_AddressSet(unsigned char ucGDramAdd)                   *
+ 204          //*函数功能:设定GDRAM(图形区)地址到地址计数器AC                                 *
+ 205          //*形式参数:unsigned char ucGDramAdd                                                    *
+ 206          //*形参说明:具体地址值                                                          *
+ 207          //*             RS      RW      DB7     DB6     DB5     DB4     DB3     DB2     DB1     DB0                                 *
+ 208          //*             0       0       1       AC6     AC5     AC4     AC3     AC2     AC1     AC0                                 *
+ 209          //*             先设定垂直位置再设定水平位置(连续写入两个字节完成垂直和水平位置的设置)  *       
+ 210          //*             垂直地址范围:AC6~AC0                                                    *
+ 211          //*             水平地址范围:AC3~AC0                                                    *
+ 212          //*返回参数:无                                                                  *
+ 213          //*使用说明:必须在扩展指令集的情况下使用                                        *
+ 214          //*******************************************************************************
+ 215          void LCD_GDRAM_AddressSet(unsigned char ucGDramAdd)
+ 216          {
+ 217   1              LCD_Write(LCD_COMMAND,LCD_EXTEND_FUNCTION);                     //扩展指令集
+ 218   1              LCD_Write(LCD_COMMAND,ucGDramAdd);              
+ 219   1      }
+ 220          
+ 221          
+ 222          
+ 223          //*******************************************
+ 224          //*函数名称:void LCD_Init(void) *
+ 225          //*函数功能:并行初始化LCD                                       *
+ 226          //*形式参数:无                                                          *
+ 227          //*形参说明:无                                                          *
+ 228          //*返回参数:无                                                          *
+ 229          //*使用说明:无                                                          *
+ 230          //*******************************************
+ 231          void LCD_Init(void)
+ 232          {
+ 233   1              LCD_CTRL_OUT();
+ 234   1      #if PARALLEL == 1
+ 235   1              #ifdef LCD_RST
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 5   
+
+ 236   1                      LCD_RST_LOW();
+ 237   1                      _delay_ms(10);
+ 238   1                      LCD_RST_HIGH(); //RST = 1;                                      //复位后拉高，停止复位
+ 239   1              #endif
+ 240   1              #ifdef LCD_PSB
+                              LCD_PSB_HIGH(); //PSB = 1;                                      //选择并行传输模式      
+                      #endif
+ 243   1      #else
+                      #ifdef LCD_RST
+                              LCD_RST_LOW();
+                              _delay_ms(100);
+                              LCD_RST_HIGH(); //RST = 1;                                      //复位后拉高，停止复位
+                      #endif
+                      #ifdef LCD_PSB
+                              LCD_PSB_LOW();  //PSB = 0;                                      //选择串并行传输模式    
+                      #endif
+              #endif  //#if PARALLEL == 1
+ 253   1      
+ 254   1      
+ 255   1              LCD_Write(LCD_COMMAND,LCD_BASIC_FUNCTION); //基本指令动作   
+ 256   1              LCD_Write(LCD_COMMAND,LCD_CLEAR_SCREEN);        //清屏，地址指针指向00H
+ 257   1              LCD_Write(LCD_COMMAND,0x06);                //光标的移动方向
+ 258   1              LCD_Write(LCD_COMMAND,0x0C);                    //开显示，关游标
+ 259   1      
+ 260   1      }
+ 261          
+ 262          
+ 263          
+ 264          //********************************************************
+ 265          //*函数名称:void LCD_ClearRam(void)                  *
+ 266          //*函数功能:并行清屏函数                                                     *
+ 267          //*形式参数:无                                                                       *
+ 268          //*形参说明:无                                                                   *
+ 269          //*返回参数:无                                                                       *
+ 270          //*使用说明:DDRAM填满20H,并设定DDRAM AC到00H             *
+ 271          //*格式说明:                                                                                     *
+ 272          //*                 RS  RW      DB7      DB6  DB5  DB4  DB3     DB2     DB1     DB0      *
+ 273          //*                 0   0        0        0        0    0        0   0   0       1       *
+ 274          //********************************************************
+ 275          void LCD_ClearRam(void)
+ 276          {
+ 277   1              LCD_Write(LCD_COMMAND,LCD_BASIC_FUNCTION);                      //基本指令集
+ 278   1              LCD_Write(LCD_COMMAND,LCD_CLEAR_SCREEN);                        //清屏
+ 279   1      }
+ 280          
+ 281          
+ 282          //*****************************************************
+ 283          //*函数名称:void LCD_GraphModeSet(unsigned char bSelect) *
+ 284          //*函数功能:打开或关闭绘图显示                                            *
+ 285          //*形式参数:unsigned char Select                                          *
+ 286          //*形参说明:打开或关闭绘图显示的标志位,1打开,0关闭        *
+ 287          //*格式说明:                                                                              *
+ 288          //*             RS      RW      DB7     DB6     DB5     DB4     DB3     DB2     DB1     DB0               *
+ 289          //*             0       0       0       0       1       1       X       RE       G       X                *
+ 290          //*                                                                               *
+ 291          //*             RE:0,基本指令集                                                           *
+ 292          //*             RE:1,扩充指令集                                                           *
+ 293          //*             G :0,绘图显示OFF                                                          *
+ 294          //*             G :1,绘图显示ON                                                           *
+ 295          //*返回参数:无                                                                            *
+ 296          //*使用说明:无                                                                            *
+ 297          //*****************************************************
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 6   
+
+ 298          void LCD_GraphModeSet(unsigned char Select)
+ 299          {
+ 300   1              LCD_Write(LCD_COMMAND,LCD_EXTEND_FUNCTION);     //扩展指令集
+ 301   1              if(Select)
+ 302   1              {
+ 303   2                      LCD_Write(LCD_COMMAND,LCD_GRAPH_ON);            //打开绘图模式
+ 304   2              }
+ 305   1              else
+ 306   1              {
+ 307   2                      LCD_Write(LCD_COMMAND,LCD_GRAPH_OFF);           //关闭绘图模式  
+ 308   2              }
+ 309   1      }
+ 310          
+ 311          
+ 312          //*********************************************************************************
+ 313          //*函数名称:void LCD_DisplayStrings_WithAddress(unsigned char ucAdd,unsigned char code *p)        *
+ 314          //*函数功能:在(文本区)ucAdd指定的位置显示一串字符(或是汉字或是ASCII或是两者混合)  *
+ 315          //*形式参数:unsigned char ucAdd,unsigned char code *p                                                     *
+ 316          //*形参说明:指定的位置,要显示的字符串                                                                                     *
+ 317          //*地址必须是:80H~87H,90H~97H,88H~8FH,98H~8FH                                                                     *
+ 318          //*返回参数:无                                                                                                                                    *
+ 319          //*使用说明:使用之前要初始化液晶                                                                                                  *
+ 320          //*********************************************************************************
+ 321          void LCD_DisplayStrings_WithAddress(unsigned char ucAdd,const char *p)
+ 322          {
+ 323   1              unsigned char length;
+ 324   1              length = strlen(p);
+ 325   1          LCD_Write(LCD_COMMAND,LCD_BASIC_FUNCTION);                          //基本指令动作   
+ 326   1              LCD_DDRAM_AddressSet(ucAdd);
+ 327   1              for( ;  length ; length -- )
+ 328   1                      LCD_Write(LCD_DATA, *(p++));                                    
+ 329   1      }
+ 330          
+ 331          
+ 332          //*********************************************************************************
+ 333          //*函数名称:void LCD_DisplayChinese(unsigned char x,unsigned char y,unsigned char code *p)        *
+ 334          //*函数功能:在(文本区)ucAdd指定的位置显示一串字符(或是汉字或是ASCII或是两者混合)  *
+ 335          //*形式参数:unsigned char x,unsigned char y,const char *p                                                 *
+ 336          //*形参说明:指定的位置,要显示的字符串                                                                                     *
+ 337          //*地址必须是: x<8, y<4                                                                                   *
+ 338          //*返回参数:无                                                                                                                                    *
+ 339          //*使用说明:使用之前要初始化液晶                                                                                                  *
+ 340          //*********************************************************************************
+ 341          void LCD_DisplayChinese(unsigned char x,unsigned char y,const char *p)
+ 342          {
+ 343   1              unsigned char length,addr;
+ 344   1      
+ 345   1              y &= 0x03;      //y < 4
+ 346   1              x &= 0x07;      //x < 8
+ 347   1      
+ 348   1              switch( y )
+ 349   1              {
+ 350   2                      case 0:
+ 351   2                              addr = 0x80;
+ 352   2                      break;
+ 353   2      
+ 354   2                      case 1:
+ 355   2                              addr = 0x90;
+ 356   2                      break;
+ 357   2      
+ 358   2                      case 2:
+ 359   2                              addr = 0x88;
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 7   
+
+ 360   2                      break;
+ 361   2      
+ 362   2                      case 3:
+ 363   2                              addr = 0x98;
+ 364   2                      break;
+ 365   2              }
+ 366   1      
+ 367   1              addr += x;
+ 368   1      
+ 369   1              length = strlen(p);
+ 370   1      
+ 371   1              LCD_Write(LCD_COMMAND,LCD_BASIC_FUNCTION);                      //基本指令动作   
+ 372   1              LCD_DDRAM_AddressSet(addr);
+ 373   1      
+ 374   1              for( ;  length ; length -- )
+ 375   1                      LCD_Write(LCD_DATA, *(p++));
+ 376   1      }
+ 377          
+ 378          
+ 379          
+ 380          //*********************************************************************************
+ 381          //*函数名称:void LCD_DisplayStrings(unsigned char x,unsigned char y,unsigned char code *p)        *
+ 382          //*函数功能:在(文本区)ucAdd指定的位置显示一串ASCII                                *
+ 383          //*形式参数:unsigned char x,unsigned char y,const char *p                                                 *
+ 384          //*形参说明:指定的位置,要显示的字符串                                                                                     *
+ 385          //*地址必须是: x<16, y<4                                                                                          *
+ 386          //*返回参数:无                                                                                                                                    *
+ 387          //*使用说明:使用之前要初始化液晶                                                                                                  *
+ 388          //*********************************************************************************
+ 389          void LCD_DisplayStrings(unsigned char x,unsigned char y,const char *p)
+ 390          {
+ 391   1              unsigned char length,addr;
+ 392   1              unsigned char AddrEO;   //x地址是奇偶
+ 393   1              unsigned char Data1;
+ 394   1      
+ 395   1              y &= 0x03;      //y < 4
+ 396   1              x &= 0x0F;      //x < 16
+ 397   1      
+ 398   1              switch( y )
+ 399   1              {
+ 400   2                      case 0:
+ 401   2                              addr = 0x80;
+ 402   2                      break;
+ 403   2      
+ 404   2                      case 1:
+ 405   2                              addr = 0x90;
+ 406   2                      break;
+ 407   2      
+ 408   2                      case 2:
+ 409   2                              addr = 0x88;
+ 410   2                      break;
+ 411   2      
+ 412   2                      case 3:
+ 413   2                              addr = 0x98;
+ 414   2                      break;
+ 415   2              }
+ 416   1      
+ 417   1              addr += x/2;
+ 418   1              AddrEO = x&0x01;
+ 419   1      
+ 420   1              length = strlen(p);
+ 421   1      
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 8   
+
+ 422   1              LCD_Write(LCD_COMMAND,LCD_BASIC_FUNCTION);                      //基本指令动作   
+ 423   1              LCD_DDRAM_AddressSet(addr);
+ 424   1      
+ 425   1              if(AddrEO == 0x01)
+ 426   1                      {
+ 427   2                      Data1 = LCD_ReadData();
+ 428   2                      LCD_DDRAM_AddressSet(addr);
+ 429   2                      LCD_Write(LCD_DATA, Data1);
+ 430   2                      }
+ 431   1      
+ 432   1              for( ;  length ; length -- )
+ 433   1                      LCD_Write(LCD_DATA, *(p++));
+ 434   1      }
+ 435          
+ 436          
+ 437          //*********************************************************************
+ 438          //*函数名称:void LCD_ImgDisplay(unsigned char code *img)         *
+ 439          //*函数功能:全屏显示128*64个象素的图形                                *
+ 440          //*形式参数:unsigned char code *img                                   *
+ 441          //*形参说明:要显示的图形                                              *
+ 442          //*液晶屏坐标说明:                                                    *
+ 443          //*      ________________128个像素______________________              *
+ 444          //*      |(0,0)                                    (7,0)|             *
+ 445          //*      |                                              |             *
+ 446          //*   64 |                                              |             *
+ 447          //*   个 |(0,31)                                  (7,31)|             *
+ 448          //*   像 |(8,0)                                   (15,0)|             *
+ 449          //*   素 |                                              |             *
+ 450          //*      |                                              |             *
+ 451          //*      |(8,31)                                 (15,31)|             *
+ 452          //*      |______________________________________________|             *
+ 453          //*                                                                   *
+ 454          //返回参数:无                                                         *
+ 455          //使用说明:此函数适用于CM12864-12型液晶                               *
+ 456          //*********************************************************************
+ 457          void LCD_ImgDisplay(unsigned char *img)
+ 458          {
+ 459   1              unsigned char i,j;
+ 460   1          LCD_GraphModeSet(0x00); //先关闭图形显示功能
+ 461   1              for(j=0;j<32;j++)
+ 462   1               {
+ 463   2              for(i=0;i<8;i++)
+ 464   2               {
+ 465   3                      LCD_Write(LCD_COMMAND,0x80+j);          //设定垂直坐标
+ 466   3                      LCD_Write(LCD_COMMAND,0x80+i);          //设定水平坐标
+ 467   3                  LCD_Write(LCD_DATA,img[j*16+i*2]);  //放入数据高字节
+ 468   3                      LCD_Write(LCD_DATA,img[j*16+i*2+1]);    //放入数据低字节
+ 469   3               }
+ 470   2               }
+ 471   1              for(j=32;j<64;j++)
+ 472   1               {
+ 473   2              for(i=0;i<8;i++)
+ 474   2               {
+ 475   3                      LCD_Write(LCD_COMMAND,0x80+j-32);
+ 476   3                      LCD_Write(LCD_COMMAND,0x88+i);
+ 477   3                      LCD_Write(LCD_DATA,img[j*16+i*2]);
+ 478   3                  LCD_Write(LCD_DATA,img[j*16+i*2+1]);
+ 479   3               }
+ 480   2               }
+ 481   1              LCD_GraphModeSet(0x01);//最后打开图形显示功能
+ 482   1      }
+ 483          
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 9   
+
+ 484          void LCD_DisplayCLR()
+ 485          {
+ 486   1              unsigned char i,j;
+ 487   1          LCD_GraphModeSet(0x00); //先关闭图形显示功能
+ 488   1              for(j=0;j<32;j++)
+ 489   1               {
+ 490   2              for(i=0;i<8;i++)
+ 491   2               {
+ 492   3                      LCD_Write(LCD_COMMAND,0x80+j);          //设定垂直坐标
+ 493   3                      LCD_Write(LCD_COMMAND,0x80+i);          //设定水平坐标
+ 494   3                  LCD_Write(LCD_DATA,0x00);   //放入数据高字节
+ 495   3                      LCD_Write(LCD_DATA,0x00);       //放入数据低字节
+ 496   3               }
+ 497   2               }
+ 498   1              for(j=32;j<64;j++)
+ 499   1               {
+ 500   2              for(i=0;i<8;i++)
+ 501   2               {
+ 502   3                      LCD_Write(LCD_COMMAND,0x80+j-32);
+ 503   3                      LCD_Write(LCD_COMMAND,0x88+i);
+ 504   3                      LCD_Write(LCD_DATA,0x00);
+ 505   3                  LCD_Write(LCD_DATA,0x00);
+ 506   3               }
+ 507   2               }
+ 508   1              LCD_GraphModeSet(0x01);//最后打开图形显示功能
+ 509   1      }
+ 510          
+ 511          
+ 512          //******************************************************************************
+ 513          //*函数名称:void LCD_ImgDisplayCharacter(unsigned char x,unsigned char y,unsigned char code *img) *
+ 514          //*函数功能:使用绘图的方法,在(x,y)处画一个16*16点阵的图案,也可以是字符             *
+ 515          //*形式参数:unsigned char x,unsigned char y,unsigned char code *img                                                                        *
+ 516          //*                     x取值范围:0~7                                                                                                      *
+ 517          //*                     y取值范围:0~31 (针对CM12864-12型液晶)                                                  *
+ 518          //*形参说明:坐标水平位置,坐标垂直位置,要显示的图形                                                         *
+ 519          //*液晶屏坐标说明:                                                                                                                         *
+ 520          //*      ________________128个像素______________________              *
+ 521          //*      |(0,0)                                    (7,0)|             *
+ 522          //*      |                                              |             *
+ 523          //*   64 |                                              |             *
+ 524          //*   个 |(0,31)                                  (7,31)|             *
+ 525          //*   像 |(8,0)                                   (15,0)|             *
+ 526          //*   素 |                                              |             *
+ 527          //*      |                                              |             *
+ 528          //*      |(8,31)                                 (15,31)|             *
+ 529          //*      |______________________________________________|             *
+ 530          //*                                                                   *
+ 531          //*返回参数:无                                                              *
+ 532          //*使用说明:此函数适用于CM12864-12型液晶                        *
+ 533          //******************************************************************************
+ 534          void LCD_ImgDisplayCharacter(unsigned char x,unsigned char y,unsigned char *img)
+ 535          {
+ 536   1              unsigned char i;
+ 537   1              LCD_GraphModeSet(0x00);         //先关闭图形显示功能
+ 538   1          LCD_Write(LCD_COMMAND,LCD_EXTEND_FUNCTION);
+ 539   1              for(i=0;i<16;i++)
+ 540   1               {
+ 541   2                      LCD_GDRAM_AddressSet(0x80+y+i);
+ 542   2                      LCD_GDRAM_AddressSet(0x80+x);
+ 543   2              LCD_Write(LCD_DATA,img[i*2]);
+ 544   2              LCD_Write(LCD_DATA,img[i*2+1]);
+ 545   2               }
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 10  
+
+ 546   1         LCD_GraphModeSet(0x01);                              //最后打开图形显示功能
+ 547   1      }
+ 548          
+ 549          
+ 550          
+ 551          //******************************************************************************
+ 552          //*函数名称:void LCD_Point(unsigned char x,unsigned char y,unsigned char color)*
+ 553          //*函数功能:使用绘图的方法,在(x,y)处画一个16*16点阵的图案,也可以是字符             *
+ 554          //*形式参数:unsigned char x,unsigned char y,unsigned char color                *
+ 555          //*                     x取值范围:0~127                                                                                                    *
+ 556          //*                     y取值范围:0~63 (针对CM12864-12型液晶)                                                  *
+ 557          //*形参说明:坐标水平位置,坐标垂直位置                                                                      *
+ 558          //*液晶屏坐标说明:                                                                                                                         *
+ 559          //*      ________________128个像素______________________              *
+ 560          //*      |(0,0)                                    (7,0)|             *
+ 561          //*      |                                              |             *
+ 562          //*   64 |                                              |             *
+ 563          //*   个 |(0,31)                                  (7,31)|             *
+ 564          //*   像 |(8,0)                                   (15,0)|             *
+ 565          //*   素 |                                              |             *
+ 566          //*      |                                              |             *
+ 567          //*      |(8,31)                                 (15,31)|             *
+ 568          //*      |______________________________________________|             *
+ 569          //*                                                                   *
+ 570          //*返回参数:无                                                              *
+ 571          //*使用说明:此函数适用于CM12864-12型液晶                        *
+ 572          //******************************************************************************
+ 573          void LCD_Point(unsigned char x,unsigned char y,unsigned char color)
+ 574          {
+ 575   1              unsigned char i,AddrX,AddrY;    //寄存器地址
+ 576   1              unsigned char BitTemp;          //该点在16bit的位置
+ 577   1              unsigned char DataH,DataL;
+ 578   1      
+ 579   1              AddrX = x>>4;                           // x/16
+ 580   1              AddrY = y&0x3F;                         // y%64
+ 581   1              if(y > 31)
+ 582   1              {
+ 583   2                      AddrX += 8;
+ 584   2                      AddrY -= 32;
+ 585   2              }
+ 586   1              BitTemp = x&0x0F;                       // x%16
+ 587   1      
+ 588   1              
+ 589   1              LCD_GraphModeSet(0x00);         //先关闭图形显示功能
+ 590   1          //LCD_Write(LCD_COMMAND,LCD_EXTEND_FUNCTION);
+ 591   1              
+ 592   1              for(i=0;i<4;i++)
+ 593   1              {
+ 594   2              LCD_GDRAM_AddressSet(0x80+AddrY);
+ 595   2              LCD_GDRAM_AddressSet(0x80+AddrX);
+ 596   2              //LCD_Write(LCD_COMMAND,LCD_BASIC_FUNCTION);                    //基本指令集
+ 597   2              DataH = LCD_ReadData();
+ 598   2              DataH = LCD_ReadData();
+ 599   2              DataL = LCD_ReadData();
+ 600   2              //DataH = LCD_ReadData();
+ 601   2              //DataL = LCD_ReadData();
+ 602   2              }
+ 603   1      
+ 604   1              if(color == LCD_COLOR_BLACK)
+ 605   1              {
+ 606   2                      if(BitTemp > 7)
+ 607   2                      {
+C51 COMPILER V7.50   ST7920                                                                10/16/2010 22:04:25 PAGE 11  
+
+ 608   3                              DataL |= (0x80>>(BitTemp-8));
+ 609   3                      }
+ 610   2                      else
+ 611   2                      {
+ 612   3                              DataH |= (0x80>>(BitTemp));
+ 613   3                      }
+ 614   2              }
+ 615   1              else
+ 616   1              {
+ 617   2              }
+ 618   1      
+ 619   1              LCD_GDRAM_AddressSet(0x80+AddrY);
+ 620   1              LCD_GDRAM_AddressSet(0x80+AddrX);
+ 621   1              LCD_Write(LCD_DATA,DataH);
+ 622   1              LCD_Write(LCD_DATA,DataL);
+ 623   1              
+ 624   1              LCD_GraphModeSet(0x01);                         //最后打开图形显示功能
+ 625   1      }
+ 626          
+ 627          
+ 628          
+
+C51 COMPILATION COMPLETE.  3 WARNING(S),  3 ERROR(S)

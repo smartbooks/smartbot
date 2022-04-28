@@ -1,0 +1,230 @@
+C51 COMPILER V7.50   短信收发                                                              09/09/2012 19:30:22 PAGE 1   
+
+
+C51 COMPILER V7.50, COMPILATION OF MODULE 短信收发
+OBJECT MODULE PLACED IN 短信收发.OBJ
+COMPILER INVOKED BY: d:\Keil\C51\BIN\C51.EXE 短信收发.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**************http://tpytongxin.taobao.com/****************/
+   2          #include <reg52.h>
+   3          #include <intrins.h>
+   4          #define uint unsigned int
+   5          #define uchar unsigned char
+   6          sbit Send_SMS_PDU_key=P1^1;     //发PDU格式短信按键
+   7          sbit LED0=P0^0;
+   8          sbit LED1=P0^1;
+   9          sbit LED2=P0^2;
+  10          sbit LED3=P0^3;
+  11          
+  12          #define MAXCHAR 81
+  13          uchar  aa[MAXCHAR];
+  14          code uchar ATE0[]="ATE0\r\n";
+  15          code uchar CREG_CMD[]="AT+CREG?\r\n";
+  16          code uchar SMS_send[]="AT+CMGS=18\r\n";
+  17          code uchar ATCN[]="AT+CNMI=2,1\r\n";
+  18          code uchar CMGF[]="AT+CMGF=0\r\n";
+  19          code uchar CMGR[12]="AT+CMGR=1\r\n";
+  20          code uchar CMGD[12]="AT+CMGD=1\r\n";
+  21          
+  22          /*-----------------------------------------------------------------------
+  23          1.如果你的晶振是11.0592M
+  24          只需要修改下面的号码就可以了,给成你手上拿着的手机的号码
+  25          
+  26          
+  27          修改方法   在下面这段字符中找到 5129021411F5 
+  28           
+  29           其实5129021411F5 --> 15922041115
+  30          18622044083 8126924480F3
+  31          
+  32          
+  33           看明白了吗  电话是两位两位颠倒 将您手上的手机号码替换即可
+  34          -----------------------------------------------------------------------*/
+  35          uchar  code Sms2_Pdu[]="0891683108200205F011000B818126924480F30008A704521B601D";
+  36          /*-----------------------------------------------------------------------
+  37          1.如果你的晶振不是11.0592M
+  38          
+  39          则修改 Ini_UART 函数 波特率 9600
+  40          
+  41          
+  42          其他都不用动
+  43          
+  44          -----------------------------------------------------------------------*/
+  45          
+  46          uchar a,j=0,flag=0;
+  47          
+  48          void delay(uint ms)// 延时子程序
+  49          {
+  50   1          uchar i;
+  51   1          while(ms--)
+  52   1          {
+  53   2              for(i=0;i<120;i++);
+  54   2          }
+  55   1      }
+C51 COMPILER V7.50   短信收发                                                              09/09/2012 19:30:22 PAGE 2   
+
+  56          
+  57          
+  58          /***********************************************************
+  59          函数名称：Print_Char
+  60          函数功能：发送单个字符
+  61                    入口参数:ch      出口参数：无
+  62          ***********************************************************/
+  63          Print_Char(uchar ch)//发送单个字符
+  64          {
+  65   1          SBUF=ch; //送入缓冲区
+  66   1          while(TI!=1); //等待发送完毕
+  67   1          TI=0; //软件清零
+  68   1      }
+  69          
+  70          /***********************************************************
+  71          函数名称：Print_Str
+  72          函数功能：发送字符串
+  73                    入口参数:*str    出口参数：无
+  74          ***********************************************************/
+  75          Print_Str(uchar *str)//发送字符串
+  76          {
+  77   1      
+  78   1          while(*str!='\0')
+  79   1          {
+  80   2              Print_Char(*str);
+  81   2              delay(2);
+  82   2              str++;
+  83   2          }
+  84   1      
+  85   1      }
+  86          
+  87          /***********************************************************
+  88          函数名称：Ini_UART
+  89          函数功能：串口初始化、定时器初始化
+  90                    入口参数:无     出口参数：无
+  91          ***********************************************************/
+  92          Ini_UART(void)//串口初始化、定时器初始化
+  93          {
+  94   1          SCON = 0x50 ;  //SCON: serail mode 1, 8-bit UART, enable ucvr
+  95   1          //UART为模式1，8位数据，允许接收
+  96   1          TMOD |= 0x20 ; //TMOD: timer 1, mode 2, 8-bit reload
+  97   1          //定时器1为模式2,8位自动重装
+  98   1          PCON |= 0x80 ; //SMOD=1;
+  99   1          TH1 = 0xFA ;   //Baud:19200 fosc="11".0592MHz
+ 100   1          TL1=0xFA;
+ 101   1          IE |= 0x90 ;     //Enable Serial Interrupt
+ 102   1          TR1 = 1 ;       // timer 1 run
+ 103   1          TI=1;
+ 104   1          ES=1;
+ 105   1      }
+ 106          
+ 107          void clearBuff(void)
+ 108          {
+ 109   1          for(j=0;j<MAXCHAR;j++)
+ 110   1          {
+ 111   2              aa[j]=0x00;
+ 112   2          }
+ 113   1          j=0;
+ 114   1      }
+ 115          
+ 116          void led(int i)
+ 117          {
+C51 COMPILER V7.50   短信收发                                                              09/09/2012 19:30:22 PAGE 3   
+
+ 118   1          P2 |= i;
+ 119   1          delay(20);
+ 120   1          P2 &= ~i;
+ 121   1          delay(20);
+ 122   1          P2 |= i;
+ 123   1          delay(20);
+ 124   1          P2 &= ~i;
+ 125   1      }
+ 126          
+ 127          
+ 128          
+ 129          void AT(void)
+ 130          {
+ 131   1      
+ 132   1          while(1)
+ 133   1          {
+ 134   2              Print_Str(ATE0);
+ 135   2              delay(50);
+ 136   2      
+ 137   2              Print_Str(ATCN);
+ 138   2              delay(50);
+ 139   2      
+ 140   2              Print_Str(CMGF);
+ 141   2              delay(100);
+ 142   2      
+ 143   2              clearBuff();
+ 144   2              Print_Str(CREG_CMD);
+ 145   2              delay(50);
+ 146   2      
+ 147   2      
+ 148   2              if(((aa[9]=='0')&&(aa[11]=='1'))||((aa[9]=='0')&&(aa[11]=='5')))
+ 149   2              {
+ 150   3                  clearBuff();
+ 151   3                  led(0x02);
+ 152   3                  break;
+ 153   3              }
+ 154   2              else
+ 155   2              {
+ 156   3                  clearBuff();
+ 157   3      
+ 158   3                  led(0x01);
+ 159   3                  delay(50);
+ 160   3              }
+ 161   2          }
+ 162   1      }
+ 163          
+ 164          
+ 165          void main()
+ 166          {
+ 167   1      
+ 168   1          Ini_UART();    //初始化串口
+ 169   1          AT();                  //初始化模块
+ 170   1          delay(10);
+ 171   1      
+ 172   1          Print_Str(SMS_send);  //发送中文短信
+ 173   1          delay(500);
+ 174   1          led(0x04);
+ 175   1      
+ 176   1          Print_Str(Sms2_Pdu);  //发短信内容
+ 177   1          delay(500);
+ 178   1          led(0x08);
+ 179   1      
+C51 COMPILER V7.50   短信收发                                                              09/09/2012 19:30:22 PAGE 4   
+
+ 180   1          Print_Char(0x1A);      //发送结束符号
+ 181   1              delay(500);
+ 182   1      
+ 183   1              Print_Str("ATD18622944083;\r\n"); //打电话
+ 184   1      
+ 185   1          while(1);
+ 186   1      }
+ 187          
+ 188          void ser() interrupt 4
+ 189          {
+ 190   1      
+ 191   1      
+ 192   1      
+ 193   1          if(RI==1)
+ 194   1          {  aa[j]=SBUF;//命令存到命令数组
+ 195   2      
+ 196   2              RI=0; //软件清除接收中断
+ 197   2              j++;
+ 198   2          }
+ 199   1      
+ 200   1      
+ 201   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    379    ----
+   CONSTANT SIZE    =    154    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     84       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

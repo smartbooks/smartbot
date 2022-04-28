@@ -1,0 +1,1 @@
+D:\ASM文件\c51文件\F8051F电话测试\cheshi.obj  TO D:\ASM文件\c51文件\F8051F电话测试\cheshi RS(256) PL(68) PW(78) 

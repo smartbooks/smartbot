@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"GPRS.obj" 
+TO "GPRS" 
+RAMSIZE(256) 

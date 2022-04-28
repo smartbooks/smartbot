@@ -1,0 +1,110 @@
+C51 COMPILER V8.18   _ÐÎÄ¶ÌÐÅ                                                              03/14/2012 21:08:57 PAGE 1   
+
+
+C51 COMPILER V8.18, COMPILATION OF MODULE _ÐÎÄ¶ÌÐÅ
+OBJECT MODULE PLACED IN ÖÐÎÄ¶ÌÐÅ.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE ÖÐÎÄ¶ÌÐÅ.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /********************************************************
+   2          Àú³ÌÃèÊö£ºGSMÄ£¿éÁªÍø³É¹¦ºó£¬Æô¶¯µ¥Æ¬»ú£¬µ¥Æ¬»ú·¢³ö¡°µÎ¡±Éù
+   3          ºó£¬¿ªÊ¼¿ØÖÆGSMÄ£¿é·¢ËÍÒ»ÌõÖÐÎÄ¶ÌÐÅ£¨Áú³Ìµç×Ó»¶Ó­Äú£¡123£©
+   4          ¡£·¢ËÍÍê±Ïºó¡£µ¥Æ¬»ú·¢³ö¡°µÎ¡±Éù¡£Àý³Ì½áÊø¡£
+   5          ********************************************************/
+   6          #include<reg52.h>
+   7          #include<intrins.h>
+   8          #include<stdlib.h>
+   9          #define uchar unsigned char
+  10          #define uint unsigned int
+  11          sbit FMQ=P3^6;  //·äÃùÆ÷ 
+  12          uchar code at[]="AT\r";
+  13          uchar code TC_MSXZ[]={"AT+CMGF=0\r"};// ·¢ËÍÄ£Ê½Ñ¡ÔñÎªPDU£¬¿ÉÒÔ·¢ËÍÖÐÎÄ×Ö·û
+  14          uchar code TC_MDSJ[]={"AT+CMGS=37\r"}; // ÐÅÏ¢³¤¶È
+  15          uchar code TC_FSNR[]={"0891683108200905F011000D91685191418135F80008AA169F997A0B75355B506B228FCE60A80021003
+             -100320033"};
+  16          
+  17          uchar num,temp,key,m=3,n=0,z=0;
+  18          void delay_1ms(uint z) //ÑÓÊ±º¯Êý
+  19          {
+  20   1              uint x,y;
+  21   1              for(x=z;x>0;x--)
+  22   1                      for(y=110;y>0;y--);
+  23   1      }
+  24          /****************  Êý¾Ý·¢ËÍ *****************/
+  25           void send(uchar *tab)
+  26           {
+  27   1              while((*tab)!='\0')
+  28   1              {
+  29   2              //      ES=0; //¹Ø´®¿ÚÖÐ¶Ï
+  30   2                      SBUF=*tab;
+  31   2                      while(TI==0);
+  32   2                      TI=0;
+  33   2                      tab++;
+  34   2              //      ES=1;  //¿ª´®¿ÚÖÐ¶Ï
+  35   2              }
+  36   1       }
+  37          /********** ´®¿Ú³õÊ¼»¯ ***********/
+  38           void uart_int(void)
+  39           {
+  40   1              SCON=0x50;//UART·½Ê½1£º8Î»UART£»
+  41   1              REN =1;   //ÔÊÐí´®ÐÐ¿Ú½ÓÊÕÊý¾Ý£»
+  42   1              PCON=0x00;//SMOD=0£º²¨ÌØÂÊ²»¼Ó±¶£»
+  43   1              TMOD=0x20;//T1·½Ê½2£¬ÓÃÓÚUART²¨ÌØÂÊ£»
+  44   1              TH1 =0xFD; //×°³õÖµ£»
+  45   1              TL1 =0xFD; //×°³õÖµ
+  46   1              TR1 =1;    //Æô¶¯¶¨Ê±Æ÷1
+  47   1      //      EA=1;   //´ò¿ªÈ«¾ÖÖÐ¶Ï¿ØÖÆ
+  48   1      //      ES=1;    //´ò¿ª´®ÐÐ¿ÚÖÐ¶Ï
+  49   1       }
+  50          void fengmingqi() //·äÃùÆ÷
+  51          {       uint b,r;
+  52   1              for (b=0;b<300;b++)
+  53   1              {
+  54   2                      FMQ=0;
+C51 COMPILER V8.18   _ÐÎÄ¶ÌÐÅ                                                              03/14/2012 21:08:57 PAGE 2   
+
+  55   2                      for(r=50;r>0;r--);
+  56   2                      FMQ=1;
+  57   2                      for(r=50;r>0;r--);      
+  58   2              }       
+  59   1      }
+  60          void main()
+  61          {
+  62   1      /*      DLED=1;
+  63   1              P0=0x00;
+  64   1              DLED=0;
+  65   1              n=0;
+  66   1              init(); */
+  67   1              delay_1ms(1000);
+  68   1              fengmingqi();  //·¢³ö¡°µÎ¡±Éù
+  69   1              uart_int();//´®¿Ú³õÊ¼»¯
+  70   1              send(at);  //·¢ËÍAT
+  71   1              delay_1ms(500);
+  72   1              send(TC_MSXZ); //¶ÌÐÅÄ£Ê½Ñ¡Ôñ
+  73   1              delay_1ms(500);
+  74   1              send(TC_MDSJ); //ÐÅÏ¢³¤¶È
+  75   1              delay_1ms(500);
+  76   1              send(TC_FSNR); //·¢ËÍÄÚÈÝ
+  77   1              delay_1ms(500);
+  78   1              SBUF=0x1A;        //16½øÖÆ·¢ËÍ1A
+  79   1              while(TI==0);
+  80   1              TI=0;
+  81   1              fengmingqi(); //·¢³ö¡°µÎ¡±Éù
+  82   1              delay_1ms(500);
+  83   1              while(1);         //³ÌÐò½áÊø
+  84   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    183    ----
+   CONSTANT SIZE    =    120    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

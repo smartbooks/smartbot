@@ -1,0 +1,123 @@
+C51 COMPILER V9.00   MESSAGE                                                               03/15/2013 18:40:30 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MESSAGE
+OBJECT MODULE PLACED IN message.OBJ
+COMPILER INVOKED BY: D:\C51\BIN\C51.EXE message.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          //*****************STC控制GSM发送短信(TXT格式)*************************************/
+   2          //发送PDU的按键对应开发板的按键接口P1^6，
+   3          //发送短信时，直接调换数组 PhoneNum       Sms 内的内容就可以的
+   4          //*************************************************************************
+   5          #include <reg52.h>
+   6          #include <absacc.h>
+   7          #include <stdio.h>
+   8          #include <math.h>
+   9          #include <stdlib.h>
+  10          #include <intrins.h>
+  11          #define uint unsigned int
+  12          #define uchar unsigned char
+  13          sbit Send_SMS_TXT_key=P1^6; 
+  14          uchar code PhoneNum[]={"AT+CMGS=\"+8615858270262\""};
+  15          uchar code TxtMode[]={"AT+CMGF=1"};
+  16          uchar code Sms[] = {"GsmTest"};
+  17          delay(uint ms)// 延时子程序
+  18          {      
+  19   1      uchar i;
+  20   1      while(ms--)
+  21   1      {
+  22   2        for(i = 0; i < 120; i++);
+  23   2      }
+  24   1      }
+  25          Print_Char(uchar ch)//发送单个字符
+  26          {
+  27   1      SBUF = ch; //送入缓冲区
+  28   1      while(TI == 0); //等待发送完毕
+  29   1      TI = 0; //软件清零
+  30   1      }
+  31          Print_Str(uchar * str,uint len)//发送字符串,调用Send_Char() len字符串长度
+  32          {
+  33   1      
+  34   1      while(len--)
+  35   1      {
+  36   2      Print_Char(*str++);
+  37   2          }
+  38   1      
+  39   1      }
+  40          Ini_UART(void)//串口初始化、定时器初始化
+  41          {
+  42   1      TMOD = 0x20;
+  43   1      TH1 = 0xFD;
+  44   1      TL1 = 0xFD;
+  45   1      SCON = 0x50;
+  46   1      PCON = 0x00;
+  47   1      
+  48   1      TF1 = 1;
+  49   1      TR1 = 1;
+  50   1      ES=1;
+  51   1      ET0=1;
+  52   1      EA=1;
+  53   1      }       
+  54          void GSM_TXT()
+  55          {   
+C51 COMPILER V9.00   MESSAGE                                                               03/15/2013 18:40:30 PAGE 2   
+
+  56   1           Print_Str(TxtMode,9);
+  57   1           Print_Char(0X0D);
+  58   1               Print_Char(0X0A);
+  59   1            ES=1;
+  60   1           delay(1000); 
+  61   1      }
+  62          void GSM_CMGS()
+  63          {   
+  64   1           Print_Str(PhoneNum,24);
+  65   1               Print_Char(0X0D);
+  66   1               Print_Char(0X0A);
+  67   1           ES=1;
+  68   1           delay(1000);   
+  69   1      }
+  70          void GSM_SMS()
+  71          {   
+  72   1           Print_Str(Sms,7);
+  73   1           Print_Char(0x1a);
+  74   1           ES=1;
+  75   1           delay(1000);
+  76   1           delay(5000);   
+  77   1      }
+  78          void main()
+  79          {
+  80   1      
+  81   1      Ini_UART();
+  82   1      while(1)
+  83   1      { 
+  84   2      if(!Send_SMS_TXT_key)
+  85   2      {
+  86   3          GSM_TXT();
+  87   3          GSM_CMGS();
+  88   3          GSM_SMS();  
+  89   3          delay(50000);
+  90   3          delay(50000);
+  91   3         
+  92   3        }
+  93   2      }
+  94   1      }
+*** WARNING C290 IN LINE 24 OF MESSAGE.C: missing return value
+*** WARNING C290 IN LINE 30 OF MESSAGE.C: missing return value
+*** WARNING C290 IN LINE 39 OF MESSAGE.C: missing return value
+*** WARNING C290 IN LINE 53 OF MESSAGE.C: missing return value
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    214    ----
+   CONSTANT SIZE    =     43    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  4 WARNING(S),  0 ERROR(S)

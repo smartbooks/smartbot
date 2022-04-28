@@ -1,0 +1,257 @@
+C51 COMPILER V7.50   51                                                                    04/28/2011 19:43:56 PAGE 1   
+
+
+C51 COMPILER V7.50, COMPILATION OF MODULE 51
+OBJECT MODULE PLACED IN 51.OBJ
+COMPILER INVOKED BY: d:\Keil\C51\BIN\C51.EXE 51.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include <absacc.h>
+   3          #include <stdio.h>
+   4          #include <math.h>
+   5          #include <stdlib.h>
+   6          #include <intrins.h>
+   7          #define uint unsigned int
+   8          #define uchar unsigned char
+   9          #define Phone_connection  1    //正在打电话状态标志
+  10          #define Clear_Connect     0    //电话已挂断状态标志
+  11          
+  12          sbit Phone_Call_Key=P1^0;     //打电话按键
+  13          sbit Hang_up=P1^1;     //挂电话按键
+  14          sbit Send_SMS_Text_key=P1^2;     //发Text格式短信按键
+  15          sbit Send_SMS_PDU_key=P1^3;     //发PDU格式短信按键
+  16          
+  17          char Calls_State_Flag=Clear_Connect;   //电话状态  
+  18          uchar code PhoneCall[]="15922260566";
+  19          uchar code PhoneCall2[]="02228214113";
+  20          uchar code SMS_send[]= "AT+CMGS=";  
+  21          uchar code ATH[]="ATH";
+  22          uchar code SMS_TXET[]= "AT+CMGF=1";//发送数据为TXET格式 
+  23          uchar code SMS_PDU[]= "AT+CMGF=0";//发送数据为PDU格式 
+  24          uchar code Sms[]="test ok!!";
+  25          uchar Byte_num[]="20";
+  26          uchar code Sms2_Pdu[]="0891683108200205F011000B815129220665F60008A70600204F60597D"; //内容是：您好
+  27          
+  28          void delay(uint ms)// 延时子程序
+  29          {      
+  30   1      uchar i;                                     
+  31   1      while(ms--)
+  32   1      {
+  33   2        for(i=0;i<120;i++);
+  34   2      }
+  35   1      }
+  36          
+  37          /*********************************************************** 
+  38          函数名称：Print_Char 
+  39          函数功能：发送单个字符     
+  40                    入口参数:ch      出口参数：无 
+  41          ***********************************************************/
+  42          void Print_Char(uchar ch)//发送单个字符
+  43          {
+  44   1      SBUF=ch; //送入缓冲区
+  45   1      while(TI==0); //等待发送完毕
+  46   1      TI=0; //软件清零
+  47   1      }
+  48          
+  49          /*********************************************************** 
+  50          函数名称：Print_Str 
+  51          函数功能：发送字符串     
+  52                    入口参数:*str    出口参数：无 
+  53          ***********************************************************/
+  54          Print_Str(uchar *str)//发送字符串
+  55          {
+C51 COMPILER V7.50   51                                                                    04/28/2011 19:43:56 PAGE 2   
+
+  56   1      
+  57   1      while(*str!='\0') 
+  58   1      {
+  59   2      Print_Char(*str++);
+  60   2          }
+  61   1      
+  62   1      }
+  63          /*Print_Str(uchar *str,uint len)//发送字符串,调用Send_Char() len字符串长度
+  64          {
+  65          
+  66          while(len--)
+  67          {
+  68          Print_Char(*str++);
+  69              }
+  70          
+  71          }*/
+  72          
+  73           
+  74          /*********************************************************** 
+  75          函数名称：Ini_UART 
+  76          函数功能：串口初始化、定时器初始化     
+  77                    入口参数:无     出口参数：无 
+  78          ***********************************************************/ 
+  79          Ini_UART(void)//串口初始化、定时器初始化
+  80          {
+  81   1      TMOD = 0x20;      //T1方式2,用于UART波特率 
+  82   1      TH1 = 0xFD;       //UART波特率设置:9600 
+  83   1      TL1 = 0xFD;
+  84   1      SCON = 0x50;  ////UART方式1:8位UART;   REN=1:允许接收 
+  85   1      PCON = 0x00;
+  86   1      
+  87   1      TF1 = 1;     // 中断标志位
+  88   1      TR1 = 1;    // 启动定时器1    
+  89   1      ES=1;       //启动串行口中断
+  90   1      ET0=1;      //启动中断功能
+  91   1      EA=1;
+  92   1      }
+  93           
+  94          /*********************************************************** 
+  95          函数名称：GSM_ATH 
+  96          函数功能：挂电话      
+  97                    入口参数:无     出口参数：无 
+  98          ***********************************************************/ 
+  99          void GSM_ATH()   
+ 100          {   
+ 101   1           Print_Str(ATH); //发送挂电话指令
+ 102   1           Print_Str("\r\n");   //发送回车
+ 103   1            
+ 104   1           delay(1000); 
+ 105   1           delay(1000); 
+ 106   1      }  
+ 107                  
+ 108          /*********************************************************** 
+ 109          函数名称：phone 
+ 110          函数功能：拨打目标电话      
+ 111                    入口参数:无     出口参数：无 
+ 112          ***********************************************************/ 
+ 113          void phone()    //打电话函数
+ 114          {  
+ 115   1               Print_Str("ATD");
+ 116   1           Print_Str(PhoneCall2);   //发送打电话指令+目标电话号码
+ 117   1               Print_Char(';');
+C51 COMPILER V7.50   51                                                                    04/28/2011 19:43:56 PAGE 3   
+
+ 118   1           Print_Str("\r\n");   //发送回车
+ 119   1           delay(5000);
+ 120   1           delay(5000);
+ 121   1           
+ 122   1      } 
+ 123          
+ 124          /*********************************************************** 
+ 125          函数名称：GSM_TEXT 
+ 126          函数功能：设置发送数据为TXET格式       
+ 127                    入口参数:无     出口参数：无 
+ 128          ***********************************************************/ 
+ 129           
+ 130          void GSM_TEXT()   //设置GSM为TEXT格式
+ 131          {   
+ 132   1           Print_Str(SMS_TXET);   //发送设置指令
+ 133   1           Print_Str("\r\n");   //发送回车
+ 134   1            ES=1;
+ 135   1           delay(1000);
+ 136   1           delay(1000);
+ 137   1           delay(1000); 
+ 138   1      }
+ 139          
+ 140          /*********************************************************** 
+ 141          函数名称：GSM_TEXT_SMS 
+ 142          函数功能：发送数据为TXET格式的短信内容       
+ 143                    入口参数:无     出口参数：无 
+ 144          ***********************************************************/ 
+ 145           
+ 146          void GSM_TEXT_SMS()  //发送TEXT格式内容
+ 147          {   
+ 148   1      
+ 149   1           Print_Str(SMS_send);
+ 150   1               Print_Str(PhoneCall);
+ 151   1           Print_Str("\r\n");   //发送回车
+ 152   1           Print_Str(Sms);
+ 153   1           Print_Char(0x1a);  //发送短息内容结束符对应的ASCII为0x1a
+ 154   1           ES=1;
+ 155   1           delay(1000);
+ 156   1           delay(5000);   
+ 157   1      } 
+ 158          /*********************************************************** 
+ 159          函数名称：GSM_PDU
+ 160          函数功能：设置发送数据为PDU格式       
+ 161                    入口参数:无     出口参数：无 
+ 162          ***********************************************************/ 
+ 163           
+ 164          void GSM_PDU()    //设置GSM为PDU格式
+ 165           {
+ 166   1           Print_Str(SMS_PDU);  //发送设置指令
+ 167   1           Print_Str("\r\n");   //发送回车
+ 168   1            ES=1;
+ 169   1           delay(1000); 
+ 170   1           delay(1000);
+ 171   1           delay(1000);
+ 172   1        }
+ 173          
+ 174          /*********************************************************** 
+ 175          函数名称：GSM_PDU_SMS
+ 176          函数功能：发送数据为PDU格式的短信内容       
+ 177                    入口参数:无     出口参数：无 
+ 178          ***********************************************************/ 
+ 179          void GSM_PDU_SMS()  //发送PDU格式内容
+C51 COMPILER V7.50   51                                                                    04/28/2011 19:43:56 PAGE 4   
+
+ 180          {   
+ 181   1      
+ 182   1           Print_Str(SMS_send);
+ 183   1           Print_Str(Byte_num);
+ 184   1              // Print_Str(PhoneCall);
+ 185   1           Print_Str("\r\n");   //发送回车
+ 186   1           Print_Str(Sms2_Pdu);
+ 187   1           Print_Char(0x1a);  //发送短息内容结束符对应的ASCII为0x1a
+ 188   1           ES=1;
+ 189   1           delay(1000);
+ 190   1           delay(5000);   
+ 191   1      }
+ 192          
+ 193          
+ 194          /*********************************************************** 
+ 195          函数名称：main
+ 196          函数功能：主函数
+ 197          ***********************************************************/ 
+ 198          void main()
+ 199          { 
+ 200   1      Ini_UART();
+ 201   1      while(1)
+ 202   1      {  
+ 203   2      
+ 204   2         if(!Hang_up)  //挂电话按键是否按下
+ 205   2              {
+ 206   3                  GSM_ATH(); //发送挂电话指令
+ 207   3                  Calls_State_Flag=Clear_Connect;   
+ 208   3                }
+ 209   2         else if((!Phone_Call_Key)&&(Calls_State_Flag==Clear_Connect))
+ 210   2              {
+ 211   3                phone();  //拨打电话
+ 212   3               Calls_State_Flag=Phone_connection;
+ 213   3               }
+ 214   2          
+ 215   2           else if((!Send_SMS_Text_key)&&(Calls_State_Flag==Clear_Connect))
+ 216   2              {
+ 217   3                GSM_TEXT();   
+ 218   3                        GSM_TEXT_SMS();                                        
+ 219   3               }
+ 220   2          
+ 221   2           else if((!Send_SMS_PDU_key)&&(Calls_State_Flag==Clear_Connect))
+ 222   2              {
+ 223   3               GSM_PDU();
+ 224   3               GSM_PDU_SMS();
+ 225   3               }
+ 226   2            
+ 227   2      }
+ 228   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    361    ----
+   CONSTANT SIZE    =    133    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

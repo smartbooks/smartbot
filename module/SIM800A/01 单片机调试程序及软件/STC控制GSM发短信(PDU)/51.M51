@@ -1,0 +1,259 @@
+BL51 BANKED LINKER/LOCATER V6.05                                                        05/14/2011  12:07:44  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.05, INVOKED BY:
+D:\PROGRAM FILES\KEIL\C51\BIN\BL51.EXE STARTUP.obj, 51.obj TO 51 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  STARTUP.obj (?C_STARTUP)
+  51.obj (51)
+  D:\PROGRAM FILES\KEIL\C51\LIB\C51S.LIB (?C_INIT)
+  D:\PROGRAM FILES\KEIL\C51\LIB\C51S.LIB (?C?CLDPTR)
+
+
+LINK MAP OF MODULE:  51 (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0003H     UNIT         ?DT?51
+            DATA    000BH     0003H     UNIT         _DATA_GROUP_
+            IDATA   000EH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     008CH     UNIT         ?C_C51STARTUP
+            CODE    008FH     0069H     UNIT         ?CO?51
+            CODE    00F8H     003AH     UNIT         ?PR?GSM_PDU_SMS?51
+            CODE    0132H     002BH     UNIT         ?PR?_PRINT_STR?51
+            CODE    015DH     001EH     UNIT         ?PR?GSM_PDU?51
+            CODE    017BH     001AH     UNIT         ?PR?_DELAY?51
+            CODE    0195H     001AH     UNIT         ?PR?INI_UART?51
+            CODE    01AFH     0019H     UNIT         ?C?LIB_CODE
+            CODE    01C8H     000EH     UNIT         ?PR?MAIN?51
+            CODE    01D6H     0008H     UNIT         ?PR?_PRINT_CHAR?51
+            CODE    01DEH     0006H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   51 (?C_STARTUP)
+
+
+SEGMENT                          DATA_GROUP 
+  +--> CALLED SEGMENT          START    LENGTH
+----------------------------------------------
+?C_C51STARTUP                  -----    -----
+  +--> ?PR?MAIN?51
+  +--> ?C_INITSEG
+
+?PR?MAIN?51                    -----    -----
+  +--> ?PR?INI_UART?51
+  +--> ?PR?GSM_PDU?51
+  +--> ?PR?GSM_PDU_SMS?51
+
+?PR?GSM_PDU?51                 -----    -----
+BL51 BANKED LINKER/LOCATER V6.05                                                      05/14/2011  12:07:44  PAGE 2
+
+
+  +--> ?CO?51
+  +--> ?PR?_PRINT_STR?51
+  +--> ?PR?_DELAY?51
+
+?PR?_PRINT_STR?51              000BH    0003H
+  +--> ?CO?51
+  +--> ?PR?_PRINT_CHAR?51
+
+?PR?GSM_PDU_SMS?51             -----    -----
+  +--> ?CO?51
+  +--> ?PR?_PRINT_STR?51
+  +--> ?PR?_DELAY?51
+  +--> ?PR?_PRINT_CHAR?51
+
+
+
+SYMBOL TABLE OF MODULE:  51 (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:0003H         SEGMENT       ?C_C51STARTUP
+  I:000EH         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:0006H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0003H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:0003H         LINE#         133
+  C:0005H         LINE#         134
+  C:0006H         LINE#         135
+  C:0007H         LINE#         136
+  C:0009H         LINE#         185
+  C:000CH         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        51
+  C:0000H         SYMBOL        _ICE_DUMMY_
+BL51 BANKED LINKER/LOCATER V6.05                                                      05/14/2011  12:07:44  PAGE 3
+
+
+  C:0092H         PUBLIC        SMS_send
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  B:00A8H.7       PUBLIC        EA
+  C:00F8H         PUBLIC        GSM_PDU_SMS
+  D:00A8H         PUBLIC        IE
+  C:017FH         PUBLIC        _delay
+  B:00A8H.4       PUBLIC        ES
+  D:00B8H         PUBLIC        IP
+  B:0098H.1       PUBLIC        TI
+  C:01C8H         PUBLIC        main
+  C:0138H         PUBLIC        _Print_Str
+  D:0099H         PUBLIC        SBUF
+  D:0087H         PUBLIC        PCON
+  C:015DH         PUBLIC        GSM_PDU
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  C:009BH         PUBLIC        SMS_PDU
+  C:0195H         PUBLIC        Ini_UART
+  D:0008H         PUBLIC        Byte_num
+  B:00A8H.1       PUBLIC        ET0
+  B:0088H.7       PUBLIC        TF1
+  D:008DH         PUBLIC        TH1
+  D:008BH         PUBLIC        TL1
+  B:0090H.7       PUBLIC        Send_SMS_PDU_key
+  B:0088H.6       PUBLIC        TR1
+  D:00C8H         PUBLIC        T2CON
+  C:01D6H         PUBLIC        _Print_Char
+  C:00A5H         PUBLIC        Sms2_Pdu
+  D:00D0H         PUBLIC        PSW
+  C:017BH         SYMBOL        L?0023
+  -------         PROC          L?0022
+  -------         ENDPROC       L?0022
+  C:017BH         SYMBOL        L?0023
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        ms
+  -------         DO            
+  D:0005H         SYMBOL        i
+  -------         ENDDO         
+  C:017FH         LINE#         21
+  C:017FH         LINE#         22
+  C:017FH         LINE#         24
+  C:0189H         LINE#         25
+  C:0189H         LINE#         26
+  C:0194H         LINE#         27
+  C:0194H         LINE#         28
+  -------         ENDPROC       _DELAY
+  -------         PROC          _PRINT_CHAR
+  D:0007H         SYMBOL        ch
+  C:01D6H         LINE#         35
+  C:01D6H         LINE#         36
+  C:01D6H         LINE#         37
+  C:01D8H         LINE#         38
+  C:01DBH         LINE#         39
+  C:01DDH         LINE#         40
+  -------         ENDPROC       _PRINT_CHAR
+BL51 BANKED LINKER/LOCATER V6.05                                                      05/14/2011  12:07:44  PAGE 4
+
+
+  -------         PROC          L?0024
+  -------         ENDPROC       L?0024
+  -------         PROC          _PRINT_STR
+  D:000BH         SYMBOL        str
+  C:0138H         LINE#         47
+  C:013EH         LINE#         48
+  C:013EH         LINE#         50
+  C:0149H         LINE#         51
+  C:0149H         LINE#         52
+  C:015AH         LINE#         54
+  C:015CH         LINE#         56
+  -------         ENDPROC       _PRINT_STR
+  -------         PROC          INI_UART
+  C:0195H         LINE#         73
+  C:0195H         LINE#         74
+  C:0195H         LINE#         75
+  C:0198H         LINE#         76
+  C:019BH         LINE#         77
+  C:019EH         LINE#         78
+  C:01A1H         LINE#         79
+  C:01A4H         LINE#         81
+  C:01A6H         LINE#         82
+  C:01A8H         LINE#         83
+  C:01AAH         LINE#         84
+  C:01ACH         LINE#         85
+  C:01AEH         LINE#         86
+  -------         ENDPROC       INI_UART
+  -------         PROC          GSM_PDU
+  C:015DH         LINE#         97
+  C:015DH         LINE#         98
+  C:015DH         LINE#         99
+  C:0166H         LINE#         100
+  C:0169H         LINE#         101
+  C:016BH         LINE#         102
+  C:016EH         LINE#         103
+  C:0171H         LINE#         104
+  C:0174H         LINE#         105
+  -------         ENDPROC       GSM_PDU
+  -------         PROC          GSM_PDU_SMS
+  C:00F8H         LINE#         113
+  C:00F8H         LINE#         114
+  C:00F8H         LINE#         116
+  C:0101H         LINE#         117
+  C:010AH         LINE#         119
+  C:010DH         LINE#         120
+  C:0114H         LINE#         121
+  C:011DH         LINE#         122
+  C:0122H         LINE#         123
+  C:0124H         LINE#         124
+  C:012BH         LINE#         125
+  -------         ENDPROC       GSM_PDU_SMS
+  -------         PROC          MAIN
+  C:01C8H         LINE#         133
+  C:01C8H         LINE#         134
+  C:01C8H         LINE#         135
+  C:01CBH         LINE#         136
+  C:01CBH         LINE#         137
+BL51 BANKED LINKER/LOCATER V6.05                                                      05/14/2011  12:07:44  PAGE 5
+
+
+  C:01CBH         LINE#         139
+  C:01CEH         LINE#         140
+  C:01CEH         LINE#         141
+  C:01D1H         LINE#         143
+  C:01D4H         LINE#         144
+  C:01D4H         LINE#         147
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        51
+
+  -------         MODULE        ?C?CLDPTR
+  C:01AFH         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+Program Size: data=15.0 xdata=0 code=484
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

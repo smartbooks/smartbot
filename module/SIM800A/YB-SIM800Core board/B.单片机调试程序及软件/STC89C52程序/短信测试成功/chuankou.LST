@@ -1,0 +1,257 @@
+C51 COMPILER V9.01   CHUANKOU                                                              03/14/2014 20:38:06 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE CHUANKOU
+OBJECT MODULE PLACED IN chuankou.OBJ
+COMPILER INVOKED BY: f:\Keil\C51\BIN\C51.EXE chuankou.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include <intrins.h>
+   3          #include <stdio.h>
+   4          #include <math.h>
+   5          #include <stdlib.h>  
+   6          #include<string.h> 
+   7          #define uint unsigned int
+   8          #define uchar unsigned char 
+   9          //void init(void);
+  10          //char j='\0';
+  11          char RsBuf[40];
+  12          char code AT_SK[]=">";
+  13          char code AT_Code[]="OK";
+  14          //bit flag=0;
+  15          uchar RsPoint=0;
+  16          sbit led1=P0^1;
+  17          sbit led2=P0^2;
+  18          sbit led3=P0^3;
+  19          sbit led4=P0^4; 
+  20          void Delay(uint z)
+  21          {
+  22   1        uint x,y;
+  23   1        for(x=z;x>0;x--)
+  24   1           for(y=125;y>0;y--);
+  25   1      
+  26   1      }
+  27          /***************************************8
+  28          ***************************************/
+  29           void  ClrRsBuf(char *p,int tt)
+  30          {
+  31   1                //int i;
+  32   1                while(tt--)
+  33   1                {
+  34   2                *p='\0';
+  35   2                 p++;
+  36   2                }
+  37   1      }
+  38          //////////////////////////////////////
+  39           void Send_AT(void)
+  40          {  uchar code mode[]="AT";
+  41   1         uchar i;
+  42   1         unsigned char *p;
+  43   1              while(1)
+  44   1              {       
+  45   2          ClrRsBuf(RsBuf,sizeof(RsBuf));      
+  46   2              for(i=0;i<2;i++) 
+  47   2              {
+  48   3              SBUF=mode[i];   //将table[i]送给发送缓冲器                              
+  49   3              while(!TI);              //等待发送完毕
+  50   3              TI=0;   
+  51   3              }
+  52   2              SBUF='\r';
+  53   2              while(!TI);              //等待发送完毕
+  54   2              TI=0;   
+  55   2      
+C51 COMPILER V9.01   CHUANKOU                                                              03/14/2014 20:38:06 PAGE 2   
+
+  56   2          ES=1;    //????
+  57   2          Delay(500);
+  58   2          p=strstr(RsBuf,AT_Code);
+  59   2          if(p!=NULL) break;
+  60   2              }
+  61   1      }
+  62          
+  63          /*********************************************************** 
+  64          ????:CMGF 
+  65          ????:???????TXET??       ????:?     ????:? 
+  66          ***********************************************************/ 
+  67          void Send_CMGF(void)
+  68            { uchar i;     
+  69   1              uchar code mode[]="AT+CMGF=1";  
+  70   1          unsigned char *p;
+  71   1              while(1)
+  72   1              {       
+  73   2          ClrRsBuf(RsBuf,sizeof(RsBuf));
+  74   2              for(i=0;i<9;i++)
+  75   2              {
+  76   3              SBUF=mode[i];   //将table[i]送给发送缓冲器                              
+  77   3              while(!TI);              //等待发送完毕
+  78   3              TI=0;
+  79   3              }
+  80   2              SBUF='\r';                              
+  81   2              while(!TI);              //等待发送完毕
+  82   2              TI=0;
+  83   2      
+  84   2              ES=1;    //????
+  85   2          Delay(500);
+  86   2          p=strstr(RsBuf,AT_Code);
+  87   2          if(p!=NULL) break;
+  88   2                }
+  89   1      }
+  90          /************CSCS*********************************8
+  91          ********************************************/ 
+  92          void  CSCS (void) 
+  93          {                       
+  94   1              uchar i;
+  95   1              uchar code mode[]="AT+CSCS=\"GSM\"";    
+  96   1      
+  97   1              for(i=0;i<14;i++)
+  98   1              //while()
+  99   1              {
+ 100   2              SBUF=mode[i];   //将table[i]送给发送缓冲器                              
+ 101   2              while(!TI);              //等待发送完毕
+ 102   2              TI=0;
+ 103   2              }
+ 104   1              SBUF='\r';                              
+ 105   1              while(!TI);              
+ 106   1              TI=0;
+ 107   1              SBUF='\n';
+ 108   1              while(!TI);              //等待发送完毕
+ 109   1              TI=0;
+ 110   1              
+ 111   1      } 
+ 112          /*********************************************************** 
+ 113          ????:CMGS 
+ 114          ????:????SIM???                 ????:?     ????:? 
+ 115          ***********************************************************/ 
+ 116          void   Send_CMGS(void) 
+ 117          { 
+C51 COMPILER V9.01   CHUANKOU                                                              03/14/2014 20:38:06 PAGE 3   
+
+ 118   1          uchar i;
+ 119   1              uchar code phone[]="AT+CMGS=\"13548624123\"";
+ 120   1              unsigned char *p;
+ 121   1              while(1)
+ 122   1              {       
+ 123   2          ClrRsBuf(RsBuf,sizeof(RsBuf));
+ 124   2              for(i=0;i<21;i++){
+ 125   3              SBUF=phone[i];  //将table[i]送给发送缓冲器                              
+ 126   3              while(!TI);              //等待发送完毕
+ 127   3              TI=0;
+ 128   3              } 
+ 129   2              SBUF='\r';                              
+ 130   2              while(!TI);              //等待发送完毕
+ 131   2              TI=0;
+ 132   2                        
+ 133   2              ES=1;    //????
+ 134   2          Delay(500);
+ 135   2          p=strstr(RsBuf,AT_SK);
+ 136   2          if(p!=NULL) break;
+ 137   2              } 
+ 138   1                 
+ 139   1      } 
+ 140          
+ 141          void  SEND(void) 
+ 142          { 
+ 143   1          uchar i=0;
+ 144   1              uchar code sms[]="TEST OK!!\x1a ";      //sms??????????,\x01a?Ctrl+Z 
+ 145   1              while(sms[i]!='\0')
+ 146   1              {
+ 147   2              SBUF=sms[i];    //将table[i]送给发送缓冲器                              
+ 148   2              while(!TI);              //等待发送完毕
+ 149   2              TI=0;
+ 150   2              i++;
+ 151   2              }
+ 152   1      //      SBUF='\n';
+ 153   1      //      while(!TI);              //等待发送完毕
+ 154   1      //      TI=0;
+ 155   1      } 
+ 156          
+ 157          void init(){
+ 158   1              TMOD=0x20;
+ 159   1              TH1=0xFA;         //bit=9600
+ 160   1              TL1=0xFA;
+ 161   1              TR1=1;
+ 162   1              REN=1;            //允许接受
+ 163   1              SM0=0;
+ 164   1              SM1=1;
+ 165   1              EA=1;
+ 166   1              ES=1;              //开串口中断
+ 167   1      }
+ 168          
+ 169          ///////////////////////////////
+ 170          /*void SendMsgStart(void)
+ 171          {
+ 172          unsigned char *p,i=10;  
+ 173              ES=1;
+ 174          while(i--)
+ 175          {
+ 176            Delay(100);  //Get">"
+ 177            p=strstr(RsBuf,SK);  //">"
+ 178            if(p!=NULL)
+ 179            {
+C51 COMPILER V9.01   CHUANKOU                                                              03/14/2014 20:38:06 PAGE 4   
+
+ 180              ClrRsBuf(RsBuf,sizeof(RsBuf));
+ 181               Delay(150); //Get">"
+ 182                   led4=1;
+ 183              break;
+ 184                  
+ 185          }
+ 186          }
+ 187          }
+ 188                  */
+ 189          ////////////////////////////
+ 190          void main(){    
+ 191   1              init();            
+ 192   1                 //flag=0;
+ 193   1                      led1=0;
+ 194   1                      led2=0;
+ 195   1                      led3=0;
+ 196   1                      led4=0;
+ 197   1                      Delay(50);
+ 198   1                      ES=0;
+ 199   1                      Delay(2000); 
+ 200   1                      Send_AT();
+ 201   1                      led1=0; 
+ 202   1              Delay(1000);    
+ 203   1                      led2=0;           
+ 204   1          //  Delay(1000);
+ 205   1              //CSCS();
+ 206   1                      Delay(1000); 
+ 207   1                  Send_CMGS();     //????????
+ 208   1                      led3=0;         
+ 209   1                      Delay(1000);
+ 210   1                      SEND();
+ 211   1                      led4=0;         
+ 212   1              //      SendMsgStart();         
+ 213   1                      while(1);
+ 214   1      }
+ 215          
+ 216          void ser()interrupt 4
+ 217          {
+ 218   1               if(RI==1)
+ 219   1        {
+ 220   2          RI=0;
+ 221   2          RsBuf[RsPoint++]=SBUF;
+ 222   2          if (RsPoint>=sizeof(RsBuf))
+ 223   2          {
+ 224   3          RsPoint=0;//FlagRs485=0;
+ 225   3          }  //????
+ 226   2        }
+ 227   1              
+ 228   1      }         
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    440    ----
+   CONSTANT SIZE    =     66    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     41       9
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

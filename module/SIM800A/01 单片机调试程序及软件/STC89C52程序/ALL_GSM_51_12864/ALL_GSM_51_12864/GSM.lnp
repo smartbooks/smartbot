@@ -1,0 +1,4 @@
+"gsm.obj",
+"lcd12864.obj" 
+TO "GSM" 
+RAMSIZE(256) 

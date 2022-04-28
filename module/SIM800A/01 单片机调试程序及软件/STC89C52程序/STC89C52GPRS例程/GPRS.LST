@@ -1,0 +1,576 @@
+C51 COMPILER V9.00   GPRS                                                                  03/13/2012 09:34:02 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE GPRS
+OBJECT MODULE PLACED IN GPRS.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE GPRS.C COMPACT ROM(COMPACT) BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include <all.h>
+   3          #include <intrins.h>
+   4          #include <stdio.h>
+   5          #include <math.h>
+   6          #include <stdlib.h>  
+   7          #include<string.h> 
+   8          #define uint unsigned int
+   9          #define uchar unsigned char     
+  10                   
+  11          
+  12          sbit LED0=P0^0;
+  13          sbit LED1=P0^1;
+  14          sbit LED2=P0^2;
+  15          sbit LED3=P0^3;
+  16          sbit LED4=P0^4;
+  17          sbit GPRSOK=P0^5;  //GPRS连接成功指示灯 亮：成功；灭：不成功
+  18          sbit LED6=P0^6;
+  19          sbit LED7=P0^7;  
+  20           
+  21          #define LenRxBuf 50
+  22          uchar GPRSBuff[30]={0}; 
+  23          char code AT_SK[]=">";
+  24          char code AT_Code[]="OK";
+  25          
+  26          char idata  RS_Sets_Cont=0;    //发送  数组指针
+  27          
+  28          char idata RsPoint=0;  //发送  数组指针
+  29          char idata READRsPoint=0;  //读取  数组指针
+  30          char RsBuf[LenRxBuf];     //接收缓存
+  31          //－－－定时用－－－－－－－－－－－
+  32          uint  data timercount;          //50MS定时器,
+  33          uint  data timer_S_cnt;
+  34          
+  35          
+  36                                    
+  37           
+  38          Delay(uint ms)// 延时子程序
+  39          {      
+  40   1      uchar i;
+  41   1      while(ms--)
+  42   1      {
+  43   2        for(i=0;i<120;i++);
+  44   2      }
+  45   1      }
+  46          
+  47          /*********************************************************** 
+  48          函数名称：Print_Char 
+  49          函数功能：发送单个字符     
+  50                    入口参数:ch      出口参数：无 
+  51          ***********************************************************/
+  52          Print_Char(uchar ch)//发送单个字符
+  53          {
+  54   1      SBUF=ch; //送入缓冲区
+  55   1      while(TI!=1); //等待发送完毕
+C51 COMPILER V9.00   GPRS                                                                  03/13/2012 09:34:02 PAGE 2   
+
+  56   1      TI=0; //软件清零
+  57   1      }
+  58          
+  59          /*********************************************************** 
+  60          函数名称：Print_Str 
+  61          函数功能：发送字符串     
+  62                    入口参数:*str    出口参数：无 
+  63          ***********************************************************/
+  64          Print_Str(uchar *str)//发送字符串
+  65          {
+  66   1      
+  67   1      while(*str!='\0') 
+  68   1      {
+  69   2      Print_Char(*str);
+  70   2         str++;
+  71   2          }
+  72   1      
+  73   1      }           
+  74          
+  75          
+  76          void  ClrRsBuf(char *p,int tt) //清空
+  77          {
+  78   1                //int i;
+  79   1                while(tt--)
+  80   1                {
+  81   2                *p='\0';
+  82   2                 p++;
+  83   2                }
+  84   1      } 
+  85          
+  86          /*********************************************************** 
+  87          函数名称：Ini_UART 
+  88          函数功能：串口初始化、定时器初始化     
+  89                    入口参数:无     出口参数：无 
+  90          ***********************************************************/ 
+  91          Ini_UART(void)//串口初始化、定时器初始化
+  92          {
+  93   1               SCON = 0x50 ;  //SCON: serail mode 1, 8-bit UART, enable ucvr   
+  94   1                               //UART为模式1，8位数据，允许接收
+  95   1                TMOD |= 0x21 ; //TMOD: timer 1, mode 2, 8-bit reload             
+  96   1                               //定时器1为模式2,8位自动重装
+  97   1                PCON |= 0x80 ; //SMOD=1; 
+  98   1                TH1 = 0xFD ;   //Baud:19200 fosc="11".0592MHz 
+  99   1                IE |= 0x90 ;     //Enable Serial Interrupt 
+ 100   1                TR1 = 1 ;       // timer 1 run 
+ 101   1                TI=1;  
+ 102   1      
+ 103   1           TH0 = 0xB8;
+ 104   1               TL0 = 0x00; //20ms的时钟基准
+ 105   1              TR0=1;
+ 106   1      
+ 107   1      } 
+ 108            
+ 109          
+ 110          //////////////////////////////////////
+ 111           void Send_AT(void)
+ 112          {  uchar code mode[]="AT\r";
+ 113   1         
+ 114   1         unsigned char *p;
+ 115   1           timercount=50;
+ 116   1              while(1)
+ 117   1              {       
+C51 COMPILER V9.00   GPRS                                                                  03/13/2012 09:34:02 PAGE 3   
+
+ 118   2      //      ClrRsBuf(RsBuf,sizeof(RsBuf));  
+ 119   2           Print_Str(mode);
+ 120   2           ES=1;    // 
+ 121   2          Delay(500);
+ 122   2      //    p=strstr(RsBuf,AT_Code);
+ 123   2          if(p!=NULL) break;
+ 124   2          if(timercount==0) break;
+ 125   2              }
+ 126   1      }
+ 127          
+ 128          ///////////////////////////////////////////////////
+ 129          //////////////////////////////////////////////////////
+ 130             
+ 131             
+ 132          uchar data system_server ;    //系统状态
+ 133           
+ 134           
+ 135          
+ 136           /*********************************************************************
+ 137           *                  C51中字符串函数的扩充                            *
+ 138           ** 函数名称    : strsearch ()
+ 139           ** 函数功能    : 在指定的数组里连续找到相同的内容
+ 140           ** 入口参数   ： ptr2=要找的内容, ptr1 当前数组
+ 141           **** 出口参数 ： 0-没有 找到   >1 查找到
+ 142           *********************************************************************/
+ 143          
+ 144          
+ 145          
+ 146          uchar strsearch(uchar *ptr2,uchar *ptr1_at,uchar num)//查字符串*ptr2在*ptr1中的位置
+ 147          //本函数是用来检查字符串*ptr2是否完全包含在*ptr1中
+ 148          //返回:  0  没有找到
+ 149          //       1-255 从第N个字符开始相同
+ 150          {
+ 151   1      //、    uchar max_length;
+ 152   1              uchar i,j,k; 
+ 153   1              if(ptr2[0]==0) return(0); 
+ 154   1              for(i=0,j=0;i<num;i++)
+ 155   1              {
+ 156   2              if(ptr1_at[i]==ptr2[j])
+ 157   2              {//第一个字符相同
+ 158   3                      for(k=i;k<num;k++,j++)
+ 159   3                      {
+ 160   4                              if(ptr2[j]==0)//比较正确
+ 161   4                                      return(i+1);               //返回值是整数，不含0
+ 162   4                              if(ptr1_at[k]!=ptr2[j]) break;
+ 163   4                      }
+ 164   3                      j=0;
+ 165   3              }
+ 166   2              }
+ 167   1              return(0);
+ 168   1      }
+ 169          
+ 170          /*********************************************************************
+ 171           *                  C51中字符串函数的扩充                            *
+ 172           ** 函数名称    : strsearch1()
+ 173           ** 函数功能    : 在指定的数组里连续找到相同的内容
+ 174           ** 入口参数   ： ptr2=要找的内容, ptr1 当前数组, id 数组开始的第一个位置
+ 175           **** 出口参数 ： 0-没有 找到   >1 查找到
+ 176           *********************************************************************/
+ 177          //------在指定移态的数组里连续找到相同的内容---------------------------------------
+ 178          //i=传来的指令,  *ptr2=要找的内容, uchar *ptr1 当前数组
+ 179          uchar strsearch1(uchar i,uchar *ptr2,uchar *ptr1)
+C51 COMPILER V9.00   GPRS                                                                  03/13/2012 09:34:02 PAGE 4   
+
+ 180          {      uchar j=0,k;
+ 181   1                              k=i;
+ 182   1            do{
+ 183   2                              if(ptr2[j]==0)  return(k);
+ 184   2                      if(ptr1[k]==ptr2[j])
+ 185   2                      {j++;k++;}
+ 186   2                      else return(0);
+ 187   2      
+ 188   2              }while(j<=60);
+ 189   1              return(0xff);
+ 190   1      }
+ 191          
+ 192          
+ 193          uchar Mygetch(char *ch)//从串口缓冲区读1字节数据
+ 194          {
+ 195   1               
+ 196   1              if(RsPoint==READRsPoint) {return 0;}    //RxBuf Empty
+ 197   1              *ch=RsBuf[READRsPoint];;  READRsPoint++;                                        //数据被读走，读指针加1
+ 198   1              if(READRsPoint>=LenRxBuf) READRsPoint=0;        //如果读指针到缓冲区尾部，则返回到头部
+ 199   1              return 1;
+ 200   1      }
+ 201           
+ 202          uchar MygetSets(char *Sets)//从串口缓冲区读取一个命令
+ 203          {
+ 204   1        char a[1]={0};
+ 205   1      if(RS_Sets_Cont)
+ 206   1       {
+ 207   2        while(1)
+ 208   2        {
+ 209   3            if(Mygetch(a)==0)
+ 210   3             { RS_Sets_Cont=0; return 1; }
+ 211   3         if(a[0]==0x0A)
+ 212   3          { 
+ 213   4          RS_Sets_Cont--;
+ 214   4          *Sets=0;
+ 215   4          return 1;
+ 216   4          }
+ 217   3         if(a[0]==0x0D)
+ 218   3         {
+ 219   4           ;
+ 220   4         }
+ 221   3         else
+ 222   3         {
+ 223   4          *Sets++=a[0];
+ 224   4         }
+ 225   3       
+ 226   3        }
+ 227   2       }
+ 228   1      else
+ 229   1       {
+ 230   2       return 0;
+ 231   2       }
+ 232   1      } 
+ 233           
+ 234          //----------------------------------------------
+ 235          uchar ReadBsbuffStrstr(uchar *buff,uchar *str) 
+ 236             {
+ 237   1            timercount=10;
+ 238   1            while(timercount>0)
+ 239   1             {
+ 240   2                              MygetSets(buff);
+ 241   2                      if(strstr(buff,str)!=NULL)
+C51 COMPILER V9.00   GPRS                                                                  03/13/2012 09:34:02 PAGE 5   
+
+ 242   2                    {
+ 243   3                                                      
+ 244   3                                       while(RS_Sets_Cont>0)
+ 245   3                         {
+ 246   4                                               MygetSets(buff);       
+ 247   4                          }
+ 248   3                                    return TRUE;
+ 249   3                                      }
+ 250   2                              else if(RS_Sets_Cont==0) return FALSE;
+ 251   2                       
+ 252   2              }
+ 253   1              }
+ 254          
+ 255           
+ 256           //======================================================
+ 257          //这里为AT指令处理区,所有的AT指令都在这时对uart_buff数组进行赋值,并发送出去,
+ 258          //-正常情况下,AT指令反回也会在这里接收完
+ 259            //------------------------
+ 260            //-----------------------
+ 261            ///==========================================
+ 262          /*
+ 263          *********************************************************************************************************
+ 264          ** 函数名称      ：Send_AT_Command()
+ 265          ** 函数功能              ：串口AT指令发送前处理,
+ 266          ** 全局变量或数组:   receive_count 接收指针
+ 267          ** 入口参数      ： type =ID,  转向所有  AT指令 字符串
+ 268                                                  str_at- uart_buff   str_code -para_temp
+ 269          **                      *str_at=要复制的内容/转AT指令
+ 270          **                      *str_code 与*str_at合并的参数 //AT指令参数
+ 271          ** 出口参数     ：  1- 成功,  0- 失败
+ 272          *********************************************************************************************************
+ 273          */
+ 274          uchar  Send_AT_Command( uchar type,uchar *str_at ,uchar *str_code)      //发送ＡＴ指令
+ 275          //拨号时号码放在phone.number
+ 276          //其他用para_temp
+ 277          { 
+ 278   1      
+ 279   1          switch(type)
+ 280   1          {
+ 281   2      
+ 282   2              
+ 283   2           //----------------------------------------------------
+ 284   2            //--------------------------------------------------------
+ 285   2       
+ 286   2             case AT_CIPCLOSE:            //    AT+CIPCLOSE 关闭TCP 或UDP 连接
+ 287   2                 strcpy(str_at,"ATE0V0+CIPCLOSE");
+ 288   2                 break;
+ 289   2               case AT_CIPSHUT:            // AT+CIPSHUT 关闭移动场景
+ 290   2                    strcpy(str_at,"AT+CIPSHUT");
+ 291   2                 break;
+ 292   2             case AT_CLPORT:            // AT+CLPORT 设置本地端口
+ 293   2                 strcpy(str_at,"AT+CLPORT=");
+ 294   2                 strcat(str_at,str_code);
+ 295   2                break;
+ 296   2            case AT_CSTT:       //AT+CSTT 启动任务并设置APN、USER ID、PASSWORD
+ 297   2                   strcpy(str_at,"AT+CSTT="); 
+ 298   2                 strcat(str_at,str_code);
+ 299   2                 break;
+ 300   2      
+ 301   2             case AT_CIICR:   // AT+CIICR 激活移动场景
+ 302   2                   strcpy(str_at,"AT+CIICR");
+ 303   2                 break;
+C51 COMPILER V9.00   GPRS                                                                  03/13/2012 09:34:02 PAGE 6   
+
+ 304   2              case AT_CIFSR:  //AT+CIFSR 获得本地IP 地址
+ 305   2                 strcpy(str_at,"AT_CIFSR");
+ 306   2                 break;
+ 307   2             case AT_CDNSGIP: //AT+CDNSGIP 域名解析
+ 308   2                strcpy(str_at,"AT+CDNSGIP=");
+ 309   2                 strcat(str_at,str_code);
+ 310   2                 break;
+ 311   2             case AT_CDNSCFG:   //AT+CDNSCFG 配置DNS
+ 312   2                   // strcpy(str_at,"AT+CDNSCFG=\"202.105.21.217\"");
+ 313   2                 //  strcpy(str_at,"AT+CDNSCFG=\"222.73.49.102\"");
+ 314   2                   strcpy(str_at,"AT+CDNSCFG=");
+ 315   2                   strcat(str_at,str_code);
+ 316   2                   break;
+ 317   2      
+ 318   2              case AT_CDNSORIP:  //AT+CDNSORIP 设置连接SERVER 端为IP 地址还是域名 1 表示是域名
+ 319   2                   strcpy(str_at,"AT+CDNSORIP=");
+ 320   2                   strcat(str_at,str_code);
+ 321   2                   break;
+ 322   2              case AT_CIPHEAD:      //AT+CIPHEAD 设置接收数据的IP 头
+ 323   2                   strcpy(str_at,"AT+CIPHEAD=1;+CIPFLP=1;+CIPATS=1,50");
+ 324   2                   
+ 325   2                   break;
+ 326   2              case AT_CIPATS:        //AT+CIPATS 设置自动发送时间
+ 327   2                  strcpy(str_at,"AT+CIPATS=1,50");
+ 328   2                  
+ 329   2                   break;
+ 330   2              case  AT_CIPSEND :    //  GPRS 发送
+ 331   2                  strcpy(str_at,"AT+CIPSEND");
+ 332   2                  break;
+ 333   2             case AT_CIPSERVER:  //AT+CIPSERVER 配置为服务器
+ 334   2                 strcpy(str_at,"AT+CIPSERVER");
+ 335   2                  break;
+ 336   2             case AT_CIPCSGP:  //  AT+CIPCSGP 设置为CSD 或GPRS 连接
+ 337   2                   strcpy(str_at,"AT+CIPCSGP=");
+ 338   2                   strcat(str_at,str_code);
+ 339   2                   break;
+ 340   2            case AT_CIPCCON: // AT+CIPCCON 设置当前连接 返回1 表示当前TCP 连接的发
+ 341   2                   strcpy(str_at,"AT+CIPCCON=");
+ 342   2                   strcat(str_at,str_code);   //AT+CIPSHUT
+ 343   2                   break;
+ 344   2      
+ 345   2             case AT_CIPSTART: //  //AT+CIPSTART   连接 GPRS TCp OR UDP
+ 346   2                   strcpy(str_at,"AT+CIPSTART=");//AT+CIPSTART="TCP","llx1.xicp.net","8080"
+ 347   2                   strcat(str_at,str_code);
+ 348   2                   break;
+ 349   2            case AT_CIPDPDP:    //AT+CIPDPDP 设置网络状态检测的时间间隔
+ 350   2                  strcpy(str_at,"AT+CIPDPDP=0");
+ 351   2      
+ 352   2                   break; 
+ 353   2               case AT_CIPSTATUS:
+ 354   2                  strcpy(str_at,"AT+CIPSTATUS");
+ 355   2      
+ 356   2                   break;
+ 357   2               //----------------------------------------------------------
+ 358   2      
+ 359   2           //-----------------------------------------------
+ 360   2          
+ 361   2            default: 
+ 362   2              return(FALSE);
+ 363   2          }
+ 364   1          ES=1;
+ 365   1          strcat(str_at,"\x0d\x00");//在命令后加入CR
+C51 COMPILER V9.00   GPRS                                                                  03/13/2012 09:34:02 PAGE 7   
+
+ 366   1          RI=0;                                       //清除接收标志
+ 367   1          TI=0;
+ 368   1         //------------------------------
+ 369   1        Print_Str(str_at);   
+ 370   1       
+ 371   1          return(TRUE); 
+ 372   1      
+ 373   1      }
+ 374          
+ 375          
+ 376          /*
+ 377          *********************************************************************************************************
+ 378          ** 函数名称      GPRS_SEND()
+ 379          ** 函数功能               TCP/UDP数据发送
+ 380          ** 全局变量或数组:   receive_count 接收指针
+ 381          ** 入口参数      ：  AT指令 字符串
+ 382                                                  str_at- uart_buff   str_code -para_temp
+ 383          **                      *str_at=要复制的内容/转AT指令
+ 384          **                      *str_code  发送的内容
+ 385          ** 出口参数     ： 1-成功      0-失败
+ 386          *********************************************************************************************************
+ 387          */
+ 388          /**************************************************************/
+ 389          //----------------------------------
+ 390          //------GPRS发送---------------
+ 391          void GPRS_SEND(char* ptr1_at)
+ 392          { 
+ 393   1       Send_AT_Command(AT_CIPSEND,ptr1_at,0);      //发送GPRS数据
+ 394   1       }
+ 395          
+ 396          //-----------------
+ 397          
+ 398          /*
+ 399          *********************************************************************************************************
+ 400          ** 函数名称      GPRS_SET_UP()
+ 401          ** 函数功能             GPRS中的 TCP 协议连接   这里用的是域名方式连接
+ 402          ** 全局变量或数组:   receive_count 接收指针
+ 403          ** 入口参数      ：  AT指令 字符串
+ 404                                                  str_at- uart_buff   str_code -para_temp
+ 405          **                      *str_at=要复制的内容/转AT指令
+ 406          **                      *str_code AT指令的参数或其它参数
+ 407          ** 出口参数     ：
+ 408          *********************************************************************************************************
+ 409          */
+ 410          void  GPRS_SET_UP(void)
+ 411          { 
+ 412   1      
+ 413   1         Send_AT_Command(AT_CDNSORIP,GPRSBuff,"1"); //IP方式
+ 414   1            ReadBsbuffStrstr(GPRSBuff,AT_Code); 
+ 415   1          Send_AT_Command(AT_CLPORT,GPRSBuff,"\"TCP\",3030");//
+ 416   1               ReadBsbuffStrstr(GPRSBuff,AT_Code);  
+ 417   1        Send_AT_Command(AT_CIPSTART,GPRSBuff,"\"TCP\",\"122.234.243.143\",\"1001\"\x00");//
+ 418   1        if(ReadBsbuffStrstr(GPRSBuff,"8")!=FALSE) GPRSOK=0;//连接成功
+ 419   1        else GPRSOK=1;  //连接失败
+ 420   1      
+ 421   1      }
+ 422          
+ 423          
+ 424          //////////////////////////////////////////////////
+ 425          void GPRS_Dispose(void) 
+ 426          {
+ 427   1         uchar j=0,i=0;
+C51 COMPILER V9.00   GPRS                                                                  03/13/2012 09:34:02 PAGE 8   
+
+ 428   1        if(RS_Sets_Cont>0) 
+ 429   1         { 
+ 430   2           MygetSets(GPRSBuff);
+ 431   2                      i=strsearch("+IPD",GPRSBuff,sizeof(GPRSBuff)); //IP头
+ 432   2                  //+IPD5:LED3N  +IPD10:12345LED3N
+ 433   2                  if(i)
+ 434   2                  { 
+ 435   3                   //-------报文长度,  这里跳过--------------
+ 436   3                    i=i+3;
+ 437   3                    i++;
+ 438   3                    if(GPRSBuff[i]==':')// :后面是内容
+ 439   3                    i++;
+ 440   3                    else i=i+2;
+ 441   3                    j=i;
+ 442   3                    //-下面GPRS数据处理区------------
+ 443   3                 //---------LED2N LED3N LED4N LED5N LED6N LED7N--------------------------------
+ 444   3                         //         LED2F LED3F LED4F LED5F LED6F LED7F
+ 445   3                       if(GPRSBuff[i]=='L'&&GPRSBuff[i+1]=='E'&&GPRSBuff[i+2]=='D'&&GPRSBuff[i+3]=='0'&&GPRSBuff[i+4]=='O'&&G
+             -PRSBuff[i+5]=='N')
+ 446   3                 {            
+ 447   4                                      LED0=0;
+ 448   4                       //GPRS_SEND(ptr1_at,ptr1_code);
+ 449   4                 }
+ 450   3                        else if(GPRSBuff[i]=='L'&&GPRSBuff[i+1]=='E'&&GPRSBuff[i+2]=='D'&&GPRSBuff[i+3]=='0'&&GPRSBuff[i+4]=='
+             -O'&&GPRSBuff[i+5]=='F'&&GPRSBuff[i+6]=='F')
+ 451   3                 {            
+ 452   4                                      LED0=1;
+ 453   4                       //GPRS_SEND(ptr1_at,ptr1_code);
+ 454   4                 } 
+ 455   3                
+ 456   3      
+ 457   3                       }
+ 458   2              }
+ 459   1       
+ 460   1           /*****************************************/
+ 461   1           
+ 462   1      
+ 463   1       }
+ 464          /****************************************/ 
+ 465          /******************************************/
+ 466          void main(void)
+ 467          {
+ 468   1       
+ 469   1       
+ 470   1         
+ 471   1              while(1)
+ 472   1              {
+ 473   2      
+ 474   2       
+ 475   2              //------------以下是短信处理-------------------------------------
+ 476   2                              // 硬件中断处理 连GPRS 服务器
+ 477   2              
+ 478   2       GPRS_SET_UP();
+ 479   2      
+ 480   2            
+ 481   2            }
+ 482   1      }
+ 483          ///////////////////////////////////////////////////////
+ 484          /*********************************************************** 
+ 485          函数名称：main
+ 486          函数功能：主函数
+ 487          ***********************************************************/ 
+C51 COMPILER V9.00   GPRS                                                                  03/13/2012 09:34:02 PAGE 9   
+
+ 488           
+ 489          
+ 490          
+ 491          //串口接收中断函数 
+ 492          void serial () interrupt 4 using 3 
+ 493          { 
+ 494   1         if(RI==1)
+ 495   1        {
+ 496   2          RI=0;
+ 497   2          RsBuf[RsPoint++]=SBUF;
+ 498   2          if (RsPoint>=sizeof(RsBuf))
+ 499   2          {
+ 500   3            RsPoint=0; 
+ 501   3          }
+ 502   2       if((RsBuf[RsPoint-2]==0x0d)
+ 503   2           &&(RsBuf[RsPoint-1]==0x0a) )
+ 504   2                          {
+ 505   3                            RS_Sets_Cont++;      
+ 506   3                          }   
+ 507   2        }
+ 508   1      } 
+ 509          
+ 510          
+ 511          /*
+ 512          *********************************************************************************************************
+ 513          ** 函数名称     Int_Timer0()
+ 514          ** 函数功能             定时器中断位,是整个程序的心跳,如果停止,程序会死机
+ 515          ** 全局变量或数组:
+ 516          
+ 517          ** 入口参数      ：
+ 518          ** 出口参数     ：
+ 519          *********************************************************************************************************
+ 520          */
+ 521          
+ 522          void  Int_Timer0(void) interrupt 1 using 3
+ 523          {
+ 524   1           TH0 = 0xB8;
+ 525   1               TL0 = 0x00; //20ms的时钟基准
+ 526   1      
+ 527   1           if(timercount>=1) timercount--; 
+ 528   1            
+ 529   1          
+ 530   1      }
+*** WARNING C290 IN LINE 45 OF GPRS.C: missing return value
+*** WARNING C290 IN LINE 57 OF GPRS.C: missing return value
+*** WARNING C290 IN LINE 73 OF GPRS.C: missing return value
+*** WARNING C290 IN LINE 107 OF GPRS.C: missing return value
+*** WARNING C291 IN LINE 253 OF GPRS.C: not every exit path returns a value
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1629    ----
+   CONSTANT SIZE    =    305    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =     80      36
+   DATA SIZE        =      5    ----
+   IDATA SIZE       =      3    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  5 WARNING(S),  0 ERROR(S)

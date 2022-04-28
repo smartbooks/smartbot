@@ -1,0 +1,199 @@
+BL51 BANKED LINKER/LOCATER V6.20                                                        03/14/2012  21:08:57  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.20, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE ÖÐÎÄ¶ÌÐÅ.obj TO ÖÐÎÄ¶ÌÐÅ RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  ÖÐÎÄ¶ÌÐÅ.obj (_ÐÎÄ¶ÌÐÅ)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?CLDPTR)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  ÖÐÎÄ¶ÌÐÅ (_ÐÎÄ¶ÌÐÅ)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0006H     UNIT         ?DT?_ÐÎÄ¶ÌÐÅ
+            IDATA   000EH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     008CH     UNIT         ?C_C51STARTUP
+            CODE    008FH     0078H     UNIT         ?CO?_ÐÎÄ¶ÌÐÅ
+            CODE    0107H     003BH     UNIT         ?PR?MAIN?_ÐÎÄ¶ÌÐÅ
+            CODE    0142H     002DH     UNIT         ?PR?FENGMINGQI?_ÐÎÄ¶ÌÐÅ
+            CODE    016FH     0025H     UNIT         ?PR?_DELAY_1MS?_ÐÎÄ¶ÌÐÅ
+            CODE    0194H     0019H     UNIT         ?C?LIB_CODE
+            CODE    01ADH     0016H     UNIT         ?PR?_SEND?_ÐÎÄ¶ÌÐÅ
+            CODE    01C3H     0014H     UNIT         ?PR?UART_INT?_ÐÎÄ¶ÌÐÅ
+            CODE    01D7H     000AH     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   ÖÐÎÄ¶ÌÐÅ (_ÐÎÄ¶ÌÐÅ)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?_ÐÎÄ¶ÌÐÅ
+  +--> ?C_INITSEG
+
+?PR?MAIN?_ÐÎÄ¶ÌÐÅ
+  +--> ?PR?_DELAY_1MS?_ÐÎÄ¶ÌÐÅ
+  +--> ?PR?FENGMINGQI?_ÐÎÄ¶ÌÐÅ
+  +--> ?PR?UART_INT?_ÐÎÄ¶ÌÐÅ
+  +--> ?CO?_ÐÎÄ¶ÌÐÅ
+
+?PR?_DELAY_1MS?_ÐÎÄ¶ÌÐÅ
+  +--> ?PR?_SEND?_ÐÎÄ¶ÌÐÅ
+
+BL51 BANKED LINKER/LOCATER V6.20                                                      03/14/2012  21:08:57  PAGE 2
+
+
+
+
+SYMBOL TABLE OF MODULE:  ÖÐÎÄ¶ÌÐÅ (_ÐÎÄ¶ÌÐÅ)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        _ÐÎÄ¶ÌÐÅ
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  C:0176H         PUBLIC        _delay_1ms
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  B:0098H.1       PUBLIC        TI
+  C:0107H         PUBLIC        main
+  C:009EH         PUBLIC        TC_MDSJ
+  C:0142H         PUBLIC        fengmingqi
+  C:01ADH         PUBLIC        _send
+  D:0099H         PUBLIC        SBUF
+  D:0087H         PUBLIC        PCON
+  C:00AAH         PUBLIC        TC_FSNR
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  D:0008H         PUBLIC        temp
+  D:0009H         PUBLIC        key
+  C:0093H         PUBLIC        TC_MSXZ
+  D:008DH         PUBLIC        TH1
+  D:000AH         PUBLIC        num
+  D:008BH         PUBLIC        TL1
+  C:008FH         PUBLIC        at
+  B:0088H.6       PUBLIC        TR1
+  B:00B0H.6       PUBLIC        FMQ
+  B:0098H.4       PUBLIC        REN
+  D:00C8H         PUBLIC        T2CON
+  C:01C3H         PUBLIC        uart_int
+  D:000BH         PUBLIC        m
+  D:000CH         PUBLIC        n
+  D:000DH         PUBLIC        z
+  D:00D0H         PUBLIC        PSW
+  C:016FH         SYMBOL        L?0035
+  C:0172H         SYMBOL        L?0036
+  -------         PROC          L?0034
+  -------         ENDPROC       L?0034
+  C:016FH         SYMBOL        L?0035
+  C:0172H         SYMBOL        L?0036
+  -------         PROC          _DELAY_1MS
+  D:0006H         SYMBOL        z
+  -------         DO            
+  D:0006H         SYMBOL        x
+  D:0004H         SYMBOL        y
+  -------         ENDDO         
+  C:0176H         LINE#         18
+  C:0176H         LINE#         19
+  C:0176H         LINE#         21
+  C:017FH         LINE#         22
+BL51 BANKED LINKER/LOCATER V6.20                                                      03/14/2012  21:08:57  PAGE 3
+
+
+  C:0193H         LINE#         23
+  -------         ENDPROC       _DELAY_1MS
+  -------         PROC          _SEND
+  D:0001H         SYMBOL        tab
+  C:01ADH         LINE#         25
+  C:01ADH         LINE#         26
+  C:01ADH         LINE#         27
+  C:01B2H         LINE#         28
+  C:01B2H         LINE#         30
+  C:01B4H         LINE#         31
+  C:01B7H         LINE#         32
+  C:01B9H         LINE#         33
+  C:01C0H         LINE#         35
+  C:01C2H         LINE#         36
+  -------         ENDPROC       _SEND
+  -------         PROC          UART_INT
+  C:01C3H         LINE#         38
+  C:01C3H         LINE#         39
+  C:01C3H         LINE#         40
+  C:01C6H         LINE#         41
+  C:01C8H         LINE#         42
+  C:01CBH         LINE#         43
+  C:01CEH         LINE#         44
+  C:01D1H         LINE#         45
+  C:01D4H         LINE#         46
+  C:01D6H         LINE#         49
+  -------         ENDPROC       UART_INT
+  -------         PROC          FENGMINGQI
+  -------         DO            
+  D:0006H         SYMBOL        b
+  D:0004H         SYMBOL        r
+  -------         ENDDO         
+  C:0142H         LINE#         50
+  C:0142H         LINE#         51
+  C:0142H         LINE#         52
+  C:0145H         LINE#         53
+  C:0145H         LINE#         54
+  C:0147H         LINE#         55
+  C:0154H         LINE#         56
+  C:0156H         LINE#         57
+  C:0163H         LINE#         58
+  C:016EH         LINE#         59
+  -------         ENDPROC       FENGMINGQI
+  -------         PROC          MAIN
+  C:0107H         LINE#         60
+  C:0107H         LINE#         61
+  C:0107H         LINE#         67
+  C:010EH         LINE#         68
+  C:0111H         LINE#         69
+  C:0114H         LINE#         70
+  C:011AH         LINE#         71
+  C:011DH         LINE#         72
+  C:0121H         LINE#         73
+  C:0124H         LINE#         74
+  C:0128H         LINE#         75
+  C:012BH         LINE#         76
+  C:012FH         LINE#         77
+BL51 BANKED LINKER/LOCATER V6.20                                                      03/14/2012  21:08:57  PAGE 4
+
+
+  C:0132H         LINE#         78
+  C:0135H         LINE#         79
+  C:0138H         LINE#         80
+  C:013AH         LINE#         81
+  C:013DH         LINE#         82
+  C:0140H         LINE#         83
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        _ÐÎÄ¶ÌÐÅ
+
+  -------         MODULE        ?C?CLDPTR
+  C:0194H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+Program Size: data=15.0 xdata=0 code=481
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

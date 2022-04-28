@@ -1,0 +1,80 @@
+C51 COMPILER V8.08   UART                                                                  01/04/2010 21:29:13 PAGE 1   
+
+
+C51 COMPILER V8.08, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN uart.OBJ
+COMPILER INVOKED BY: F:\Program Files\keil\C51\BIN\C51.EXE uart.c LARGE BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <reg52.h>
+   2          
+   3          #define uchar unsigned char
+   4          #define uint unsigned int
+   5          
+   6          /*
+   7          void delay_uart(uint ms)
+   8          {
+   9                  uint i,j;
+  10                  for(i=0;i<ms;i++)
+  11                          for(j=0;j<112;j++);
+  12          }    
+  13          */
+  14          void Uart_init()
+  15          {
+  16   1              
+  17   1              TMOD= 0X20;             //T1  方式2  ，8位   自动重装   
+  18   1              TH1=0Xfd;
+  19   1              TL1=0Xfd;           //9600
+  20   1              TR1=1;              // 定时器1启动  
+  21   1      
+  22   1      
+  23   1              SM0=0;      // 设置串口的工作模式
+  24   1              SM1=1;      //方式1
+  25   1      
+  26   1      
+  27   1              REN=1;           // 不允许串口接收数据   
+  28   1      
+  29   1      
+  30   1              ES=1;        // 串口中断应许 
+  31   1              EA=1;            // 开启中断 
+  32   1              
+  33   1      }
+  34          
+  35          void Uart_sendB(uchar d)
+  36          {
+  37   1              
+  38   1              SBUF=d;
+  39   1              while(!TI);
+  40   1      
+  41   1              TI=0;
+  42   1      }
+  43          void SendString(uchar *str)     
+  44          {
+  45   1              while(*str)
+  46   1              {
+  47   2                      Uart_sendB(*str) ;
+  48   2                      str++;
+  49   2                      //delay_uart(1);
+  50   2              }
+  51   1      }
+  52                                                                                                                 
+  53          
+  54          
+  55          
+C51 COMPILER V8.08   UART                                                                  01/04/2010 21:29:13 PAGE 2   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     49    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,1633 @@
+#include <cheshi.h>
+uchar data int_case;	//中断标志
+#define MAX_TM    100             //一个号码暂时定为(12手机号码)*6=72+(ALARM2T:05)*2=20=92
+uchar xdata uart_buff[MAX_TM]; //通信程序中的缓冲
+uchar data send_count,receive_count;
+data uchar AT_Command_Type;		//当前发送的命令类型
+data uchar AT_Command_Status;		//命令发出以后的返回参数
+//uchar string_temp[20];
+uchar idata para_temp[MAX_TM];
+//uchar idata key_temp[MAX_TM];
+uchar data read_tmp;             ///读电话本号参数
+uchar num_tmp1;			///读短信号码参数
+uchar TMP_BUF;         // 万用 值
+uchar sms_tmp;			///参数代码
+uchar batt_tmp;         //电池
+uchar  tel_tmp;
+uchar  tel_tmp1;			///读电话码地址
+data uchar  system_tep ;          ///报警功能开启与关闭参数
+uchar data system_server ;    //系统状态
+uint  data timercount;		//50MS定时器,
+uchar data timer_1S_cnt;
+uchar data timer_10S_cnt;
+uchar data timer_S_cnt;
+uchar data timer_led1_cnt;  //第一个灯闪计数器
+uchar data timer_led2_cnt;  //第二个灯闪计数器
+uchar data ring_cnt;
+uchar data eer_int;       //收到TC35模块来的错识代码计数器
+//uchar data sync_count;		//用于TC35控制的计数器
+//uchar data Pick_count ;
+//uchar data Ring_count;
+#define _Nop()    _nop_()
+//位变量
+bit hsk1_pin_flag;
+bit ring_pin_flag;//振铃脚状态
+bit ring_bit  ;  // 电话呼入　2
+bit pickup_pin_flag;        //摘机脚状态
+bit txd_rxd_bit;
+bit INT_TMP1;
+bit INT_TMP2;
+bit at_send_bit;
+bit tel1_bit;  //指定呼入程序开启与取消
+bit  sms_tmp_bit;			//：发短信 QXA 可立即取消10的受控设置。但不影响***的运行
+
+bit p2_stop_bit;
+// 中断　IO 模拟脚
+bit io_p01_bit;
+bit io_p02_bit;
+bit io_p03_bit;
+bit io_p04_bit;
+bit io_p05_bit;
+bit io_p06_bit;
+bit io_p07_bit;
+//　ＩＯ设置开启与关闭
+bit io_p01_on;
+bit io_p02_on;
+bit io_p03_on;
+bit io_p04_on;
+bit io_p05_on;
+bit io_p06_on;
+bit io_p07_on;
+
+ uchar Read_Call_ID(void);
+
+//bit Hookoff_bit;
+//bit Hookoff_bit1;
+void int_p01() //  p1口设置
+{   uchar i;
+    io_p01_on=1;
+    // if(!IO_P01==0) return;
+     LED_S2=0;
+     for(i=0;i<6;i++)    //灯闪三下
+     {  timercount=0;
+     	while(timercount<1) ;
+     	LED_INT=~LED_INT;
+     }
+      ring_bit=0;
+      timercount=0;
+      ES=1;			//设置发送指针
+      receive_count=0;
+	  send_count=0xff;
+	RI=0 ;
+      while(timercount<120)     //２分钟
+      {   if(ring_bit)
+          {  if(Read_Call_ID())    //读来电显示
+              {   para_temp[0]=0x31; para_temp[1]=',';
+             	  Send_AT_Command(PHONE_WRITE);
+                  Send_AT_Command(HOOKOFF);
+   				 // timer_S_cnt=0;timer_1S_cnt=0;
+   				  //while(timer_S_cnt<1&&(AT_Command_Status==COMMAND_WAIT))  ;
+				  io_p01_bit=0;
+				  return;
+               }
+              ring_bit=0;
+
+          	}
+
+
+       }
+
+
+
+}
+
+void int_p02() //  p2口设置
+{ // uchar i=;
+     if(tel1_bit)   return;  //测试是关闭返回
+   //  if(!IO_P02==0) return;
+      if(p2_stop_bit)  return;
+    	 LED_S2=0;
+       if(ring_bit)
+          {   Read_Call_ID();    //读来电显示
+          }
+
+      	   tel_diat();
+
+
+
+
+}
+ring_auto()   //自动监听
+{   uchar i=0,j;
+	 ring_bit=0;
+	   ring_cnt=1;
+       timercount=0;
+       while(timercount<30)     //２分钟
+       {
+       		if(ring_cnt>=4)
+          	{  if(Read_Call_ID())    //读来电显示
+              	{   //if(strsearch("para_temp"))
+                  	read_tmp=0x31;
+   					Send_AT_Command(PHONE_READ);   //读电话号码
+
+					for(j=7;j<12;j++)
+					{
+						if(uart_buff[j]=='\x22')   break;
+    				}
+    				i=2 ;
+    				j++ ;
+					for(;j<25;j++)
+					{   if(uart_buff[j]=='\x22')   break;
+						if(uart_buff[j]!=para_temp[i++])  break;
+
+
+					}
+                     if(uart_buff[j]!='\x22')
+					 {  ring_bit=0; ring_cnt=0;
+					      Send_AT_Command(HOOKOFF);
+					   return;}
+
+					 Send_AT_Command(PICK_UP);
+					 timercount=0;
+   				   	 while(timercount<10&&(AT_Command_Status==COMMAND_WAIT))   system_sleep;
+
+                     Send_AT_Command(HOOKOFF);
+					ring_bit=0;
+					 ring_cnt=0;
+					return;
+
+              	 }
+
+           	}
+       }
+	}
+void int_p04() //  p4口设置
+{
+    //  if(tel1_bit)   return;  //测试是关闭返回
+    // if(!IO_P01==0) return;
+      io_p04_on=1;
+      timercount=0;
+      while(timercount<30) io_p04_bit=~io_p04_bit;    //２分钟
+      if(io_p04_on) return;
+      tel_diat();
+
+}
+void   tel_diat2();
+
+void int_p07() //  p4口设置
+{
+    //  if(tel1_bit)   return;  //测试是关闭返回
+    // if(!IO_P01==0) return;
+      io_p07_on=1;
+      timercount=0;
+    //  while(timercount<10) io_p07_bit=~io_p07_bit;    //２分钟
+     // if(io_p07_on) return;
+      tel_diat2();
+
+}
+
+void  Int_Timer0(void) interrupt 1 using 3
+{
+
+   #if  CPU_TYPE2==PLC900
+	if(eer_int<=9)
+	   {
+			EA = 0; //关闭中断
+			WFEED1 = 0xA5; //执行清零第一部分
+			WFEED2 = 0x5A; //执行清零第二部分
+			EA = 1; //开中断
+			TH0 = 0x27;  //7.373
+			TL0 = 0xFF;
+		}
+
+
+  #elif  CPU_TYPE2==C8051F330
+     	 TH0 = 0x9e;
+    	 TL0 = 0x38;
+
+  #endif
+ //  timercount++;
+   timer_1S_cnt++;
+   timer_led2_cnt++;
+   timer_led1_cnt++;
+   if(timer_1S_cnt==40)    //25×40=1000MS  =1S
+    { timer_10S_cnt++;
+      timer_1S_cnt=0;
+      timer_S_cnt++;
+
+
+    }
+    if(timer_10S_cnt==16)   //10S
+    {  //timer_S_cnt++;
+	//LED_INT=~LED_INT;
+	   timer_10S_cnt=0;
+	    timercount++;
+	}
+
+
+
+   //-------------------------------------
+    IO_P01=1;
+	if((io_p01_bit!=IO_P01))
+	{
+
+		if(IO_P01==0)
+		{
+			//int_case|=INT_RINGOFF;
+			//int_case&=~INT_RING;
+			io_p01_on=0;
+			//system_server=SYS_RING;
+		}
+		//else  {  system_server=SYS_SMSR; io_p01_on=1; }
+		io_p01_bit=IO_P01;
+	}
+  //---------------------------------------------------
+   IO_P02=1;
+	if((io_p02_bit!=IO_P02))
+	{
+
+		if(IO_P02==0)
+		{
+			//int_case|=INT_RINGOFF;
+			//int_case&=~INT_RING;
+			io_p02_on=0;
+			//system_server=SYS_RING;
+		}
+		else  {  system_server=SYS_SMSR; io_p02_on=1; }
+		io_p02_bit=IO_P02;
+	}
+
+	//---------------------------------------------
+	IO_P03=1;
+	if((io_p03_bit!=IO_P03))
+	{
+
+		if(IO_P03==0)
+		{
+			//int_case|=INT_RINGOFF;
+			//int_case&=~INT_RING;
+			io_p03_on=0;
+			//system_server=SYS_RING;
+		}
+		else  {  system_server=SYS_SMSR; io_p03_on=1; }
+		io_p03_bit=IO_P03;
+	}
+//--------------------------------------------------
+	IO_P04=1;
+	if((io_p04_bit!=IO_P04))
+	{
+
+		if(IO_P04==0)
+		{
+			//int_case|=INT_RINGOFF;
+			//int_case&=~INT_RING;
+			io_p04_on=0;
+			//system_server=SYS_RING;
+		}
+
+		io_p04_bit=IO_P04;
+	}
+//-----------------------------------------------------------------
+    IO_P07=1;
+	if((io_p07_bit!=IO_P07))
+	{
+
+		if(IO_P07==0)
+		{
+			//int_case|=INT_RINGOFF;
+			//int_case&=~INT_RING;
+			io_p07_on=0;
+			//system_server=SYS_RING;
+		}
+		//else  {  system_server=SYS_SMSR; io_p04_on=1; }
+		io_p07_bit=IO_P07;
+	}
+  //-------------------------------------------------------
+
+
+
+}
+/*****************************************************************************
+ *                   TC35 的命令列表,与中断服务程序                          *
+ *****************************************************************************/
+void  Int_Uart(void) interrupt 4 using 3  //串口的中断程序
+{
+	if(TI)//数据模式与命令方式共用
+	{
+    		TI=0;
+
+			if(send_count>=MAX_TM-1)  send_count=0;
+
+			if((uart_buff[send_count]==0)) //应该检测命令结束代码，检测到时结束通信
+			{
+                	at_send_bit=1;
+                	send_count=0xff;
+                	uart_buff[0]=0;		//清除接收缓冲区
+                	receive_count=0;  return;
+            }
+			else
+			{   if(uart_buff[send_count]<=0xB0)
+				  SBUF=uart_buff[send_count++];
+
+                   if((uart_buff[send_count]==0)) //应该检测命令结束代码，检测到时结束通信
+					{ at_send_bit=1;
+                	 send_count=0xff;
+                	 uart_buff[0]=0;		//清除接收缓冲区
+                	 receive_count=0;    return;
+             		}
+			}
+
+
+    	receive_count=0;
+    }
+
+	else
+	if(RI) //命令方式
+		{
+        	RI=0;
+        	if(at_send_bit==0)      return;
+        	if((send_count==0xff)&&(receive_count<MAX_TM-2))//没有发送时才能进行接收
+        	{	//所有的命令返回都是处于 0x0A [Result] 0x0D 之间,其他命令,不会出现这种情况
+
+       			uart_buff[receive_count++]=SBUF;
+
+        	}
+        	 else
+        	 {
+       			//ACC=SBUF;
+       			return;
+       		 }
+
+
+		if(receive_count>=MAX_TM-2)
+       		{  eer_int=0;
+       			if(AT_Command_Type==SMS_CMGR)    receive_count=0;
+         		else
+		   		 {	receive_count=0;
+		   	 		AT_Command_Status=COMMAND_OK;
+        			return;
+				 }
+			     receive_count=0;
+ 			}
+
+       	if((receive_count==2)&&(uart_buff[1]==0x0d))//没有包含为其他信息的命令返回
+       		{	//接收到一个命令回应,可能为,0-OK  1-CONNECT 2-RING 3-NO CARRIER 4-ERROR
+       			//只返回OK
+
+       			uart_buff[receive_count]=0;
+       			if(uart_buff[0]=='0')
+       			{
+       				AT_Command_Status=COMMAND_OK;  //txd_rxd_bit=1;
+       			}
+       			if(uart_buff[0]=='2')
+       			{    ring_bit=1;  ring_cnt++;
+       				 AT_Command_Status=COMMAND_OK;  //txd_rxd_bit=1;
+       				 ES=1;			//设置发送指针
+     				 receive_count=0;
+	  				 send_count=0xff;
+       			}
+       			else if(uart_buff[0]=='4'||uart_buff[0]=='3')
+       		    {  AT_Command_Status=COMMAND_ERROR;}
+       			else AT_Command_Status=COMMAND_UNKNOW;
+  				 txd_rxd_bit=1;
+       			 uart_buff[receive_count]=0;
+       			 return;
+		    }
+
+   		else if((uart_buff[receive_count-1]==0x0d)
+   			  &&(receive_count>=3)
+   			  &&(uart_buff[receive_count-3]==0x0a)
+   		      &&((uart_buff[receive_count-2]=='0')))
+   		    {  ///可能是包含为其他信息的命令返回
+        		  uart_buff[receive_count]=0;//RECEIV OK ANSWER, with some message
+                  AT_Command_Status=COMMAND_OK;     txd_rxd_bit=1;
+                  eer_int=0;
+        		 // if(uart_buff[receive_count-2]=='0')
+        		 // {AT_Command_Status=COMMAND_OK;}
+        		// else{ AT_Command_Status=COMMAND_WAIT; receive_count=0;}
+        	}
+
+         else if(AT_Command_Type==SMS_CMGS&&uart_buff[3]=='>')
+        	{	AT_Command_Status=COMMAND_OK;    txd_rxd_bit=1;
+        		return;
+        	}
+
+
+	}//End of if(RI)
+}
+/*********************************************************************
+ *                  C51中字符串函数的扩充                            *
+ *********************************************************************/
+
+uchar strsearch(uchar *ptr2)//查字符串*ptr2在*ptr1中的位置
+//本函数是用来检查字符串*ptr2是否完全包含在*ptr1中
+//返回:  0  没有找到
+//       1-255 从第N个字符开始相同
+{
+//、	uchar max_length;
+	uchar i,j,k;
+	uchar flag;
+	if(ptr2[0]==0) return(0);
+	//max_length=strlen(ptr)+1;
+	flag=0;
+	for(i=0,j=0;i<MAX_TM-2;i++)
+	{
+        if(uart_buff[i]==ptr2[j])
+        {//第一个字符相同
+        	for(k=i;k<MAX_TM-2;k++,j++)
+        	{
+        		if(ptr2[j]==0)//比较正确
+        			return(i+1);               //返回值是整数，不含0
+        		if(uart_buff[k]!=ptr2[j]) break;
+        	}
+        	j=0;
+        }
+	}
+	return(0);
+}
+
+//==============================＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+//==========       读写短信程序
+//====================================================
+void read_sms()
+{    uchar  i,t,j,r;
+
+      for(r=1;r<20;r++)
+       {
+       	if(system_server==SYS_RING) return;
+       	 num_tmp1=r;
+		if(READ_TEL(r)!=1)    //读一个短信    at+cmgr=1-19      读指令
+		{   //timer_S_cnt=0;timer_1S_cnt=0;
+			//while(timer_S_cnt<15) system_sleep;
+			if(system_server==SYS_RING) return;
+			timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<10) system_sleep;
+            if(!io_p03_on)   p2_stop_bit=1;     //P3如为低电平即可马上取消2的设置
+            else if(!io_p01_on)  int_p01();
+             else if(!io_p02_on)  int_p02();
+             else if(!io_p04_on)  int_p04();
+             else if(!io_p07_on)  int_p07();
+             else { if(ring_bit)  ring_auto();
+                   else  ring_bit=0; }
+              //+CMTI: "SM",1
+            if(strsearch("+CMTI:"))  return;
+            io_p01_bit=0;
+			io_p02_bit =0;
+			io_p04_bit=0;
+
+           if(r==16)
+           {//timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<1&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+          // Send_AT_Command(SMSS_ID);
+		  //  timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<1&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+
+           	}
+			continue;
+		}
+
+      //---------------手机号码设置-------------
+		if((i=strsearch("HS")))       // 发短信 HSP 13*********（A者）；发短信 HSD 13*********（B者）
+		{
+			if(!io_p07_on)    goto DELTER; 		//**当P7口为低电平时，可使9开始受控，
+            if(sms_tmp_bit)  goto DELTER;   //可立即取消10的受控设置
+			 tel_tmp1=i-1;
+            i=i+1;t=0;  j=2;
+			if((uart_buff[i]=='P'))
+			{
+			  	para_temp[0]=0x31;
+			}
+			 else if((uart_buff[i]=='D'))
+               { para_temp[0]=0x32;
+            }
+            else goto DELTER;
+			  	 //短信发送的手机号码在存在SIM卡中的是4,5,6位置
+											     //要存的手机号码位置如果是1那在SIM卡中的位置就是4
+	    			i=i+1;
+			  		tel_tmp=i;          //手机号码的起始位置
+		     	system_server=SYS_TEL;
+
+	     }
+
+
+		//-----  ---设维护,进行设备人工关闭  ------------------
+			 else if(i=strsearch("QXP2"))   //控制关闭系统
+			 {
+				//	sms_tmp=0;
+			 		//system_server=SYS_RING;
+			 		tel1_bit=1;  //短信取消P2口线设置:发送短信 QXP2 即可取消2的设置.
+			 		 goto DELTER;
+			 		//continue;
+
+			}
+            else if(i=strsearch("QXA"))  // 发短信 QXA 可立即取消10的受控设置。但不影响***的运行。
+
+			 {
+
+			 		sms_tmp_bit=1;
+			 		 goto DELTER;
+
+		     }
+            else if(i=strsearch("XHT"))   // P5口将变为低电平
+			 {
+				IO_P05=0;  //短信取消P2口线设置:发送短信 QXP2 即可取消2的设置.
+
+			 goto DELTER;
+
+
+			}
+		else if(i=strsearch("GYT"))   //发短信 GYT  P5口将变为高电平
+			 {
+				IO_P05=1;  //短信取消P2口线设置:发送短信 QXP2 即可取消2的设置.
+
+			 	 goto DELTER;
+
+			}
+ 		//--------------------------设备从新启--------------------------
+			 else if(i=strsearch("START"))   //控制系统开启
+			 {
+                    system_tep=1;
+			 		system_server=SYS_START;       return;
+
+
+		    }
+		//--------------------//参数查询命令--为三个语音\三个短信\二个定时时长---------------------------------------------
+			else if(i=strsearch("CXK"))   //参数查询命令
+			 {
+               //发短信 CXK 然后机器就会给法定号码的手机回一条短信，主要是检查 P2，P3，P4，P5，P6，P7 的口线的电平
+			 		system_server=SYS_PARA;
+                     return;
+
+			 }
+			else {
+DELTER:
+					para_temp[0]=(num_tmp1/10)+0x30;para_temp[1]=(num_tmp1%10)+0x30; para_temp[2]=0x0d;para_temp[3]=0x00;
+					Send_AT_Command(SMS_CMGD);
+					timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<10&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+					for(i=10;i<=90;i++)
+         			{    uart_buff[i]=0;
+         			}
+					 return;
+
+				 }
+
+           if(system_server==SYS_SMSR)		    return;
+			do
+			{
+				if((uart_buff[0]=='4')&&uart_buff[1]==0x0d){   return;}
+				if(uart_buff[i]>='0'&&uart_buff[i]<='9')
+					para_temp[j++]=uart_buff[i++];
+				else  i++;
+	  			if((uart_buff[i]==0x0d)||(j>20))     //号码存储及分析
+	    			{
+	    			para_temp[1]=',';
+	    			para_temp[j]=0x0d;
+	    			//para_temp[j++]=0x0d;
+	    			para_temp[j++]=0x00;
+					Send_AT_Command(PHONE_WRITE);
+					//send_sms();
+					//system_server=SYS_SMSR;
+               		break;
+               		// return;
+	    		    }
+
+
+			} while(1);
+
+
+			 return;
+
+	    }
+
+
+
+
+
+}
+
+
+void send_sms() //发送短信
+{  	uchar  j=1,i=1;
+     Send_AT_Command(SIM_ID);
+   	timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<8&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+
+           //根据不同的方式发送短消息内容
+		switch(sms_tmp)
+
+		{
+		//======================发送收到设备开启指令================================================
+           case	smss_alarm:
+                 //read_tmp=0x31;
+          	//for(read_tmp=0x31;read_tmp<=0x32;read_tmp++)
+
+		    		TMP_BUF=0;
+   					j=PHONE_RD();
+   					para_temp[j++]=0x0d;para_temp[j++]=0x00;
+   					timer_S_cnt=0; while(timer_S_cnt<15&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+		    		Send_AT_Command(SMS_CMGS);
+		    		TMP_BUF=0;
+          	 		para_temp[TMP_BUF++]='Q';
+          	 		para_temp[TMP_BUF++]='J';
+          	 		para_temp[TMP_BUF++]='Q';
+          	 		para_temp[TMP_BUF++]='J';
+          	 		para_temp[TMP_BUF++]='Q';
+          	 		para_temp[TMP_BUF++]='J';
+          	 		para_temp[TMP_BUF++]=0x20;
+          	 		para_temp[TMP_BUF++]=0x1a;para_temp[TMP_BUF++]=0x0d;para_temp[TMP_BUF++]=0x00;
+
+		     	Send_AT_Command(CMGS_MUB);
+		     	at_send_bit=1;
+                send_count=0xff;	//设置接收成功标志
+                receive_count=0;
+      	 	  	timer_S_cnt=0;while(timer_S_cnt<80&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+                 break;
+
+
+//==============发送设备参数查询返回值=========================================
+		  case smss_para:    //  发短信 CXK 然后机器就会给法定号码的手机回一条短信，主要是检查 P2，P3，P4，P5，P6，P7 的口线的电平。 //read_tmp=0x31;    //第一个
+                read_tmp=0x31;
+          	//for(read_tmp=0x31;read_tmp<=0x32;read_tmp++)
+		    {
+		    	TMP_BUF=0;
+   				j=PHONE_RD();
+   				para_temp[j++]=0x0d;para_temp[j++]=0x00;
+   				timer_S_cnt=0; while(timer_S_cnt<15&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+		    	Send_AT_Command(SMS_CMGS);
+	    		TMP_BUF=0;
+
+          	 	para_temp[TMP_BUF++]='P';
+          	 	para_temp[TMP_BUF++]='0';
+          	 	para_temp[TMP_BUF++]='2';
+          	 	para_temp[TMP_BUF++]=0x20;
+          	 	if(IO_P02)para_temp[TMP_BUF++]=0x31;
+          	 	else   	para_temp[TMP_BUF++]=0x30;
+             	para_temp[TMP_BUF++]=0x20;
+             	para_temp[TMP_BUF++]=0x0a;
+
+             	para_temp[TMP_BUF++]='P';
+          	 	para_temp[TMP_BUF++]='0';
+          	 	para_temp[TMP_BUF++]='3';
+          	 	para_temp[TMP_BUF++]=0x20;
+             	if(IO_P03)para_temp[TMP_BUF++]=0x31;
+          	 	else   	para_temp[TMP_BUF++]=0x30;
+             	para_temp[TMP_BUF++]=0x20;
+             	para_temp[TMP_BUF++]=0x0a;
+
+             	para_temp[TMP_BUF++]='P';
+          	 	para_temp[TMP_BUF++]='0';
+          	 	para_temp[TMP_BUF++]='4';
+          	 	para_temp[TMP_BUF++]=0x20;
+              	if(IO_P04)para_temp[TMP_BUF++]=0x31;
+          	 	else   	para_temp[TMP_BUF++]=0x30;
+             	para_temp[TMP_BUF++]=0x20;
+             	para_temp[TMP_BUF++]=0x0a;
+
+             	para_temp[TMP_BUF++]='P';
+          	 	para_temp[TMP_BUF++]='0';
+          	 	para_temp[TMP_BUF++]='5';
+          	 	para_temp[TMP_BUF++]=0x20;
+              	if(IO_P05)para_temp[TMP_BUF++]=0x31;
+          	 	else   	para_temp[TMP_BUF++]=0x30;
+             	para_temp[TMP_BUF++]=0x20;
+             	para_temp[TMP_BUF++]=0x0a;
+
+             	para_temp[TMP_BUF++]='P';
+          	 	para_temp[TMP_BUF++]='0';
+          	 	para_temp[TMP_BUF++]='6';
+          	 	para_temp[TMP_BUF++]=0x20;
+              	if(IO_P06)para_temp[TMP_BUF++]=0x31;
+          	 	else   	para_temp[TMP_BUF++]=0x30;
+             	para_temp[TMP_BUF++]=0x20;
+             	para_temp[TMP_BUF++]=0x0a;
+
+             	para_temp[TMP_BUF++]='P';
+          	 	para_temp[TMP_BUF++]='0';
+          	 	para_temp[TMP_BUF++]='7';
+          	 	para_temp[TMP_BUF++]=0x20;
+              	if(IO_P07)para_temp[TMP_BUF++]=0x31;
+          	 	else   	para_temp[TMP_BUF++]=0x30;
+            	para_temp[TMP_BUF++]=0x20;
+            	para_temp[TMP_BUF++]=0x0a;
+				para_temp[TMP_BUF++]=0x1a;para_temp[TMP_BUF++]=0x0d;para_temp[TMP_BUF++]=0x00;
+
+		     	Send_AT_Command(CMGS_MUB);
+		     	at_send_bit=1;
+                send_count=0xff;	//设置接收成功标志
+                receive_count=0;
+      	 	  	timer_S_cnt=0;while(timer_S_cnt<80&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+         }
+
+         for(i=10;i<=90;i++)
+         {    uart_buff[i]=0;
+         	}
+		 break;
+
+
+
+		  default:
+			//system_server=SYS_SMSR;
+			break;
+
+    }
+    	system_server=SYS_SMSR;
+    	receive_count=0;
+		AT_Command_Status=COMMAND_WAIT;	//设置接收成功标志
+      	send_count=0xff;timer_S_cnt=0;timer_1S_cnt=0;
+      	while(timer_S_cnt<40&&(AT_Command_Status==COMMAND_WAIT))
+       		{   if(strsearch("+CMGS:"))   continue;
+       		    else if(txd_rxd_bit) continue;
+       			system_sleep;
+       		}
+
+
+       		para_temp[0]=(num_tmp1/10)+0x30;para_temp[1]=(num_tmp1%10)+0x30; para_temp[2]=0x0d;para_temp[3]=0x00;
+
+			Send_AT_Command(SMS_CMGD);
+			timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<10&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+
+
+}
+//======================================================================
+//================进行SIM卡的电话本读======================================================
+//======================================================================
+uchar PHONE_RD( )      //read_tmp=0x30+i;  要读的电话号码
+{       uchar j;
+
+     	Send_AT_Command(PHONE_READ);
+     	send_count=0;
+     	timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<6&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+
+     	if(j=strsearch("+CPBR:"))    //+CPBW: 1,"13818120592",129,"chia"
+     	{ 	j=j+9;
+
+       		 do
+        	{
+   			 	para_temp[TMP_BUF++]= uart_buff[j++];
+   				if( uart_buff[j]=='"')
+   				{  	//para_temp[t++]=';';para_temp[t++]=0x0d;para_temp[t++]=0x00;
+   				   return(TMP_BUF);
+   			   	}
+
+
+   	    	}while(j<=24);
+
+
+       }
+       else if(uart_buff[1]==0x0d&&uart_buff[0]==0x34)
+           {           eer_int++;  return(FALSE);
+           	}
+        else return(FALSE);
+}
+
+//======================================================================
+//========================进行SIM卡中的1到20条短信号码的读==============================================
+//======================================================================
+uchar   READ_TEL(uchar r)                //读短信号码１－２０个
+{     //  uchar r;
+	 para_temp[0]=(r/10)+0x30;para_temp[1]=(r%10)+0x30; para_temp[2]=0x0d;para_temp[3]=0x00;
+	 para_temp[4]=0x00;para_temp[5]=0x00;para_temp[6]=0x00;para_temp[7]=0x00;
+	 para_temp[8]=0x00;para_temp[9]=0x00;para_temp[10]=0x00;para_temp[11]=0x00;
+      //  timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<1&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+     	Send_AT_Command(SMS_CMGR);
+     	timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<1&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+     	send_count=0;
+     	if(strsearch("CMGR: 0,,0"))     //+CMGR: 0,,0    没有短信返回
+     	{   timer_S_cnt=0; while(timer_S_cnt<1) system_sleep;
+     		timercount=0;
+     		 ES=1;			//设置发送指针
+     		 receive_count=0;
+	 		send_count=0xff;
+			RI=0 ;
+
+     		return(FALSE);
+
+    	}
+        else if(uart_buff[1]==0x0d&&uart_buff[0]==0x34)
+           {           eer_int++;  return(FALSE);
+           	}
+        else
+        {  if(AT_Command_Status==COMMAND_ERROR)	return(FALSE);
+
+            else  return(TRUE);
+
+        }
+
+}
+
+
+//=============================================================================
+//                  话机被叫程序
+//=============================================================================
+uchar Read_Call_ID(void)//读出来电显示的号码
+//正确  TRUE
+//错误  FALSE
+//号码  string_temp[0..16],最多显示前16位
+//呼叫方式 stringt_temp[20]
+{
+	uchar i,j,r;
+
+	Send_AT_Command(CALL_ID);//+CLCC:1,1,4,0,0,"02138950224",129
+	//	语音呼入
+	//	+CLCC:1,1,4,0,0,"02138950223",129
+	//	数字呼入
+	//	+CLCC:1,1,4,1,0,"02138950224",129
+	//	传真呼入
+	//	+CLCC:1,1,4,2,0,"02138950224",129
+	//	未知呼叫
+	//	+CLCC:1,1,4,9,0,"02138950224",129
+	//  主叫:
+	//  +CLCC:1,0,0,0,0,"1001",129
+	//string_temp[0]=0;
+	//string_temp[20]=0;  //读来电显示出错时设为1
+	if(receive_count<15) return(FALSE);
+	uart_buff[receive_count]=0;
+	j=0;
+//	i=strsearch(uart_buff,"CLCC");//查第一个CLCC
+    i=strsearch("CLCC");//查第一个CLCC
+	if(i==0)
+		return(FALSE);
+	//gotoxy(0,0);
+	//printlcd(&send_buf[12]);
+	j=j+i;
+
+	//i=strsearch(&uart_buff[j],",");//查第1个','
+	for(r=0;r<9;r++)
+	{
+	if(uart_buff[j]==',')   break;
+	else  j=j+1;
+   }
+
+	if(r>=9)
+		return(FALSE);
+	j=j+1;
+	//i=strsearch(&uart_buff[j],",");//查第2个','
+	for(r=0;r<4;r++)
+	{
+		if(uart_buff[j]==',')    break;
+		else  j=j+1;
+    }
+	if(r>=4)
+		return(FALSE);
+	j=j+1;
+	//检查是否为来话呼叫
+	if(uart_buff[j]!='4')
+		return(FALSE);
+	//i=strsearch(&uart_buff[j],",");//查第3个','
+	for(r=0;r<4;r++)
+	{
+	if(uart_buff[j]==',')    break;
+	else  j=j+1;
+    }
+
+	if(r>=4)
+		return(FALSE);
+	j=j+1;
+//	string_temp[20]=uart_buff[j];//读出呼叫类型
+	//只要能读出呼叫类型就认为正确
+   //	i=strsearch(&uart_buff[j],"\x22");//查第一个"号
+   	for(r=0;r<6;r++)
+	{
+	if(uart_buff[j]=='\x22')   break;
+	else  j=j+1;
+    }
+
+	if(r>=6)
+		return(FALSE);
+   	j=j+1;
+   i=j;
+   //	i=strsearch(&uart_buff[j],"\x22");//查第二个"号
+   	for(r=0;r<20;r++)
+	{
+	if(uart_buff[j]=='\x22')   break;
+	else  j=j+1;
+   }
+   	if(i<=2) return(FALSE);//没有来电号码
+   	for(r=0;r<20;r++)
+	{
+       para_temp[r+2]=uart_buff[i++];
+	   if(uart_buff[i]=='\x22')
+	   { uart_buff[i++]=0x0d;uart_buff[i]=0; break;}
+
+	 }
+
+   	return(TRUE);
+}
+
+void Initialize_Model(void)    //初始化　PIN检测
+{
+	uchar i;
+    Sys_Init();
+    tel1_bit=0;
+	IO_IGT=0;
+	sms_tmp_bit=0;
+	io_p01_on=1;
+	io_p02_on=1;
+	io_p03_on=1;
+	io_p04_on=1;
+	io_p07_on=1;
+	io_p01_bit=0;
+	io_p02_bit =0;
+	io_p04_bit=0;
+	io_p07_bit=0;
+	//INT_TMP2=1;
+
+	for(i=0;i<12;i++)
+	{//进行初始化,并显示
+		Send_AT_Command(TC35_INIT);
+		// INT1=~INT1;
+		if(uart_buff[1]==0x0d&&uart_buff[0]==0x30)
+		//if(AT_Command_Status==COMMAND_OK)
+		    {  break;}
+
+		if((i%4)==0)
+		{
+			IO_IGT=1;
+		}
+		else if((i%2)==0)
+		{
+			IO_IGT=0;
+		}
+
+   	//	timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<10&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+         pickup_pin_flag=0;hsk1_pin_flag=0;
+   		//Send_AT_Command(REQUEST_MOD);
+
+    }
+    if(i>=11)   goto at_eer;
+
+
+	for(i=0;i<12;i++)
+    	{
+    		if(Send_AT_Command(CHECK_PIN))
+    		{//如有收到回应进行分析收到的信息,
+				uart_buff[receive_count]=0;
+				if(strsearch("READY")!=0)
+        			break;
+        	}
+          timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<2&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+          //LED_INT=~LED_INT;
+    }
+   if(i>=11)
+    {
+at_eer:      Send_AT_Command(RESET_TC35);
+        timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<2) system_sleep;
+       // Send_AT_Command(SMSS_ID);
+	//	timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<2&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+
+    eer_int=15;
+	timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<5) system_sleep;
+
+    }
+    //IO_SBT=1;IO_IRP=1;   P0=0x87;
+     //   t=7,i=1;
+    //	t&=~(1<<i-1) ;
+    //   i=2;
+    //	t&=~(1<<i-1) ;
+     //   i=3;
+    //	t&=~(1<<i-1) ;
+
+	IO_IGT=0;
+//	Send_AT_Command(SMSS_ID);
+	//timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<1&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+     pickup_pin_flag=1;hsk1_pin_flag=1;
+  // 	Send_AT_Command(SMS_CNMI);
+  // 	timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<1&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+
+   	Send_AT_Command(SIM_ID);
+   	pickup_pin_flag=0;hsk1_pin_flag=0;
+   	//timer_S_cnt=0;timer_1S_cnt=0; while(timer_S_cnt<1&&(AT_Command_Status==COMMAND_WAIT)) system_sleep;
+
+
+
+
+}
+
+
+
+#if  CPU_TYPE2==PLC900
+
+void  Sys_Init(void)//话机启动的初始化程序,包含键盘与定时器,串口等
+{
+			//TH0=(65536-46080)/256;//重新装入定时25mS的初值到TH0,TL0
+  			//TL0=(65536-46080)%256;
+			//65536-(11.0592/12)*25MS*1000=To       30732   87f4       3686.5
+			//65536-(7.373MHz/2)*15MS*1000=To   	10239     27FF
+              //55297.5                 10239     27FF
+			//Baudrate = CCLK [ BRGR1 BRGR0 +16]
+			//假如取9600 的波特率取7.3728MHz 的晶振得
+			//9600 = 7372800 [ (BRGR1 BRGR0)+16 ]
+			//计算出(BRGR1 BRGR0)= 7372800/9600 – 16 = 752 = 0x02F0
+			//最后得BRGR1 = 0x02 BRGR1= 0xF0
+				//7372800进行8分 921600   1920
+//端口初始化
+P0M1=0X00;
+P0M2=0Xf0;
+P1M1=0x18;             //0001 1000
+P1M2=0xc4;             //1100 0100
+
+TH0 = 0x27;  //7.373     15MS
+TL0 = 0xFF;
+DIVM=0x04;
+//ACC=TRIM;
+//ACC6=0;
+//TRIM=ACC;
+//TRIM|= 0x40;
+//TH0 = 0x87;
+// = 0xF4;
+SCON=0x50; //使能接收选择串口模式1
+SSTAT=0x00; //选择独立的Tx/Rx 中断
+BRGR0=0xF0; //1200 baud @ 7.373MHz
+BRGR1=0x02;
+BRGCON =0x03; //使能BRG
+TAMOD&=(~0x01);//T0M2=0
+TMOD &=0xF0;    //清低4位
+TMOD |= 0x10;   //T0GATE 0 T0C/T 0 T0M1 1 T0M0 0
+IP0H|=0x10;//设置T0为最高优先级中断
+IP0|=0x10;
+ET0= 1;
+TR0 = 1;
+IE0=0;
+IE1=0;
+IT0=1;
+//ESR=1; //ESR=Enable Serial Recieve
+//EST=1; //EST=Enable Serial Transmit
+EA=1; //使能中断
+ES=1; //EST=Enable Serial Transmit
+    P0=0xFF;
+    P1=0xFF;
+    P2=0xFF;
+    P3=0xFF;
+    IO_IGT=0;
+    	ACC = WDCON; //读取WDT 控制寄存器
+	ACC = ACC|0x04; //置位ACC.2 准备启动WDT
+	WDL = 0x80; //设置8 位倒计时器初值
+	WDCON = ACC; //启动WDT
+	WFEED1 = 0xA5; //清零第一部分
+	WFEED2 = 0x5A; //清零第二部分
+   // P4=0xff;
+
+    receive_count=0;
+    send_count=0xff;		//表示禁止发送,可以接收
+ //  int_case=0;
+   hsk1_pin_flag=1; // sync_count=0;
+   //timer_25ms_flag=0;
+ //  timercount=0;
+   timer_10S_cnt=0;
+   timer_1S_cnt=0;
+   timer_S_cnt=0;
+   IO_IRP=1;
+   IO_SBT=0;
+    eer_int=0;
+     batt_tmp=1;
+    // LED_INT=0;
+
+}
+#elif  CPU_TYPE2==SM5964
+
+void  Sys_Init(void)//话机启动的初始化程序,包含键盘与定时器,串口等
+{
+			//TH0=(65536-46080)/256;//重新装入定时25mS的初值到TH0,TL0
+  			//TL0=(65536-46080)%256;
+			//65536-(11.0592/12)*25MS*1000=To
+			//1ms定时
+			//11.0592/12 = 0.9216 M (记数频率)
+			//1ms记数 921.6次
+			//16位 2^16 - x = 922 x=64614 FC66
+			//定时器里不断放fc66，不用怀疑51定时器得到的 1ms的精确性吗
+
+
+
+
+   	TH0 = 0xf6;
+    TL0 = 0x50;
+    //TH0 = 0xB1;
+	//TL0 = 0xE0; //20ms的时钟基准
+  //串口中断
+    TI=0;
+    RI=0;
+    SCON=0x50;        		//选用方式1
+    TMOD=0x20;
+    TMOD = (TMOD & 0xf0) | 1;//MODE 1
+   // TH1=0xe8;              //波特率为9600
+   // TL1=0xe8;
+    TH1=0xfd;              //波特率为9600
+   TL1=0xfd;
+    PCON=0x00;            //倍频0x80
+
+    IE = 0xb0;  	// EA XX ET2 ES ET0 EX0 ET1 EX1
+    TR1=1;  		//enable TIMER1
+    //TF0=0;
+    //PT0=1; //Set Timer0 interrupt as highest priority level'
+   // PT0=1; //Set Timer0 interrupt as highest priority level
+    ES=1;
+    TR0=1;
+    ET0=1;
+    ET1=0;
+    EA=1;
+    P0=0xC3;
+    P1=0xFE;
+    P2=0xFF;
+    P3=0xFF;
+   // P4=0xff;
+    timer_1S_cnt=0;
+    receive_count=0;
+    send_count=0xff;		//表示禁止发送,可以接收
+  // sync_count=0;
+  // int_case=0;
+   hsk1_pin_flag=1;
+ //  IO_OUT=1;
+   //INT_TMP1=0;
+   //INT_TMP2=0;
+
+
+}
+#elif  CPU_TYPE2==C8051F330
+void Sys_Init (void)
+{
+	 uchar j;
+	 //OSCICN = 0x0C;                     // configure internal oscillator for
+                                       // its maximum frequency}
+  // RSTSRC = 0x04;                      // enable missing clock detector
+   OSCICN |= 0x03;                     // 配置内部振荡器的的最大频率
+   RSTSRC  = 0x04;
+
+   P0SKIP  |= 0x01;
+   P0MDIN  |= 0x01;
+   P0MDOUT |= 0x10;
+   P1MDOUT |= 0x08;
+   XBR0    = 0x01; //端口I/O交叉开关寄存器0    TX0, RX0连到端口引脚P0.4和P0.5。
+   XBR1    = 0x50;   // 端口I/O交叉开关寄存器1     使能交叉开关  T0连到端口引脚
+
+
+   SCON0 = 0x10;               //(24500000/9600 /2/256)
+   if (SYSCLK/BAUDRATE/2/256 < 1) {
+
+      TH1 = -(SYSCLK/BAUDRATE/2);
+      CKCON &= ~0x0B;
+      CKCON |=  0x08;
+   } else if (SYSCLK/BAUDRATE/2/256 < 4) {
+      TH1 = -(SYSCLK/BAUDRATE/2/4);
+      CKCON &= ~0x0B;
+      CKCON |=  0x09;
+   } else if (SYSCLK/BAUDRATE/2/256 < 12) {
+      TH1 = -(SYSCLK/BAUDRATE/2/12);
+
+       CKCON &= ~0x0B;
+   } else {
+      TH1 = -(SYSCLK/BAUDRATE/2/48);
+      CKCON &= ~0x0B;
+      CKCON |=  0x02;
+   }
+
+
+    j=0x03;
+    j=~0x0b;
+   TL1 = TH1;
+   TMOD &= ~0xf0;
+   TMOD |=  0x20;
+   TR1 = 1;
+   TI0 = 1;                     // Indicate TX0 ready      24500000  ]
+   	TH0 = 0x9e;
+    TL0 = 0x38;
+    //TH0 = 0xB1;
+	//TL0 = 0xE0; //20ms的时钟基准
+  //串口中断
+    TI=0;
+    RI=0;
+    SCON0=0x50;        		//选用方式1
+    IE = 0xb0;  	// EA XX ET2 ES ET0 EX0 ET1 EX1
+    TR1=1;  		//enable TIMER1   TL0(低8位)和TH0(高8位)
+    TR0 = 1;  ET0 = 1;                          //t=65536-( 24.5/12)*25*1000    25MS  51041  14495        389e
+  //--- 定时器2系统时钟中断       //t=65536-(11.0592/12)*25*1000    25MS   23040   42496             A600
+   timer_1S_cnt=0;
+   //wait_count_50ms=0;
+  // wait_count_10s=0;
+
+   PCA0MD &= ~0x40;   // WDTE = 0 (clear watchdog timer enable)
+}
+
+#endif
+
+
+uchar  Send_AT_Command( uchar type)
+//拨号时号码放在phone.number
+//其他用para_temp
+{
+	AT_Command_Type=type;
+	send_count=0;
+    switch(type)
+    {
+
+	case VOICE_DIAL:   	//语音拨号
+        strcpy(uart_buff,"ATD");
+        strcat(uart_buff,para_temp);
+      // strcpy(uart_buff,"ATD10086;");
+       //strcat(uart_buff,";");
+
+        break;
+      case RESET_TC35:		//复位TC35
+      	strcpy(uart_buff,"AT+CFUN=1,1");
+     	break;
+      case CHECK_PIN:		//检查当前是否要输入PIN码
+        strcpy(uart_buff,"AT+CPIN?");
+        break;
+
+      case TC35_INIT:		//TC35初始化命令
+        strcpy(uart_buff,"ATE0V0");
+        break;
+      case TC35_SBC:      //检查信号
+      	 strcpy(uart_buff,"AT^SBC?");
+        break;
+
+      case VOICE_HANDSET:	//手柄方式
+      	strcpy(uart_buff,"AT^SNFS=4^SNFO=2,8000,14000,20000,26000,32700,0,512^SNFI=5,10000");
+      	break;
+
+    //
+      //   case REQUEST_MOD:			//读模块型号
+     	//strcpy(uart_buff,"AT+CGMM");
+     	//strcpy(para_temp,uart_buff);
+     	//strcpy(uart_buff,para_temp);
+     	//uart_buff[55]=0x0d;
+     //	uart_buff[60]=0x00;
+     //	break;
+     // case SIM_CARD_CHECK://查询是否有插入SIM卡 ^SCKS: 0,1
+     // 	strcpy(uart_buff,"ate0v0^scks?");
+     // 	break;
+
+      case SIM_ID:
+          strcpy(uart_buff,"AT+CMGF=1+CNMI=1,1");
+        break;
+        case SMSS_ID:
+          strcpy(uart_buff,"ATE0V0^SSMSS=1+CNMI=1,1");
+        break;
+      case HOOKOFF:			//挂机,停止通话
+        strcpy(uart_buff,"AT+CHUP");
+        break;
+      //case SMS_CNMI:	//SMS 接收方式,
+      //  strcpy(uart_buff,"AT+CNMI=1,1");
+       // break;
+     // case  TC35_VERSION:   //读取TC35的版本号
+     // 	strcpy(uart_buff,"AT+GMR");
+    //  	break;
+
+      case PHONE_WRITE:  	//存电话号码
+        strcpy(uart_buff,"AT+CPBW=");
+        strcat(uart_buff,para_temp);
+        break;
+    //  case PHONE_RC_CHECK:  	//已接电话
+    //    strcpy(uart_buff,"AT+CPBS=\x22RC\x22+CPBS?");
+    //    break;
+     case PHONE_SET:
+        strcpy(uart_buff,"AT+CPBW=");
+        strcat(uart_buff,para_temp);
+        break;
+    //  case PHONE_RC_CHECK:  	//已接电话
+    //    strcpy(uart_buff,"AT+CPBS=\x22RC\x22+CPBS?");
+    //    break;
+     case CALL_ID:			//读来电显示
+      	strcpy(uart_buff,"AT+CLCC");
+      	break;
+      case PHONE_READ:  	//读电话本
+        strcpy(uart_buff,"AT+CPBR=");
+        strcat(uart_buff,&read_tmp);
+        uart_buff[9]=0x0d; uart_buff[10]=0x0a;
+        uart_buff[11]=0x00;   uart_buff[12]=0x00;
+        break;
+      case SMS_CMGR:		//读一个短信
+        strcpy(uart_buff,"AT+CMGR=");
+        strcat(uart_buff,para_temp);
+        break;
+       case SMS_CMGS:		//写一个短信
+        strcpy(uart_buff,"AT+CMGS=");
+           strcat(uart_buff,para_temp);
+
+        break;
+       case SMS_CMGD:		//删除一个短信
+        strcpy(uart_buff,"AT+CMGD=");
+        strcat(uart_buff,para_temp);
+        break;
+       case  CMGS_MUB:    //发报警短信内容
+        strcpy(uart_buff,para_temp);
+         break;
+       case PICK_UP:         //摘机
+	    strcpy(uart_buff,"ATA");
+
+      case AT_COMMAND:
+      	break;
+      default:
+      	receive_count=0;
+      	return(TRUE);
+    }
+    ES=1;
+    strcat(uart_buff,"\x0d\x00");//在命令后加入CR
+    send_count=0;			//设置发送指针
+    receive_count=0;
+    AT_Command_Status=COMMAND_WAIT;	//设置接收成功标志
+    timer_1S_cnt=0;  timer_S_cnt=0;
+    txd_rxd_bit=0;
+     at_send_bit=0;
+    TI=1;					//开始发送数据
+    RI=0;					//清除接收标志
+
+
+  if(type==AT_COMMAND)
+    {
+    	return(TRUE);
+    }
+    else if (type==TC35_INIT )
+    {     while (timer_S_cnt<20)
+ 		{
+
+        	if (AT_Command_Status!=COMMAND_WAIT||txd_rxd_bit==1)
+        	return(TRUE);
+    	}
+    }
+
+    else if((type==SMS_CMGR))
+    {
+        while (timer_S_cnt<25)
+ 		{
+
+        	if (AT_Command_Status!=COMMAND_WAIT||txd_rxd_bit==1)
+        	return(TRUE);
+    	}
+    }
+
+    else
+    {
+    	 while (timer_S_cnt<20)
+ 		{
+    		system_sleep;
+        	if (AT_Command_Status!=COMMAND_WAIT||txd_rxd_bit==1)
+        	return(TRUE);
+    	}
+    }
+       eer_int++;
+    return(FALSE);
+}
+void tel_diat()           //报警时拨打前三个电话,时间设为40秒,
+{   uchar j,t;
+    timer_S_cnt=0;timer_1S_cnt=0;
+   	while(timer_S_cnt<1&&(AT_Command_Status==COMMAND_WAIT))  ;
+   	Send_AT_Command(VOICE_HANDSET );
+   	timer_S_cnt=0;timer_1S_cnt=0;
+   	while(timer_S_cnt<2);
+    io_p02_on=1;
+    t=0; //为没有打通电话时做临时存储    0000 0 000    0000 0111,
+    do
+        {
+   			TMP_BUF=0;
+   			read_tmp=0x31;
+   			j=PHONE_RD();    //读电话号码
+
+  			if(j)
+   			{    para_temp[j++]=';';para_temp[j++]=0x0d;para_temp[j++]=0x00;
+                   if(!Send_AT_Command(VOICE_DIAL));
+                   {  ES=1;			//设置发送指针
+    					receive_count=0;
+					    send_count=0xff;
+						 RI=0 ;
+    					//AT_Command_Status=COMMAND_WAIT;	//设置接收成功标志
+   				   		timercount=0;
+   				   	 	while((timercount<40)&&(AT_Command_Status==COMMAND_WAIT))  system_sleep;
+   				   }
+   				   if((uart_buff[0]=='0')&&uart_buff[1]==0x0d)      //拨号成功
+   				   {  	              //加语音发送设置--------------------------
+   				   	//	IO_SBT=1;IO_IRP=0;   P0=0x87;
+   				   		 ES=1;			//设置发送指针
+    					receive_count=0;
+					    send_count=0xff;
+    					uart_buff[0]=0;
+						 RI=0 ;
+    					AT_Command_Status=COMMAND_WAIT;	//设置接收成功标志
+   				   	 	timercount=0;
+   				   	 	while(timercount<10&&(AT_Command_Status==COMMAND_WAIT))   system_sleep;
+
+						// t&=~(1<<ii-1) ;     //  0110  &   1101
+                      Send_AT_Command(HOOKOFF);
+						while(timercount<5)   system_sleep;
+						return;
+   				    }
+   				    else
+   				    {
+
+   				    }
+
+   		 		       Send_AT_Command(HOOKOFF);
+						while(timercount<5)   system_sleep;
+
+   		 		  // else    continue;  //拨号失败  再拨下一个电话
+
+
+   			  }
+
+              t++;
+             if(io_p02_on==0) return;
+   		}while(t<50);
+
+}
+
+void tel_diat2()           //报警时拨打前2个电话,时间设为40秒,
+{   uchar ii,j,t;
+    timer_S_cnt=0;timer_1S_cnt=0;
+   	while(timer_S_cnt<1&&(AT_Command_Status==COMMAND_WAIT))  ;
+   	Send_AT_Command(VOICE_HANDSET );
+   	timer_S_cnt=0;timer_1S_cnt=0;
+   	while(timer_S_cnt<2);
+    ii=0;
+    t=3; //为没有打通电话时做临时存储    0000 0 000    0000 0111,
+    do
+        {
+   			ii=ii+1;
+			if(ii>=3)  ii=0;
+   			TMP_BUF=0;
+   			if(	(t>>ii-1)&0x01!=0)
+   			{
+   			  read_tmp=0x30+ii; }
+   			else
+			 { //ii=ii+1;
+			   continue;  }
+   			j=PHONE_RD();    //读电话号码
+
+  			if(j)
+   			{    para_temp[j++]=';';para_temp[j++]=0x0d;para_temp[j++]=0x00;
+                   if(!Send_AT_Command(VOICE_DIAL));
+                   {  ES=1;			//设置发送指针
+    					receive_count=0;
+					    send_count=0xff;
+						 RI=0 ;
+    					//AT_Command_Status=COMMAND_WAIT;	//设置接收成功标志
+   				   		timercount=0;
+   				   		while(timercount<70&&(AT_Command_Status==COMMAND_WAIT))  ;
+   				   }
+   				   if((uart_buff[0]=='0')&&uart_buff[1]==0x0d)      //拨号成功
+   				   {  	              //加语音发送设置--------------------------
+   				   	//	IO_SBT=1;IO_IRP=0;   P0=0x87;
+   				   		 ES=1;			//设置发送指针
+    					receive_count=0;
+					    send_count=0xff;
+    					uart_buff[0]=0;
+						 RI=0 ;
+    					AT_Command_Status=COMMAND_WAIT;	//设置接收成功标志
+
+                        timercount=0;
+   				   	 	while(timercount<40&&(AT_Command_Status==COMMAND_WAIT))
+   				      	system_sleep;
+
+						 t&=~(1<<ii-1) ;     //  0110  &   1101
+
+   				}
+   				else
+                     {  sms_tmp= smss_alarm;
+                        read_tmp=0x30+ii;
+                        send_sms();
+                        timercount=0;
+   				        while(timercount<3&&(AT_Command_Status==COMMAND_WAIT))  ;
+                     	}
+
+   		 		        Send_AT_Command(HOOKOFF);
+   				   	    timercount=0;
+   				        while(timercount<10&&(AT_Command_Status==COMMAND_WAIT))  ;
+                        Send_AT_Command(HOOKOFF);
+
+
+   			}
+   			else t=0;
+
+
+
+   		}while(t!=0);
+
+}
+
+
+
+void main(void)
+{
+	Initialize_Model();
+     pickup_pin_flag=1;hsk1_pin_flag=1;
+	// if(system_server==SYS_RING) system_server=SYS_RING;
+	// else
+	system_server=SYS_SMSR;
+	//system_server=SYS_START;
+	//system_server=SYS_PARA;
+	receive_count=0;
+	 sms_tmp=0;
+	 system_tep=1;
+	 eer_int=0;
+	 p2_stop_bit=0;
+	 // pickup_pin_flag=1;   hsk1_pin_flag=1;
+	while(1)
+	{
+		//-----------查询1到20条中的短信,只要有短信就处理------------------------------------------
+		if(system_server==SYS_SMSR)			//读1-20条短信
+			{	//send_sms();
+				//system_server=SYS_SMSR;
+			//
+			   // tel_diat();
+				read_sms();           		//timer_S_cnt=0;
+				//tel_diat();
+
+            }
+ 		//----------------一些短信的发送---------------------------------------------------
+		else if(system_server==SYS_SMSS)       //发送小区信息
+ 			{   eer_int=0;
+
+ 				 send_sms();system_server=SYS_SMSR;
+
+		   }
+
+		//---===============外部中断进行 报警状态=================================================================
+
+			//===================设置报警时的延时时长==================================================
+		else if(system_server==SYS_ALARM)
+		  	{
+		  		sms_tmp=smss_tel;
+				system_server=SYS_SMSR;
+		  	}
+
+		  else if(system_server==SYS_START)
+		  {
+
+		  		sms_tmp=smss_atart;
+		  		send_sms();
+
+		  		system_server=SYS_SMSR;
+
+
+
+		  }
+
+			//========================用短信进行设备参数检查=============================================================
+		 else if(system_server==SYS_PARA)          //设备参数查询
+     			{
+     				sms_tmp=smss_para;
+     			//	IO_OUT=1;     //断油、断电
+     			//read_sms();
+		  		system_server=SYS_SMSS;
+		  	}
+		//==========================进行报警时的电话号码和手机号的设置===========================================================
+		  else if(system_server==SYS_TEL)  //防盗电话号码设置
+		  {                          //存储位于SIM卡的4,5,6三个位置
+		  		sms_tmp=smss_tel;
+		  		system_server=SYS_SMSS;
+
+	      }
+		//==================//电池电量不充报警=================================================================
+		else if(system_server==SYS_SBC)          //电池电量不充报警
+		{
+			   if(batt_tmp>=1)
+			 {
+			 	sms_tmp=smss_sbc;
+		  	 	system_server=SYS_SMSS;
+		  	 }
+		  	 else 	 system_server=SYS_SMSR;
+
+	}
+	else  system_server=SYS_SMSR;
+
+	}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

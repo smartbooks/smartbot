@@ -1,0 +1,86 @@
+C51 COMPILER V9.51   MAIN                                                                  09/09/2014 12:43:01 PAGE 1   
+
+
+C51 COMPILER V9.51, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c ROM(COMPACT) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include"reg52.h"
+   2          #include "uart.c"
+   3          #include "delay.h"
+   4          
+   5          
+   6          uchar code PhoneNO[]= "18845146761"; //接收方号码
+   7          uchar code Text1[]= "Harmfulgases";  //内容
+   8          
+   9          
+  10          void main()
+  11          {
+  12   1        Uart_init();
+  13   1        while(1)
+  14   1        {
+  15   2        
+  16   2          SendString("AT+CMGF=1\r\n");  
+  17   2          
+  18   2          delayms_1000ms();
+  19   2          
+  20   2          SendString("AT+CSCS=\"GSM\"\r\n");  
+  21   2          
+  22   2          delayms_1000ms();
+  23   2          
+  24   2          SendString("AT+CMGS="); //信息发送指令 AT+CMGS=//
+  25   2          SendASC('"');
+  26   2          SendString(PhoneNO);   
+  27   2          SendASC('"');
+  28   2          SendASC('\r');      //发送回车指令//
+  29   2          SendASC('\n');      //发送回车指令//
+  30   2          
+  31   2          delayms_1000ms();
+  32   2          
+  33   2          SendString(Text1);  
+  34   2      
+  35   2          delayms_1000ms();
+  36   2          
+  37   2          SendASC(0x1a);    
+  38   2          
+  39   2          delayms_1000ms();
+  40   2          delayms_1000ms();
+  41   2          delayms_1000ms();
+  42   2          delayms_1000ms();
+  43   2          delayms_1000ms();
+  44   2        }
+  45   1      
+  46   1       }
+  47          
+  48           
+  49           
+  50          
+  51          
+  52           /*问题：
+  53             每次处理完数据。RsPoint是怎样清零的？？？？？在 准备发一个数据，然后接受一个数据 之前
+  54             RsBuf[RsPoint++]=SBUF;
+  55              RsBuf[RsPoint]=0x00;   //将下一个数据清零
+C51 COMPILER V9.51   MAIN                                                                  09/09/2014 12:43:01 PAGE 2   
+
+  56          
+  57              如果这个发送没问题。加删除，接收函数，参考桌面上的tc35.c
+  58          
+  59              添加液晶菜单的支持  ，类似手机
+  60          */
+  61           
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    169    ----
+   CONSTANT SIZE    =     62    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

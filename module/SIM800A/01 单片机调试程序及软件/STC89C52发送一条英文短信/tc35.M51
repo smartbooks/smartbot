@@ -1,0 +1,211 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/13/2014  10:52:32  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE main.obj TO tc35 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  main.obj (MAIN)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?CLDPTR)
+
+
+LINK MAP OF MODULE:  tc35 (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0058H     INBLOCK      ?PR?MAIN?MAIN
+            CODE    005BH     003EH     UNIT         ?CO?MAIN
+            CODE    0099H     0019H     UNIT         ?C?LIB_CODE
+            CODE    00B2H     0016H     INBLOCK      ?PR?UART_INIT?MAIN
+            CODE    00C8H     0013H     INBLOCK      ?PR?_SENDSTRING?MAIN
+            CODE    00DBH     000EH     INBLOCK      ?PR?_DELAY_MS?MAIN
+            CODE    00E9H     000DH     INBLOCK      ?PR?DELAYMS_1000MS?MAIN
+            CODE    00F6H     000CH     UNIT         ?C_C51STARTUP
+            CODE    0102H     0008H     INBLOCK      ?PR?_SENDASC?MAIN
+            CODE    010AH     0005H     INBLOCK      ?PR?DELAYMS_100MS?MAIN
+
+
+
+OVERLAY MAP OF MODULE:   tc35 (MAIN)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN
+  +--> ?PR?UART_INIT?MAIN
+  +--> ?CO?MAIN
+  +--> ?PR?DELAYMS_1000MS?MAIN
+  +--> ?PR?_SENDSTRING?MAIN
+  +--> ?PR?_SENDASC?MAIN
+
+?PR?DELAYMS_1000MS?MAIN
+  +--> ?PR?_SENDSTRING?MAIN
+  +--> ?PR?DELAYMS_100MS?MAIN
+
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/13/2014  10:52:32  PAGE 2
+
+
+?PR?_SENDSTRING?MAIN
+  +--> ?PR?_SENDASC?MAIN
+
+?PR?DELAYMS_100MS?MAIN
+  +--> ?PR?_DELAY_MS?MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  tc35 (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  B:00A8H.7       PUBLIC        EA
+  C:00C8H         PUBLIC        _SendString
+  D:00A8H         PUBLIC        IE
+  B:00A8H.4       PUBLIC        ES
+  D:00B8H         PUBLIC        IP
+  C:0080H         PUBLIC        PhoneNO
+  B:0098H.1       PUBLIC        TI
+  C:0003H         PUBLIC        main
+  D:0099H         PUBLIC        SBUF
+  D:0098H         PUBLIC        SCON
+  C:00B2H         PUBLIC        Uart_init
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  C:010AH         PUBLIC        delayms_100ms
+  D:008DH         PUBLIC        TH1
+  B:0098H.7       PUBLIC        SM0
+  B:0098H.6       PUBLIC        SM1
+  D:008BH         PUBLIC        TL1
+  C:00DBH         PUBLIC        _delay_ms
+  B:0088H.6       PUBLIC        TR1
+  C:008CH         PUBLIC        Text1
+  C:0102H         PUBLIC        _SendASC
+  B:0098H.4       PUBLIC        REN
+  D:00C8H         PUBLIC        T2CON
+  C:00ECH         PUBLIC        delayms_1000ms
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          UART_INIT
+  C:00B2H         LINE#         17
+  C:00B2H         LINE#         18
+  C:00B2H         LINE#         20
+  C:00B5H         LINE#         21
+  C:00B8H         LINE#         22
+  C:00BBH         LINE#         23
+  C:00BDH         LINE#         26
+  C:00BFH         LINE#         27
+  C:00C1H         LINE#         30
+  C:00C3H         LINE#         33
+  C:00C5H         LINE#         34
+  C:00C7H         LINE#         36
+  -------         ENDPROC       UART_INIT
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/13/2014  10:52:32  PAGE 3
+
+
+  -------         PROC          _SENDASC
+  D:0007H         SYMBOL        d
+  C:0102H         LINE#         38
+  C:0102H         LINE#         39
+  C:0102H         LINE#         41
+  C:0104H         LINE#         42
+  C:0107H         LINE#         44
+  C:0109H         LINE#         45
+  -------         ENDPROC       _SENDASC
+  -------         PROC          _SENDSTRING
+  D:0001H         SYMBOL        str
+  C:00C8H         LINE#         46
+  C:00C8H         LINE#         47
+  C:00C8H         LINE#         48
+  C:00CEH         LINE#         49
+  C:00CEH         LINE#         50
+  C:00D1H         LINE#         51
+  C:00D8H         LINE#         53
+  C:00DAH         LINE#         54
+  -------         ENDPROC       _SENDSTRING
+  -------         PROC          _DELAY_MS
+  D:0007H         SYMBOL        z
+  -------         DO            
+  D:0007H         SYMBOL        i
+  D:0006H         SYMBOL        j
+  -------         ENDDO         
+  C:00DBH         LINE#         4
+  C:00DBH         LINE#         5
+  C:00DBH         LINE#         7
+  C:00E1H         LINE#         8
+  C:00E8H         LINE#         9
+  -------         ENDPROC       _DELAY_MS
+  -------         PROC          DELAYMS_100MS
+  C:010AH         LINE#         10
+  C:010AH         LINE#         11
+  C:010AH         LINE#         13
+  -------         ENDPROC       DELAYMS_100MS
+  -------         PROC          L?0023
+  -------         ENDPROC       L?0023
+  -------         PROC          DELAYMS_1000MS
+  -------         DO            
+  D:0005H         SYMBOL        i
+  -------         ENDDO         
+  C:00ECH         LINE#         16
+  C:00ECH         LINE#         17
+  C:00ECH         LINE#         19
+  C:00EEH         LINE#         20
+  C:00F5H         LINE#         21
+  -------         ENDPROC       DELAYMS_1000MS
+  -------         PROC          MAIN
+  C:0003H         LINE#         10
+  C:0003H         LINE#         11
+  C:0003H         LINE#         12
+  C:0006H         LINE#         13
+  C:0006H         LINE#         14
+  C:0006H         LINE#         16
+  C:000CH         LINE#         18
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/13/2014  10:52:32  PAGE 4
+
+
+  C:000FH         LINE#         20
+  C:0013H         LINE#         22
+  C:0016H         LINE#         24
+  C:001DH         LINE#         25
+  C:0022H         LINE#         26
+  C:0029H         LINE#         27
+  C:002EH         LINE#         28
+  C:0033H         LINE#         29
+  C:0038H         LINE#         31
+  C:003BH         LINE#         33
+  C:0042H         LINE#         35
+  C:0045H         LINE#         37
+  C:004AH         LINE#         39
+  C:004DH         LINE#         40
+  C:0050H         LINE#         41
+  C:0053H         LINE#         42
+  C:0056H         LINE#         43
+  C:0059H         LINE#         44
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        ?C?CLDPTR
+  C:0099H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+Program Size: data=9.0 xdata=0 code=271
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

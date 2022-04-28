@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"message.obj" 
+TO "message" 
+RAMSIZE(256) 

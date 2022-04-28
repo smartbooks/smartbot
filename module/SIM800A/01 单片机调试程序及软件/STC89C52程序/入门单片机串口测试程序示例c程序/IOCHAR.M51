@@ -1,0 +1,239 @@
+BL51 BANKED LINKER/LOCATER V5.12                                                        03/28/2011  21:51:52  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V5.12, INVOKED BY:
+D:\KEIL\C51\BIN\BL51.EXE iochar.obj TO IOCHAR RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  iochar.obj (IOCHAR)
+  D:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+  D:\KEIL\C51\LIB\C51S.LIB (?C?CLDPTR)
+  D:\KEIL\C51\LIB\C51S.LIB (?C?ULCMP)
+  D:\KEIL\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  IOCHAR (IOCHAR)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0069H     UNIT         ?DT?IOCHAR
+            DATA    0071H     0004H     UNIT         _DATA_GROUP_
+            IDATA   0075H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     008CH     UNIT         ?C_C51STARTUP
+            CODE    008FH     0071H     UNIT         ?PR?MAIN?IOCHAR
+            CODE    0100H     0066H     UNIT         ?C_INITSEG
+            CODE    0166H     003FH     UNIT         ?PR?_DELAY_XMS?IOCHAR
+            CODE    01A5H     0030H     UNIT         ?PR?SEND_SMS_ENGLISH?IOCHAR
+            CODE    01D5H     002DH     UNIT         ?PR?_SERIAL_RECIEVE?IOCHAR
+            CODE    0202H     002AH     UNIT         ?C?LIB_CODE
+            CODE    022CH     0021H     UNIT         ?CO?IOCHAR
+            CODE    024DH     0016H     UNIT         ?PR?_SEND_MODEM_STRING?IOCHAR
+
+
+
+OVERLAY MAP OF MODULE:   IOCHAR (IOCHAR)
+
+
+SEGMENT                                 DATA_GROUP 
+  +--> CALLED SEGMENT                 START    LENGTH
+-----------------------------------------------------
+?C_C51STARTUP                         -----    -----
+  +--> ?PR?MAIN?IOCHAR
+  +--> ?C_INITSEG
+
+?PR?MAIN?IOCHAR                       -----    -----
+  +--> ?PR?_DELAY_XMS?IOCHAR
+  +--> ?PR?_SEND_MODEM_STRING?IOCHAR
+  +--> ?PR?_SERIAL_RECIEVE?IOCHAR
+  +--> ?PR?SEND_SMS_ENGLISH?IOCHAR
+
+?PR?_DELAY_XMS?IOCHAR                 0071H    0004H
+BL51 BANKED LINKER/LOCATER V5.12                                                      03/28/2011  21:51:52  PAGE 2
+
+
+  +--> ?PR?_SEND_MODEM_STRING?IOCHAR
+
+?PR?SEND_SMS_ENGLISH?IOCHAR           -----    -----
+  +--> ?PR?_DELAY_XMS?IOCHAR
+  +--> ?CO?IOCHAR
+  +--> ?PR?_SEND_MODEM_STRING?IOCHAR
+
+
+
+SYMBOL TABLE OF MODULE:  IOCHAR (IOCHAR)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        IOCHAR
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IE
+  B:0080H.0       PUBLIC        P0_0
+  B:0080H.1       PUBLIC        P0_1
+  D:00B8H         PUBLIC        IP
+  D:0008H         PUBLIC        CSCA
+  B:0098H.0       PUBLIC        RI
+  D:0022H         PUBLIC        flag
+  B:0098H.1       PUBLIC        TI
+  C:008FH         PUBLIC        main
+  D:0023H         PUBLIC        CMGS
+  C:01D5H         PUBLIC        _serial_recieve
+  D:003AH         PUBLIC        count
+  D:003BH         PUBLIC        CMGF_1
+  D:0099H         PUBLIC        SBUF
+  D:0087H         PUBLIC        PCON
+  D:0046H         PUBLIC        ctrlz
+  B:00A0H.0       PUBLIC        p2_0
+  D:0098H         PUBLIC        SCON
+  B:0090H.4       PUBLIC        p1_4
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  D:008DH         PUBLIC        TH1
+  C:01A5H         PUBLIC        send_SMS_english
+  D:008BH         PUBLIC        TL1
+  B:0088H.6       PUBLIC        TR1
+  D:0047H         PUBLIC        ATD
+  D:0058H         PUBLIC        str
+  D:006CH         PUBLIC        ATH
+  D:00C8H         PUBLIC        T2CON
+  C:0173H         PUBLIC        _Delay_xMs
+  D:00D0H         PUBLIC        PSW
+  C:024DH         PUBLIC        _send_modem_string
+  C:0168H         SYMBOL        L?0040
+  C:016BH         SYMBOL        L?0041
+  -------         PROC          L?0039
+  -------         ENDPROC       L?0039
+  C:0168H         SYMBOL        L?0040
+BL51 BANKED LINKER/LOCATER V5.12                                                      03/28/2011  21:51:52  PAGE 3
+
+
+  C:016BH         SYMBOL        L?0041
+  -------         PROC          _DELAY_XMS
+  D:0071H         SYMBOL        x
+  -------         DO            
+  D:0082H         SYMBOL        i
+  D:0006H         SYMBOL        j
+  -------         ENDDO         
+  C:0173H         LINE#         20
+  C:017BH         LINE#         21
+  C:017BH         LINE#         23
+  C:0193H         LINE#         24
+  C:0193H         LINE#         25
+  C:01A1H         LINE#         26
+  C:01A4H         LINE#         27
+  -------         ENDPROC       _DELAY_XMS
+  -------         PROC          _SEND_MODEM_STRING
+  D:0001H         SYMBOL        modem_string
+  C:024DH         LINE#         28
+  C:024DH         LINE#         29
+  C:024DH         LINE#         30
+  C:0252H         LINE#         31
+  C:0252H         LINE#         32
+  C:0254H         LINE#         33
+  C:0257H         LINE#         34
+  C:0259H         LINE#         35
+  C:0260H         LINE#         36
+  C:0262H         LINE#         37
+  -------         ENDPROC       _SEND_MODEM_STRING
+  -------         PROC          SEND_SMS_ENGLISH
+  C:01A5H         LINE#         39
+  C:01A5H         LINE#         40
+  C:01A5H         LINE#         41
+  C:01A9H         LINE#         42
+  C:01ACH         LINE#         43
+  C:01B0H         LINE#         44
+  C:01B3H         LINE#         45
+  C:01B9H         LINE#         46
+  C:01BCH         LINE#         47
+  C:01C5H         LINE#         48
+  C:01CCH         LINE#         56
+  C:01CFH         LINE#         57
+  C:01D2H         LINE#         58
+  C:01D4H         LINE#         59
+  -------         ENDPROC       SEND_SMS_ENGLISH
+  -------         PROC          _SERIAL_RECIEVE
+  D:0007H         SYMBOL        a
+  C:01D5H         LINE#         62
+  C:01D5H         LINE#         63
+  C:01D5H         LINE#         64
+  C:01D8H         LINE#         65
+  C:01D8H         LINE#         66
+  C:01DAH         LINE#         67
+  C:01E1H         LINE#         68
+  C:01E3H         LINE#         69
+  C:01FEH         LINE#         70
+  C:01FEH         LINE#         71
+  C:0201H         LINE#         77
+BL51 BANKED LINKER/LOCATER V5.12                                                      03/28/2011  21:51:52  PAGE 4
+
+
+  -------         ENDPROC       _SERIAL_RECIEVE
+  -------         PROC          MAIN
+  C:008FH         LINE#         79
+  C:008FH         LINE#         80
+  C:008FH         LINE#         82
+  C:0092H         LINE#         83
+  C:0095H         LINE#         84
+  C:0098H         LINE#         85
+  C:009BH         LINE#         86
+  C:009EH         LINE#         87
+  C:00A0H         LINE#         92
+  C:00A9H         LINE#         94
+  C:00B2H         LINE#         97
+  C:00B2H         LINE#         98
+  C:00B2H         LINE#         99
+  C:00B5H         LINE#         100
+  C:00B5H         LINE#         101
+  C:00B7H         LINE#         102
+  C:00BAH         LINE#         103
+  C:00BCH         LINE#         104
+  C:00BEH         LINE#         105
+  C:00C0H         LINE#         107
+  C:00C3H         LINE#         108
+  C:00C3H         LINE#         109
+  C:00CCH         LINE#         110
+  C:00D1H         LINE#         111
+  C:00EBH         LINE#         112
+  C:00EBH         LINE#         113
+  C:00EDH         LINE#         114
+  C:00F0H         LINE#         115
+  C:00F2H         LINE#         116
+  C:00F2H         LINE#         118
+  C:00F2H         LINE#         120
+  C:00F2H         LINE#         121
+  C:00F4H         LINE#         122
+  C:00F6H         LINE#         123
+  C:00F6H         LINE#         124
+  C:00F9H         LINE#         125
+  C:00F9H         LINE#         126
+  C:00FCH         LINE#         128
+  C:00FEH         LINE#         129
+  C:00FEH         LINE#         131
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        IOCHAR
+
+  -------         MODULE        ?C?CLDPTR
+  C:0202H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+  -------         MODULE        ?C?ULCMP
+  C:021BH         PUBLIC        ?C?ULCMP
+  -------         ENDMOD        ?C?ULCMP
+
+Program Size: data=118.0 xdata=0 code=611
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

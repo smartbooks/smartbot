@@ -1,0 +1,16 @@
+<html>
+<body>
+<pre>
+<h1>礦ision2 Build Log</h1>
+<h2>Project:</h2>
+E:\资料\SIM300资料\SIM300开发板配套光盘资料\STC89C52程序\c51GSM源代码\STC89C52单片机控制GSM发送短信例程\51GSM_SMS.uv2
+Project File Date:  04/27/2011
+
+<h2>Output:</h2>
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling GSM.C...
+linking...
+Program Size: data=9.0 xdata=0 code=383
+creating hex file from "51GSM_SMS"...
+"51GSM_SMS" - 0 Error(s), 0 Warning(s).

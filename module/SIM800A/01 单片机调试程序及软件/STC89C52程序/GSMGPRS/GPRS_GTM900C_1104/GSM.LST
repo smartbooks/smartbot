@@ -1,0 +1,298 @@
+C51 COMPILER V7.50   GSM                                                                   09/29/2010 23:39:26 PAGE 1   
+
+
+C51 COMPILER V7.50, COMPILATION OF MODULE GSM
+OBJECT MODULE PLACED IN GSM.OBJ
+COMPILER INVOKED BY: D:\单片机\Keil2\C51\BIN\C51.EXE GSM.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<reg52.h>
+   2          
+   3          #define uint unsigned int
+   4          #define uchar unsigned char
+   5          #define RST      0X01
+   6          #define CMGF     0X02
+   7          #define CMGD     0X03
+   8          #define CREG     0X04
+   9          #define CMGR     0X05
+  10          #define CMGS     0X06
+  11          #define CSCA     0X07
+  12          #define ATDAT    0X08
+  13          #define TC35RET  0X00
+  14           uchar TC35_CON;
+  15          extern uchar read_flag;
+  16          extern uchar i_TC35_RECE;
+  17          extern uchar i_receive,
+  18               TC35_RE[30],
+  19                    TC35_MAX,
+  20                    i_TC35;
+  21          extern uchar str0[16]={"TIME 00:00:00   "};
+  22          extern uchar str1[16]={"TEMP 000.0C     "};
+  23          uchar code  GSM_START[16]={"GSM START!      "};
+  24          uchar code     ATE_OK[16]={"ATE0 OK!        "};
+  25          uchar code  ATCMGF_OK[16]={"TEXT MODE OK!   "};
+  26          uchar code ATCREG1_OK[16]={"NET CONNECT OK! "};
+  27          uchar code ATCREG2_OK[16]={"NET CONNECTING! "};
+  28          ///////需要改动的地方///////////////////////////////////////////////////////////
+  29          uchar code TC_MDSJ2[]={"13132061066"};        //目的手机地址，
+  30          //uchar code TC_ZXH2[]={"+8613010130500"};      //天津联通本地中心号。
+  31          uchar code TC_ZXH2[]={"+8613800220500"};      //天津移动本地中心号。
+  32          ////////其他地方不要乱动////////////////////////////////////////////////////////
+  33          uchar code TC_MDSJ1[]={"AT+CMGS="};             //目的手机地址，
+  34          uchar code TC_ZXH1[]={"AT+CSCA="};              //本地中心号。
+  35          uchar code TC_FSNR[]={"I AM OK"};                   //发送短信内容。
+  36          uchar code TC_WLZT[]={"AT+CREG?"};                  //网络状态查询
+  37          uchar code TC_MSXZ[]={"AT+CMGF=1"};                 //发送模式选择。
+  38          uchar code TC_DQML[]={"AT+CMGR=1"};                 //短信读取命令。
+  39          uchar code TC_SCML[]={"AT+CMGD=1"};                 //短信删除命令。
+  40          uchar code TC_ATF[]={"AT&F"};                   //格式化命令。
+  41          uchar code TC_ATE0[]={"ATE0"};                  //清除回显命令
+  42          uchar code TC_ATE1[]={"ATE1"};                  //回复回显命令
+  43          
+  44          
+  45          void delay_GSM(uint i)
+  46          {unsigned int i_delay,j_delay;
+  47   1      for(i_delay=0;i_delay<i;i_delay++)
+  48   1      {for(j_delay=0;j_delay<100;j_delay++)
+  49   2      {;}}
+  50   1      } 
+  51          void init_serialcom( void ) 
+  52             { 
+  53   1             SCON = 0x50 ;  //SCON: serail mode 1, 8-bit UART, enable ucvr   
+  54   1                               //UART为模式1，8位数据，允许接收
+  55   1                TMOD |= 0x21 ; //TMOD: timer 1, mode 2, 8-bit reload             
+C51 COMPILER V7.50   GSM                                                                   09/29/2010 23:39:26 PAGE 2   
+
+  56   1                               //定时器1为模式2,8位自动重装
+  57   1                PCON |= 0x80 ; //SMOD=1; 
+  58   1                TH1 = 0xFD ;   //Baud:19200 fosc="11".0592MHz 
+  59   1                IE |= 0x90 ;     //Enable Serial Interrupt 
+  60   1                TR1 = 1 ;       // timer 1 run 
+  61   1                TI=1;        
+  62   1             }           
+  63          
+  64          //向串口发送一个字符 
+  65          void send_uart( char a_s) 
+  66                   { // TI= 0 ; 
+  67   1                
+  68   1                  while (TI!=1){;} 
+  69   1        SBUF=a_s; 
+  70   1                     TI= 0 ; 
+  71   1                                 
+  72   1                } 
+  73          //串口接收中断函数 
+  74          void serial () interrupt 4 using 3 
+  75          { 
+  76   1          if (RI) 
+  77   1                {  
+  78   2              RI = 0 ; 
+  79   2              i_receive=SBUF;
+  80   2              TC35_RE[i_TC35_RECE++]=i_receive;
+  81   2                // i_TC35_RECE++;
+  82   2                   if(i_TC35_RECE>TC35_MAX){TC35_MAX=i_TC35_RECE;}
+  83   2      
+  84   2                    }
+  85   1      } 
+  86          
+  87           
+  88          void ATE0()
+  89          {//I AM OK
+  90   1      uchar i;
+  91   1      for(i=0;i<sizeof(TC_ATE0)-1;i++)
+  92   1      {send_uart(TC_ATE0[i]);} 
+  93   1      send_uart(0X0D);
+  94   1      send_uart(0X0A);
+  95   1      TC35_CON=RST;
+  96   1      //TC35_CON=ATDAT;
+  97   1      }
+  98          void ATNAME()
+  99          {//I AM OK
+ 100   1      uchar i;
+ 101   1      for(i=0;i<sizeof(TC_FSNR)-1;i++)
+ 102   1      {send_uart(TC_FSNR[i]);} 
+ 103   1      delay_GSM(500);
+ 104   1      send_uart(0X1A); 
+ 105   1      TC35_CON=ATDAT;
+ 106   1      }
+ 107          //写目的手机的
+ 108          void AT_CMGS()
+ 109          {//AT+CMGS=13132061066
+ 110   1      uchar i;
+ 111   1      for(i=0;i<sizeof(TC_MDSJ1)-1;i++)
+ 112   1      {send_uart(TC_MDSJ1[i]);} 
+ 113   1      
+ 114   1      send_uart(0X22); 
+ 115   1      for(i=0;i<sizeof(TC_MDSJ2)-1;i++)
+ 116   1      {send_uart(TC_MDSJ2[i]);} 
+ 117   1      
+C51 COMPILER V7.50   GSM                                                                   09/29/2010 23:39:26 PAGE 3   
+
+ 118   1      send_uart(0X22); 
+ 119   1      send_uart(0X0D); 
+ 120   1      send_uart(0X0D);
+ 121   1      send_uart(0X0A);
+ 122   1      TC35_CON=CMGS;
+ 123   1      }
+ 124          //写信息中心号
+ 125          void AT_CSCA()
+ 126          {//AT+CSCA=+8613010130500
+ 127   1      uchar i;
+ 128   1      for(i=0;i<sizeof(TC_ZXH1)-1;i++)
+ 129   1      {send_uart(TC_ZXH1[i]);} 
+ 130   1      send_uart(0X22); 
+ 131   1      for(i=0;i<sizeof(TC_ZXH2)-1;i++)
+ 132   1      {send_uart(TC_ZXH2[i]);} 
+ 133   1      
+ 134   1      send_uart(0X22); 
+ 135   1      
+ 136   1      send_uart(0X0D);
+ 137   1      send_uart(0X0A);
+ 138   1      TC35_CON=CSCA;
+ 139   1      }
+ 140          //AT复位指令
+ 141          void AT_RST()
+ 142          {
+ 143   1      uchar i;
+ 144   1      for(i=0;i<sizeof(TC_ATF)-1;i++)
+ 145   1      {send_uart(TC_ATF[i]);} 
+ 146   1      send_uart(0X0D); 
+ 147   1      send_uart(0X0D);
+ 148   1      send_uart(0X0A);
+ 149   1      TC35_CON=RST;
+ 150   1      }
+ 151          //AT网络状态查询指令
+ 152          void AT_CREG()
+ 153          {
+ 154   1      uchar i;
+ 155   1      for(i=0;i<sizeof(TC_WLZT)-1;i++)
+ 156   1      {send_uart(TC_WLZT[i]);} 
+ 157   1      send_uart(0X0D); 
+ 158   1      send_uart(0X0D);
+ 159   1      send_uart(0X0A);
+ 160   1      TC35_CON=CREG;
+ 161   1      }
+ 162          //AT接收格式指令
+ 163          void AT_CMGF()
+ 164          {//AT+CMGF=1
+ 165   1      uchar i;
+ 166   1      for(i=0;i<sizeof(TC_MSXZ)-1;i++)
+ 167   1      {send_uart(TC_MSXZ[i]);}
+ 168   1      send_uart(0X0D); 
+ 169   1      send_uart(0X0D); 
+ 170   1      send_uart(0X0A);
+ 171   1      TC35_CON=CMGF;
+ 172   1      }
+ 173          //AT短消息读取指令
+ 174          void AT_CMGR()
+ 175          {//AT+CMGR=1
+ 176   1      uchar i;
+ 177   1      for(i=0;i<sizeof(TC_DQML)-1;i++)
+ 178   1      {send_uart(TC_DQML[i]);}
+ 179   1      send_uart(0X0D); 
+C51 COMPILER V7.50   GSM                                                                   09/29/2010 23:39:26 PAGE 4   
+
+ 180   1      send_uart(0X0D);
+ 181   1      send_uart(0X0A);
+ 182   1      TC35_CON=CMGR;
+ 183   1      }
+ 184          //AT短消息删除指令
+ 185          void AT_CMGD()
+ 186          {//AT+CMGD=1
+ 187   1      uchar i;
+ 188   1      for(i=0;i<sizeof(TC_SCML)-1;i++)
+ 189   1      {send_uart(TC_SCML[i]);} 
+ 190   1      send_uart(0X0D); 
+ 191   1      send_uart(0X0D);
+ 192   1      send_uart(0X0A);
+ 193   1      TC35_CON=CMGD;
+ 194   1      }
+ 195          
+ 196          
+ 197          void SEND_MESSAGE()
+ 198          { delay_GSM(10);
+ 199   1      if(TC35_MAX>0)
+ 200   1      {
+ 201   2      if(TC35_CON==RST){
+ 202   3      if((TC35_RE[2]=='O')&&(TC35_RE[3]=='K'))
+ 203   3      {
+ 204   4      //LCD(str0,ATE_OK);
+ 205   4      TC35_CON=TC35RET; 
+ 206   4       delay_GSM(10);
+ 207   4      AT_CMGF();}
+ 208   3      //如果不成功则重新关闭回显
+ 209   3      else{  delay_GSM(10);
+ 210   4      ATE0();
+ 211   4      }
+ 212   3      }
+ 213   2      else if(TC35_CON==CMGF){
+ 214   3      if((TC35_RE[2]=='O')&&(TC35_RE[3]=='K'))
+ 215   3      {//LCD(str0,ATCMGF_OK);
+ 216   4      TC35_CON=TC35RET;  delay_GSM(10);
+ 217   4      AT_CREG();}
+ 218   3      else{;}
+ 219   3      }
+ 220   2      else if(TC35_CON==CREG){
+ 221   3      if(((TC35_RE[9]=='0')&&(TC35_RE[11]=='1'))||((TC35_RE[9]=='0')&&(TC35_RE[11]=='5')))
+ 222   3      {//LCD(str0, ATCREG1_OK);
+ 223   4      TC35_CON=TC35RET;AT_CSCA();}
+ 224   3      else{
+ 225   4      //LCD(str0, ATCREG2_OK);
+ 226   4      AT_CREG();}
+ 227   3      }
+ 228   2      else if(TC35_CON==CMGD){;}
+ 229   2      //填写信息中心号
+ 230   2      else if(TC35_CON==CSCA){
+ 231   3      
+ 232   3       delay_GSM(10);
+ 233   3      if((TC35_RE[2]=='O')&&(TC35_RE[3]=='K'))
+ 234   3      { delay_GSM(100);AT_CMGS();}
+ 235   3      //如果没出现CALL READY 则重新初始化
+ 236   3      else if((TC35_RE[2]=='+'))
+ 237   3      { delay_GSM(100);ATE0();}
+ 238   3      else{AT_CSCA();}
+ 239   3      }
+ 240   2      
+ 241   2      //填写发送内容
+C51 COMPILER V7.50   GSM                                                                   09/29/2010 23:39:26 PAGE 5   
+
+ 242   2      else if(TC35_CON==CMGS){ delay_GSM(10);
+ 243   3      if((TC35_RE[2]==0X3E)&&(TC35_RE[3]==0X20))
+ 244   3      { delay_GSM(100);ATNAME();}
+ 245   3      else{ATNAME();;}
+ 246   3      }
+ 247   2      //发送完毕返回继续扫描接收
+ 248   2      else if(TC35_CON==ATDAT){ delay_GSM(10);
+ 249   3      if((TC35_RE[0]=='+')||(TC35_RE[0]==0x1A))
+ 250   3      {;//delay(100);AT_CMGR();
+ 251   4      }
+ 252   3      else{;}
+ 253   3      }
+ 254   2      //复位接收组
+ 255   2      for(i_TC35=0;i_TC35<=29;i_TC35++)
+ 256   2      {TC35_RE[i_TC35]=0;}
+ 257   2      i_TC35_RECE=0;
+ 258   2      TC35_MAX=0;
+ 259   2      }
+ 260   1      }
+ 261          
+ 262          
+ 263          
+ 264          
+ 265          
+ 266          
+ 267          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    609    ----
+   CONSTANT SIZE    =    187    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     33    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

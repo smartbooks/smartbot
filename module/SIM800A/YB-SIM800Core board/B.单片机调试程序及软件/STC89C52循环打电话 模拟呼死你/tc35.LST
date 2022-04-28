@@ -1,0 +1,99 @@
+C51 COMPILER V8.08   TC35                                                                  01/04/2010 21:32:25 PAGE 1   
+
+
+C51 COMPILER V8.08, COMPILATION OF MODULE TC35
+OBJECT MODULE PLACED IN tc35.OBJ
+COMPILER INVOKED BY: F:\Program Files\keil\C51\BIN\C51.EXE tc35.c COMPACT BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include "uart.c"
+   2          #include "1602.h"
+   3          #include "delay.h"
+   4          
+   5          #define uchar unsigned char
+   6          #define uint unsigned int
+   7           #define NULL 0
+   8          
+   9          #define ATwaits                 10
+  10          #define DWWwaits                10
+  11          #define Readwaits               10
+  12          #define Sendwaits               10
+  13          
+  14          #define RsBuf_N                 40
+  15          
+  16          char RsBuf[RsBuf_N];    //定义串口接收数据缓冲区
+  17          
+  18          void Send_AT(void);
+  19          char *mystrstr(char *s, char *t);
+  20          
+  21          /***********************发送联机指令******************************
+  22          *功    能: 串口发送数组命令到TC35，"AT",
+  23          *形    参: 
+  24          *返 回 值:
+  25          *备    注: 测试GSM模块是否连接正确
+  26          *****************************************************************/
+  27          void Send_AT(void)
+  28          {
+  29   1        uchar *p,i=ATwaits;
+  30   1              while(i--){
+  31   2              SendString("AT\r");
+  32   2                      //****************************等待应答"OK"
+  33   2              ES=1;    //必须中断
+  34   2              delayms_100ms();
+  35   2              p=mystrstr(RsBuf,"OK");
+  36   2              if(p!=NULL) {
+  37   3                              lcd_disp_str("GSM module is OK",1);
+  38   3                              lcd_disp_str("Will contimue!  ",2);
+  39   3                              delayms_1000ms();delayms_1000ms();
+  40   3                              lcd_disp_str("                ",1);
+  41   3                              lcd_disp_str("                ",2);
+  42   3                              break;
+  43   3                              }
+  44   2                      lcd_disp_str("No GSM connected",1);delayms_1000ms();
+  45   2                      lcd_disp_str("                ",1);
+  46   2                      }
+  47   1      }
+  48          
+  49          
+  50          /***********************字符串查找********************************
+  51          *功    能: 查找字符串
+  52          *形    参: char *s,  char *t  ;在s中查找t
+  53          *返 回 值: s_temp(t在s中的位置)成功     0 （失败 ）
+  54          *备    注: 
+  55          *****************************************************************/
+C51 COMPILER V8.08   TC35                                                                  01/04/2010 21:32:25 PAGE 2   
+
+  56          char *mystrstr(char *s, char *t)
+  57          {
+  58   1        char    *s_temp;        /*the s_temp point to the s*/
+  59   1        char    *m_temp;        /*the mv_tmp used to move in the loop*/
+  60   1        char    *t_temp;        /*point to the pattern string*/
+  61   1      
+  62   1              if (NULL == s || NULL == t) return NULL;
+  63   1      
+  64   1              /*s_temp point to the s string*/
+  65   1              for (s_temp = s; *s_temp != '\0'; s_temp++){
+  66   2                      /*the move_tmp used for pattern loop*/
+  67   2                      m_temp = s_temp;
+  68   2              /*the pattern string loop from head every time*/
+  69   2                      for (t_temp = t; *t_temp == *m_temp; t_temp++, m_temp++);
+  70   2              /*if at the tail of the pattern string return s_tmp*/
+  71   2                      if (*t_temp == '\0') return s_temp;
+  72   2              }
+  73   1              return NULL;
+  74   1       }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    498    ----
+   CONSTANT SIZE    =     75    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =     42      16
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

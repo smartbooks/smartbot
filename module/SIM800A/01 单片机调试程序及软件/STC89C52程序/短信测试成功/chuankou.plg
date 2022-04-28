@@ -1,0 +1,61 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+D:\360安全浏览器下载\单片机程序(51-AVR-430-STM32)-亲测\51单片机例程\STC89C52程序\短信测试成功\chuankou.uvproj
+Project File Date:  03/19/2012
+
+<h2>Output:</h2>
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling chuankou.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_CMGF?CHUANKOU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CSCS?CHUANKOU
+Program Size: data=68.0 xdata=0 code=829
+creating hex file from "chuankou"...
+"chuankou" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling chuankou.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_CMGF?CHUANKOU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CSCS?CHUANKOU
+Program Size: data=68.0 xdata=0 code=829
+creating hex file from "chuankou"...
+"chuankou" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling chuankou.c...
+CHUANKOU.C(119): error C103: '<string>': unclosed string
+chuankou.c(119): error C305: unterminated string/char const
+CHUANKOU.C(120): error C141: syntax error near 'unsigned'
+CHUANKOU.C(135): error C183: unmodifiable lvalue
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling chuankou.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_CMGF?CHUANKOU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CSCS?CHUANKOU
+Program Size: data=68.0 xdata=0 code=829
+creating hex file from "chuankou"...
+"chuankou" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling chuankou.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_CMGF?CHUANKOU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CSCS?CHUANKOU
+Program Size: data=68.0 xdata=0 code=829
+creating hex file from "chuankou"...
+"chuankou" - 0 Error(s), 2 Warning(s).

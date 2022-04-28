@@ -1,0 +1,315 @@
+<?xml version="1.0" standalone="yes" ?>
+<!-- JEDIVIEW Toolchain Configurtion file for 51 system-->
+<Configurations>
+    <Option name="Target">
+        <Catalog name="target id" value="1" valtype="INT" />
+        <Catalog name="attir2" value="0" valtype="INT" />
+        <Catalog name="attir3" value="0" valtype="INT" />
+        <Catalog name="Device" value="AT89C52" valtype="STRING" />
+        <Catalog name="Vendor" value="Atmel" valtype="STRING" />
+        <Catalog name="CPU">
+            <Item name="IRAM" value="0 - 0xFF" valtype="STRING" />
+            <Item name="IROM" value="0 - 0x1FFF" valtype="STRING" />
+            <Item name="CLOCK" value="24000000" valtype="STRING" />
+            <Item name="MOD" value="" valtype="STRING" />
+            <Item name="XRAM" value="" valtype="STRING" />
+            <Item name="ICAN" value="" valtype="STRING" />
+            <Item name="bDPX" value="0" valtype="INT" />
+            <Item name="bMOD_CONT" value="0" valtype="INT" />
+            <Item name="bMX51" value="0" valtype="INT" />
+        </Catalog>
+        <Catalog name="FlashUt" value="" valtype="STRING" />
+        <Catalog name="StupF" value="" valtype="STRING" />
+        <Catalog name="FlashDR" value="" valtype="STRING" />
+        <Catalog name="Rgf" value="AT89X52.H" valtype="STRING" />
+        <Catalog name="Mem" value="" valtype="STRING" />
+        <Catalog name="C" value="" valtype="STRING" />
+        <Catalog name="A" value="" valtype="STRING" />
+        <Catalog name="RL" value="" valtype="STRING" />
+        <Catalog name="OH" value="" valtype="STRING" />
+        <Catalog name="UseEnv" value="0" valtype="INT" />
+        <Catalog name="EnvBin" value="C:\Keil\C51\BIN" valtype="STRING" />
+        <Catalog name="EnvInc" value="C:\KEIL\C51\INC;C:\Keil\C51\inc" valtype="STRING" />
+        <Catalog name="EnvLib" value="\Dallas;C:\Keil\C51\INC\Atmel;C:\Keil\C51\INC\AtmelWM" valtype="STRING" />
+        <Catalog name="EnvReg" value="ÿAtmel\" valtype="STRING" />
+        <Catalog name="OrgReg" value="0" valtype="INT" />
+        <Catalog name="TgStat" value="0" valtype="INT" />
+        <Catalog name="OutDir" value=".\" valtype="STRING" />
+        <Catalog name="OutName" value="cheshi.omf" valtype="STRING" />
+        <Catalog name="GenApp" value="1" valtype="INT" />
+        <Catalog name="GenLib" value="0" valtype="INT" />
+        <Catalog name="GenHex" value="1" valtype="INT" />
+        <Catalog name="Debug" value="1" valtype="INT" />
+        <Catalog name="Browse" value="1" valtype="INT" />
+        <Catalog name="LstDir" value=".\" valtype="STRING" />
+        <Catalog name="HexSel" value="0" valtype="INT" />
+        <Catalog name="HexSel offset" value="0" valtype="INT" />
+        <Catalog name="MG32K" value="0" valtype="INT" />
+        <Catalog name="RunUsrItem 0" value="RunUsrItem 0">
+            <Item name="id" value="0" valtype="INT" />
+            <Item name="bEnable" value="0" valtype="INT" />
+            <Item name="ExePath" value="" valtype="STRING" />
+        </Catalog>
+        <Catalog name="RunUsrItem 1" value="RunUsrItem 1">
+            <Item name="id" value="1" valtype="INT" />
+            <Item name="bEnable" value="0" valtype="INT" />
+            <Item name="ExePath" value="" valtype="STRING" />
+        </Catalog>
+        <Catalog name="BrunUsrItem 0" value="BrunUsrItem 0">
+            <Item name="id1" value="0" valtype="INT" />
+            <Item name="id2" value="0" valtype="INT" />
+            <Item name="string" value="" valtype="STRING" />
+        </Catalog>
+        <Catalog name="BrunUsrItem 1" value="BrunUsrItem 1">
+            <Item name="id1" value="1" valtype="INT" />
+            <Item name="id2" value="0" valtype="INT" />
+            <Item name="string" value="" valtype="STRING" />
+        </Catalog>
+        <Catalog name="SVCSID" value="" valtype="STRING" />
+        <Catalog name="MODEL5" value="0" valtype="INT" />
+        <Catalog name="RTOS5" value="0" valtype="INT" />
+        <Catalog name="ROMSZ5" value="2" valtype="INT" />
+        <Catalog name="DHOLD5" value="0" valtype="INT" />
+        <Catalog name="XHOLD5" value="0" valtype="INT" />
+        <Catalog name="T51FL" value="0" valtype="INT" />
+        <Catalog name="CBANKS5" value="0" valtype="INT" />
+        <Catalog name="XBANKS5" value="0" valtype="INT" />
+        <Catalog name="RCB51" value="RCB51">
+            <Item name="id1" value="0" valtype="INT" />
+            <Item name="bank start low" value="0" valtype="INT" />
+            <Item name="bank start high" value="0" valtype="INT" />
+            <Item name="id4" value="0" valtype="INT" />
+            <Item name="id5" value="0" valtype="INT" />
+            <Item name="bank end low" value="255" valtype="INT" />
+            <Item name="bank end high" value="255" valtype="INT" />
+            <Item name="id8" value="1" valtype="INT" />
+            <Item name="id9" value="0" valtype="INT" />
+        </Catalog>
+        <Catalog name="RXB51" value="RXB51">
+            <Item name="id1" value="0" valtype="INT" />
+            <Item name="id2" value="0" valtype="INT" />
+            <Item name="id3" value="0" valtype="INT" />
+            <Item name="id4" value="0" valtype="INT" />
+            <Item name="id5" value="0" valtype="INT" />
+            <Item name="id6" value="0" valtype="INT" />
+            <Item name="id7" value="0" valtype="INT" />
+            <Item name="id8" value="0" valtype="INT" />
+            <Item name="id9" value="0" valtype="INT" />
+        </Catalog>
+        <Catalog name="OCM51" value="OCM51">
+            <Item name="id1" value="0" valtype="INT" />
+            <Item name="eprom1_start_low" value="0" valtype="INT" />
+            <Item name="eprom1_start_high" value="0" valtype="INT" />
+            <Item name="eprom1_start_highest" value="0" valtype="INT" />
+            <Item name="id5" value="0" valtype="INT" />
+            <Item name="eprom1_size_low" value="0" valtype="INT" />
+            <Item name="eprom1_size_high" value="0" valtype="INT" />
+            <Item name="eprom1_size_highest" value="0" valtype="INT" />
+            <Item name="id9" value="0" valtype="INT" />
+            <Item name="id10" value="0" valtype="INT" />
+            <Item name="eprom2_start_low" value="0" valtype="INT" />
+            <Item name="eprom2_start_high" value="0" valtype="INT" />
+            <Item name="eprom2_start_highest" value="0" valtype="INT" />
+            <Item name="id14" value="0" valtype="INT" />
+            <Item name="eprom2_size_low" value="0" valtype="INT" />
+            <Item name="eprom2_size_high" value="0" valtype="INT" />
+            <Item name="eprom2_size_highest" value="0" valtype="INT" />
+            <Item name="id18" value="0" valtype="INT" />
+            <Item name="id19" value="0" valtype="INT" />
+            <Item name="eprom3_start_low" value="0" valtype="INT" />
+            <Item name="eprom3_start_hgih" value="0" valtype="INT" />
+            <Item name="eprom3_start_highest" value="0" valtype="INT" />
+            <Item name="id23" value="0" valtype="INT" />
+            <Item name="eprom3_size_low" value="0" valtype="INT" />
+            <Item name="eprom3_size_high" value="0" valtype="INT" />
+            <Item name="eprom3_size_highest" value="0" valtype="INT" />
+            <Item name="id27" value="0" valtype="INT" />
+        </Catalog>
+        <Catalog name="OCR51" value="OCR51">
+            <Item name="id1" value="0" valtype="INT" />
+            <Item name="ram1_start_low" value="0" valtype="INT" />
+            <Item name="ram1_start_high" value="0" valtype="INT" />
+            <Item name="ram1_start_highest" value="0" valtype="INT" />
+            <Item name="id5" value="0" valtype="INT" />
+            <Item name="ram1_size_low" value="0" valtype="INT" />
+            <Item name="ram1_size_high" value="0" valtype="INT" />
+            <Item name="ram1_size_highest" value="0" valtype="INT" />
+            <Item name="id9" value="0" valtype="INT" />
+            <Item name="id10" value="0" valtype="INT" />
+            <Item name="ram2_start_low" value="0" valtype="INT" />
+            <Item name="ram2_start_high" value="0" valtype="INT" />
+            <Item name="ram2_start_highest" value="0" valtype="INT" />
+            <Item name="id14" value="0" valtype="INT" />
+            <Item name="ram2_size_low" value="0" valtype="INT" />
+            <Item name="ram2_size_high" value="0" valtype="INT" />
+            <Item name="ram2_size_highest" value="0" valtype="INT" />
+            <Item name="id18" value="0" valtype="INT" />
+            <Item name="id19" value="0" valtype="INT" />
+            <Item name="ram3_start_low" value="0" valtype="INT" />
+            <Item name="ram3_start_high" value="0" valtype="INT" />
+            <Item name="ram3_start_highest" value="0" valtype="INT" />
+            <Item name="id23" value="0" valtype="INT" />
+            <Item name="ram3_size_low" value="0" valtype="INT" />
+            <Item name="ram3_size_high" value="0" valtype="INT" />
+            <Item name="ram3_size_highest" value="0" valtype="INT" />
+            <Item name="id27" value="0" valtype="INT" />
+        </Catalog>
+        <Catalog name="IRO51" value="IRO51">
+            <Item name="id1" value="1" valtype="INT" />
+            <Item name="id2" value="0" valtype="INT" />
+            <Item name="id3" value="0" valtype="INT" />
+            <Item name="id4" value="0" valtype="INT" />
+            <Item name="id5" value="0" valtype="INT" />
+            <Item name="id6" value="0" valtype="INT" />
+            <Item name="id7" value="16" valtype="INT" />
+            <Item name="id8" value="0" valtype="INT" />
+            <Item name="id9" value="0" valtype="INT" />
+        </Catalog>
+        <Catalog name="IRA51" value="IRA51">
+            <Item name="id1" value="0" valtype="INT" />
+            <Item name="id2" value="0" valtype="INT" />
+            <Item name="id3" value="0" valtype="INT" />
+            <Item name="id4" value="0" valtype="INT" />
+            <Item name="id5" value="0" valtype="INT" />
+            <Item name="id6" value="128" valtype="INT" />
+            <Item name="id7" value="0" valtype="INT" />
+            <Item name="id8" value="0" valtype="INT" />
+            <Item name="id9" value="0" valtype="INT" />
+        </Catalog>
+        <Catalog name="XRA51" value="XRA51">
+            <Item name="id1" value="0" valtype="INT" />
+            <Item name="id2" value="0" valtype="INT" />
+            <Item name="id3" value="0" valtype="INT" />
+            <Item name="id4" value="0" valtype="INT" />
+            <Item name="id5" value="0" valtype="INT" />
+            <Item name="id6" value="0" valtype="INT" />
+            <Item name="id7" value="0" valtype="INT" />
+            <Item name="id8" value="0" valtype="INT" />
+            <Item name="id9" value="0" valtype="INT" />
+        </Catalog>
+        <Catalog name="C51FL" value="21646608" valtype="INT" />
+        <Catalog name="C51VA" value="0" valtype="INT" />
+        <Catalog name="C51MSC" value="" valtype="STRING" />
+        <Catalog name="C51DEF" value="" valtype="STRING" />
+        <Catalog name="C51UDF" value="" valtype="STRING" />
+        <Catalog name="INCC5" value="" valtype="STRING" />
+        <Catalog name="AX51FL" value="68" valtype="INT" />
+        <Catalog name="AX51MSC" value="" valtype="STRING" />
+        <Catalog name="AX51SET" value="" valtype="STRING" />
+        <Catalog name="AX51RST" value="" valtype="STRING" />
+        <Catalog name="INCA5" value="" valtype="STRING" />
+        <Catalog name="IncBld" value="1" valtype="INT" />
+        <Catalog name="AlwaysBuild" value="0" valtype="INT" />
+        <Catalog name="GenAsm" value="0" valtype="INT" />
+        <Catalog name="AsmAsm" value="0" valtype="INT" />
+        <Catalog name="PublicsOnly" value="0" valtype="INT" />
+        <Catalog name="StopCode" value="3" valtype="INT" />
+        <Catalog name="CustArgs" value="" valtype="STRING" />
+        <Catalog name="LibMods" value="" valtype="STRING" />
+        <Catalog name="BankNo" value="65535" valtype="INT" />
+        <Catalog name="LX51FL" value="266" valtype="INT" />
+        <Catalog name="LX51OVL" value="" valtype="STRING" />
+        <Catalog name="LX51MSC" value="" valtype="STRING" />
+        <Catalog name="LX51DWN" value="" valtype="STRING" />
+        <Catalog name="LX51LFI" value="" valtype="STRING" />
+        <Catalog name="LX51ASN" value="" valtype="STRING" />
+        <Catalog name="LX51RES" value="" valtype="STRING" />
+        <Catalog name="LX51CCL" value="" valtype="STRING" />
+        <Catalog name="LX51UCL" value="" valtype="STRING" />
+        <Catalog name="LX51CSC" value="" valtype="STRING" />
+        <Catalog name="LX51UCS" value="" valtype="STRING" />
+        <Catalog name="LX51COB" value="" valtype="STRING" />
+        <Catalog name="LX51XDB" value="" valtype="STRING" />
+        <Catalog name="LX51PDB" value="" valtype="STRING" />
+        <Catalog name="LX51BIB" value="" valtype="STRING" />
+        <Catalog name="LX51DAB" value="" valtype="STRING" />
+        <Catalog name="LX51IDB" value="" valtype="STRING" />
+        <Catalog name="LX51PRC" value="" valtype="STRING" />
+        <Catalog name="LX51STK" value="" valtype="STRING" />
+        <Catalog name="LX51COS" value="" valtype="STRING" />
+        <Catalog name="LX51XDS" value="" valtype="STRING" />
+        <Catalog name="LX51BIS" value="" valtype="STRING" />
+        <Catalog name="LX51DAS" value="" valtype="STRING" />
+        <Catalog name="LX51IDS" value="" valtype="STRING" />
+        <Catalog name="OPTDL" value="OPTDL">
+            <Item name="Unknown1" value="S8051.DLL" valtype="STRING" />
+            <Item name="Unknown2" value="" valtype="STRING" />
+            <Item name="Unknown3" value="DP51.DLL" valtype="STRING" />
+            <Item name="Unknown4" value="-p51" valtype="STRING" />
+            <Item name="Unknown5" value="S8051.DLL" valtype="STRING" />
+            <Item name="Unknown6" value="" valtype="STRING" />
+            <Item name="Unknown7" value="TP51.DLL" valtype="STRING" />
+            <Item name="Unknown8" value="-p51" valtype="STRING" />
+        </Catalog>
+        <Catalog name="OPTDBG" value="OPTDBG">
+            <Item name="Unknown1" value="0" valtype="INT" />
+            <Item name="Unknown2" value="0" valtype="INT" />
+            <Item name="Unknown3" value="" valtype="STRING" />
+            <Item name="Unknown4" value="" valtype="STRING" />
+            <Item name="Unknown5" value="" valtype="STRING" />
+            <Item name="Unknown6" value="" valtype="STRING" />
+            <Item name="Unknown7" value="" valtype="STRING" />
+            <Item name="Unknown8" value="" valtype="STRING" />
+            <Item name="Unknown9" value="" valtype="STRING" />
+            <Item name="Unknown10" value="" valtype="STRING" />
+            <Item name="Unknown11" value="" valtype="STRING" />
+            <Item name="Unknown12" value="" valtype="STRING" />
+            <Item name="Unknown13" value="" valtype="STRING" />
+            <Item name="Unknown14" value="" valtype="STRING" />
+            <Item name="Unknown15" value="" valtype="STRING" />
+            <Item name="Unknown16" value="" valtype="STRING" />
+        </Catalog>
+        <Catalog name="FLASH1" value="FLASH1">
+            <Item name="id1" value="1" valtype="INT" />
+            <Item name="id2" value="0" valtype="INT" />
+            <Item name="id3" value="0" valtype="INT" />
+            <Item name="id4" value="0" valtype="INT" />
+            <Item name="id5" value="0" valtype="INT" />
+            <Item name="id6" value="0" valtype="INT" />
+            <Item name="id7" value="0" valtype="INT" />
+            <Item name="id8" value="0" valtype="INT" />
+            <Item name="id9" value="0" valtype="INT" />
+            <Item name="id10" value="0" valtype="INT" />
+            <Item name="id11" value="0" valtype="INT" />
+            <Item name="id12" value="0" valtype="INT" />
+            <Item name="id13" value="0" valtype="INT" />
+            <Item name="id14" value="0" valtype="INT" />
+            <Item name="id15" value="0" valtype="INT" />
+            <Item name="id16" value="0" valtype="INT" />
+            <Item name="id17" value="0" valtype="INT" />
+            <Item name="id18" value="0" valtype="INT" />
+            <Item name="id19" value="0" valtype="INT" />
+            <Item name="id20" value="0" valtype="INT" />
+        </Catalog>
+        <Catalog name="FLASH2" value="" valtype="STRING" />
+        <Catalog name="FLASH3" value="" valtype="STRING" />
+        <Catalog name="Beep When Complete" value="0" valtype="INT" />
+    </Option>
+    <Catalog name="enable C Listing" value="1" valtype="INT" />
+    <Catalog name="page width" value="80" valtype="INT" />
+    <Catalog name="page length" value="65" valtype="INT" />
+    <Catalog name="tab space" value="8" valtype="INT" />
+    <Catalog name="C Listing conditional" value="1" valtype="INT" />
+    <Catalog name="C Listing Symbols" value="0" valtype="INT" />
+    <Catalog name="C Listing include File" value="0" valtype="INT" />
+    <Catalog name="C Listing Asm Code" value="1" valtype="INT" />
+    <Catalog name="C Propressor Listing" value="0" valtype="INT" />
+    <Catalog name="Enable Asm Listing" value="1" valtype="INT" />
+    <Catalog name="Asm Listing conditional" value="1" valtype="INT" />
+    <Catalog name="Asm Listing symbols" value="1" valtype="INT" />
+    <Catalog name="Asm Listing macro" value="0" valtype="INT" />
+    <Catalog name="Asm Listing crossref" value="0" valtype="INT" />
+    <Catalog name="Enable Linker Listing" value="1" valtype="INT" />
+    <Catalog name="Linker Listing Memmap" value="1" valtype="INT" />
+    <Catalog name="Linker Listing publicsymbols" value="1" valtype="INT" />
+    <Catalog name="Linker Listing localsymbols" value="1" valtype="INT" />
+    <Catalog name="Linker Listing common recordes" value="1" valtype="INT" />
+    <Catalog name="Linker Listing crossref" value="0" valtype="INT" />
+    <Catalog name="Linker Listing genSymbols" value="1" valtype="INT" />
+    <Catalog name="Linker Listing libsymbols" value="1" valtype="INT" />
+    <Catalog name="Linker Code Listing" value="0" valtype="INT" />
+    <Catalog name="Linker Disable Warnning Level" value="0" valtype="INT" />
+    <Catalog name="Global Compiler Option" value="OPTIMIZE(9,SPEED)  BROWSE    DEBUG OBJECTEXTEND CODE PAGEWIDTH(80)" valtype="STRING" />
+    <Catalog name="Global Asm Option" value="SET(SMALL) DEBUG PAGEWIDTH(80)  EP" valtype="STRING" />
+    <Catalog name="Global Linker Option" value="TO cheshi.omf  RAMSIZE(256) IXREF" valtype="STRING" />
+</Configurations>

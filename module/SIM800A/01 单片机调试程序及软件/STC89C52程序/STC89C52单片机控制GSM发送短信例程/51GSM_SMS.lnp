@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"GSM.obj" 
+TO "51GSM_SMS" 
+RAMSIZE(256) 

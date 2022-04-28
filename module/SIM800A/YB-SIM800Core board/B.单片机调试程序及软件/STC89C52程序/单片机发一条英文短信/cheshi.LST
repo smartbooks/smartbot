@@ -1,0 +1,554 @@
+C51 COMPILER V7.20   CHESHI                                                                03/14/2014 19:53:29 PAGE 1   
+
+
+C51 COMPILER V7.20, COMPILATION OF MODULE CHESHI
+OBJECT MODULE PLACED IN cheshi.OBJ
+COMPILER INVOKED BY: d:\Keil\C51\BIN\C51.EXE cheshi.C BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          //==**********************************************************
+   2          //--软件功能, 读一条英文短信，但不回复，  START  END  两条，可以控制继电器
+   3          //---   可使用单片机  要求 16K ROM 256 RAM 及以上 8位标准单片机   STC SST SM W78E单片机
+   4          //--   TC35 SIM300 GTM900 EM310   波特率 9600
+   5          //100%不支持  AT89S51 W78E51及其它RAM为 128B的单片机
+   6          //============================================================
+   7          #include <reg52.h>
+   8          #include <cheshi.h> 
+   9          uchar data int_case;    //中断标志
+  10          #define MAX_TM   100         // AT指收发数组最大缓冲
+  11          #define MAX_T  35
+  12          uchar idata uart_buff[MAX_TM]; //通信程序中的缓冲
+  13          uchar idata  receive_count;    //发送与接收 数组指针
+  14          
+  15          uchar data para_temp[MAX_T];     //多用临时用
+  16          uchar data read_tmp;             ///读电话本号参数
+  17          uchar data sms_num_tmp;                 ///读短信号码参数
+  18          uchar data sms_tmp;                     ///短信处理参数代码
+  19          //uchar idata TEL_temp[15];   //存对方号码，
+  20          #define IO_OUT                  P3_6
+  21          
+  22          
+  23          //－－－定时用－－－－－－－－－－－
+  24          uint  data timercount;          //50MS定时器,
+  25          uchar data timer_1S_cnt;
+  26          uchar data timer_10S_cnt;
+  27          uchar data timer_S_cnt;
+  28          //--------------------
+  29          uchar data ring_cnt;    //振铃用
+  30           bit ring_bit  ;  // 电话呼入　2
+  31          
+  32          
+  33          
+  34          
+  35          
+  36            /*
+  37          *********************************************************************************************************
+  38          ** 函数名称 dmsec()
+  39          ** 函数功能 ：延时 NS
+  40          ** 入口参数 ：
+  41          ** 出口参数 :
+  42          *********************************************************************************************************
+  43          */
+  44          //---延时S------------------------------
+  45          void dmsec (unsigned int count)
+  46          {
+  47   1              unsigned int i;
+  48   1              while (count)
+  49   1              {
+  50   2                      //#if   CPU_TYPE2==W78E58
+  51   2                 i =115;
+  52   2             // #elif  CPU_TYPE2==STC89E58
+  53   2                // i =300;
+  54   2             // #endif
+  55   2      
+C51 COMPILER V7.20   CHESHI                                                                03/14/2014 19:53:29 PAGE 2   
+
+  56   2                      while (i>0) i--;
+  57   2                      count--;
+  58   2          }
+  59   1      }
+  60          
+  61          
+  62          //------------------------
+  63          //----------------------
+  64          /*
+  65          *********************************************************************************************************
+  66          ** 函数名称     Int_Timer0()
+  67          ** 函数功能             定时器中断位,是整个程序的心跳,如果停止,程序会死机
+  68          ** 全局变量或数组:
+  69          
+  70          ** 入口参数      ：
+  71          ** 出口参数     ：
+  72          *********************************************************************************************************
+  73          */
+  74          
+  75          void  Int_Timer0(void) interrupt 1 using 3
+  76          {
+  77   1           TH0 = 0xB8;
+  78   1               TL0 = 0x00; //20ms的时钟基准
+  79   1      
+  80   1         timer_1S_cnt++;   timercount++;
+  81   1         if(timer_1S_cnt==50)    //20×50=1000MS  =1S
+  82   1          { timer_10S_cnt++; timer_1S_cnt=0;
+  83   2            timer_S_cnt++;
+  84   2                LED_S0=~LED_S0;
+  85   2      
+  86   2          }                              //１秒＝１０００毫秒
+  87   1          if(timer_10S_cnt==60)   //60S
+  88   1          {
+  89   2                 timer_10S_cnt=0;
+  90   2      
+  91   2              }
+  92   1      
+  93   1      //---------------------------------------------------------------------------------
+  94   1      
+  95   1      }
+  96          
+  97          /*
+  98          *********************************************************************************************************
+  99          ** 函数名称     Int_Uart()
+ 100          ** 函数功能              TC35 的命令列表,与中断服务程序
+ 101          ** 全局变量或数组:   receive_count 接收指针      uart_buff
+ 102                                ring_bit  ring_cnt
+ 103          ** 入口参数      ：
+ 104          ** 出口参数     ： 1-成功      0-失败
+ 105          *********************************************************************************************************
+ 106          */
+ 107          
+ 108          void  Int_Uart(void) interrupt 4 using 3  //串口的中断程序
+ 109          {
+ 110   1      
+ 111   1              if(RI) //命令方式
+ 112   1          {
+ 113   2      
+ 114   2                      RI=0;
+ 115   2      
+ 116   2               if((receive_count<MAX_TM-1))//没有发送时才能进行接收
+ 117   2                      {       //所有的命令返回都是处于 0x0A [Result] 0x0D 之间,其他命令,不会出现这种情况
+C51 COMPILER V7.20   CHESHI                                                                03/14/2014 19:53:29 PAGE 3   
+
+ 118   3                      uart_buff[receive_count++]=SBUF;
+ 119   3                     //0D 0A 32 0D 0A
+ 120   3                      if((receive_count==5)&&(uart_buff[0]==0x0d&&uart_buff[1]==0x0A))
+ 121   3                      {
+ 122   4                         if(uart_buff[2]=='2')    //电话呼入
+ 123   4                                 {    ring_bit=1;  ring_cnt++;
+ 124   5                                     receive_count=0;
+ 125   5                                 }
+ 126   4                      }
+ 127   3                      }
+ 128   2                       else
+ 129   2                       {
+ 130   3                               return;
+ 131   3                       }
+ 132   2      
+ 133   2      
+ 134   2            //------------------------------------
+ 135   2      
+ 136   2              }//End of if(RI)
+ 137   1      }
+ 138          
+ 139          /*********************************************************************
+ 140           *                  C51中字符串函数的扩充                            *
+ 141           ** 函数名称    : strsearch ()
+ 142           ** 函数功能    : 在指定的数组里连续找到相同的内容
+ 143           ** 入口参数   ： ptr2=要找的内容, ptr1 当前数组
+ 144           **** 出口参数 ： 0-没有 找到   >1 查找到
+ 145           *********************************************************************/
+ 146          
+ 147          
+ 148          uchar strsearch(uchar *ptr2,uchar *ptr1_at)//查字符串*ptr2在*ptr1中的位置
+ 149          //本函数是用来检查字符串*ptr2是否完全包含在*ptr1中
+ 150          //返回:  0  没有找到
+ 151          //       1-255 从第N个字符开始相同
+ 152          { 
+ 153   1              uchar i,j,k;
+ 154   1              uchar flag;
+ 155   1              if(ptr2[0]==0) return(0);
+ 156   1              flag=0;
+ 157   1              for(i=0,j=0;i<MAX_TM-2;i++)
+ 158   1              {
+ 159   2              if(ptr1_at[i]==ptr2[j])
+ 160   2              {//第一个字符相同
+ 161   3                      k=i; 
+ 162   3                      do {
+ 163   4                              if(ptr2[j]==0)//比较正确
+ 164   4                                      return(i+1);               //返回值是整数，不含0
+ 165   4                              if(ptr1_at[k]!=ptr2[j]) break;
+ 166   4                              k++;j++ ;
+ 167   4                      } while(k<MAX_TM-2) ;
+ 168   3      
+ 169   3                      j=0;
+ 170   3              }
+ 171   2              }
+ 172   1              return(0);
+ 173   1      }
+ 174          
+ 175          
+ 176          
+ 177          
+ 178          
+ 179            /*
+C51 COMPILER V7.20   CHESHI                                                                03/14/2014 19:53:29 PAGE 4   
+
+ 180          *********************************************************************************************************
+ 181          ** 函数名称 Initialize_Model()
+ 182          ** 函数功能 ： 模块初始化
+ 183          ** 入口参数 ：ptr1_at --uart_buff AT指令发送用 ptr1_code -para_temp 参数内容
+ 184          **             全局 变最    ptr1_at, uart_buff, receive_count
+ 185          ** 出口参数 :
+ 186          *********************************************************************************************************
+ 187          */
+ 188          
+ 189          void Initialize_Model(char* ptr1_at,char* ptr1_code)    //初始化　PIN检测
+ 190          {
+ 191   1              uchar i,j; 
+ 192   1      
+ 193   1           ptr1_code[0]=0;
+ 194   1              for(i=0;i<15;i++)
+ 195   1              {   //进行初始化,并显示  ATE0V0  = ATE0 ATV0   AT_E
+ 196   2                      Send_AT_Command(AT_E,ptr1_at,0);
+ 197   2                      Send_AT_Command(AT_INIT,ptr1_at,0);
+ 198   2                      if(ptr1_at[1]==0x0d&&ptr1_at[0]==0x30)
+ 199   2                      {  break;}
+ 200   2              else if(ptr1_at[receive_count-1]==0x0d&&ptr1_at[receive_count-2]=='0')
+ 201   2               {  break;}
+ 202   2      
+ 203   2                      if(i==1)
+ 204   2                      {   IO_IGT=0;   for(i=0;i<=200;i++) dmsec(30);IO_IGT=1;
+ 205   3                          timercount=0; while(timercount<60);
+ 206   3                      }
+ 207   2      
+ 208   2      
+ 209   2                 timercount=0; while(timercount<60);
+ 210   2      
+ 211   2          }
+ 212   1      
+ 213   1              for(i=0;i<12;i++)
+ 214   1              {            //读卡  AT+CPIN?
+ 215   2      
+ 216   2                        Send_AT_Command(AT_E,ptr1_at,0);
+ 217   2                               Send_AT_Command(AT_INIT,ptr1_at,0);
+ 218   2                       Send_AT_Command(AT_CPIN,ptr1_at,0) ;
+ 219   2                       //如有收到回应进行分析收到的信息,
+ 220   2                       timercount=0; while(timercount<2);
+ 221   2                              if(j=strsearch("READY",ptr1_at))
+ 222   2                                      break;
+ 223   2      
+ 224   2                  timercount=0; while(timercount<60);
+ 225   2              }
+ 226   1      
+ 227   1      
+ 228   1      
+ 229   1      
+ 230   1              Send_AT_Command(AT_IPR,ptr1_at,0);//波特率  AT+IPR=9600
+ 231   1              Send_AT_Command(AT_CGMM,ptr1_at,0);  //模块型号 AT+CGMM
+ 232   1      
+ 233   1      
+ 234   1           timer_S_cnt=0; while(timer_S_cnt<15) ;
+ 235   1      //     BELL=0;  for(i=0;i<=100;i++) dmsec(1);  BELL=1;
+ 236   1           Send_AT_Command(AT_CNMI,ptr1_at,0);
+ 237   1           Send_AT_Command(AT_CMGF1,ptr1_at,0);//AT+CMGF=1
+ 238   1      }
+ 239          
+ 240          
+ 241            /*
+C51 COMPILER V7.20   CHESHI                                                                03/14/2014 19:53:29 PAGE 5   
+
+ 242          *********************************************************************************************************
+ 243          ** 函数名称 Sys_Init()
+ 244          ** 函数功能 ： 单片机初始化
+ 245          ** 入口参数 ：
+ 246          **             全局 变最  timer_1S_cnt  receive_count
+ 247          ** 出口参数 :
+ 248          *********************************************************************************************************
+ 249          */
+ 250          
+ 251          void  Sys_Init(void)//话机启动的初始化程序,包含键盘与定时器,串口等
+ 252          {
+ 253   1                              //TH0=(65536-46080)/256;//重新装入定时25mS的初值到TH0,TL0     56320
+ 254   1                              //TL0=(65536-46080)%256;
+ 255   1                              //65536-(11.0592/12)*20MS*1000=To    18432     47104
+ 256   1                              //1ms定时
+ 257   1                              //11.0592/12 = 0.9216 M (记数频率)
+ 258   1                              //1ms记数 921.6次
+ 259   1                              //16位 2^16 - x = 922 x=64614 FC66
+ 260   1                              //定时器里不断放fc66，不用怀疑51定时器得到的 1ms的精确性吗
+ 261   1      
+ 262   1              TH0 = 0xB8;
+ 263   1              TL0 = 0x00; //20ms的时钟基准
+ 264   1      
+ 265   1        //串口中断
+ 266   1          TI=0; RI=0;
+ 267   1          SCON=0x50;                  //选用方式1
+ 268   1          TMOD=0x20;
+ 269   1          TMOD = (TMOD & 0xf0) | 1;//MODE 1
+ 270   1         // TH1=0xe8;              //波特率为9600
+ 271   1         // TL1=0xe8;
+ 272   1         TH1=0xfd;              //波特率为9600
+ 273   1         TL1=0xfd;
+ 274   1          PCON=0x00;            //倍频0x80
+ 275   1          IE = 0xb0;          // EA XX ET2 ES ET0 EX0 ET1 EX1
+ 276   1          TR1=1;              //enable TIMER1
+ 277   1      
+ 278   1          ES=1;  //开串口开断
+ 279   1          TR0=1; //串口接收中断
+ 280   1          ET0=1;  //T0 中断
+ 281   1          ET1=0;  // T1 中断
+ 282   1          EA=1;
+ 283   1          P0=0xFF;
+ 284   1          P1=0xFF;
+ 285   1          P2=0xFF;
+ 286   1          P3=0xFF;
+ 287   1         // P4=0xff;
+ 288   1          timer_1S_cnt=0;receive_count=0;
+ 289   1          IO_IGT=1;
+ 290   1      
+ 291   1      
+ 292   1      
+ 293   1      }
+ 294           //======================================================
+ 295          //这里为AT指令处理区,所有的AT指令都在这时对uart_buff数组进行赋值,并发送出去,
+ 296          //-正常情况下,AT指令反回也会在这里接收完
+ 297            //------------------------
+ 298            //-----------------------
+ 299            ///==========================================
+ 300          /*
+ 301          *********************************************************************************************************
+ 302          ** 函数名称      ：Send_AT_Command()
+ 303          ** 函数功能              ：串口AT指令发送前处理,
+C51 COMPILER V7.20   CHESHI                                                                03/14/2014 19:53:29 PAGE 6   
+
+ 304          ** 全局变量或数组:   receive_count 接收指针
+ 305          ** 入口参数      ： type =ID,  转向所有  AT指令 字符串
+ 306                                                  str_at- uart_buff   str_code -para_temp
+ 307          **                      *str_at=要复制的内容/转AT指令
+ 308          **                      *str_code 与*str_at合并的参数 //AT指令参数
+ 309          ** 出口参数     ：  1- 成功,  0- 失败
+ 310          *********************************************************************************************************
+ 311          */
+ 312          uchar  Send_AT_Command( uchar type,uchar *str_at ,uchar *str_code)      //发送ＡＴ指令
+ 313          //拨号时号码放在phone.number
+ 314          //其他用para_temp
+ 315          {
+ 316   1              uint   i; 
+ 317   1          switch(type)
+ 318   1          {
+ 319   2      
+ 320   2            case AT_CPIN:             //检查当前是否要输入PIN码
+ 321   2              strcpy(str_at,"AT+CPIN?");
+ 322   2              break;
+ 323   2           //  AT_E
+ 324   2             case AT_E:               //ATE0 功能关回显  ATE1 开回显
+ 325   2              strcpy(str_at,"ATE0");
+ 326   2              break;
+ 327   2            case AT_INIT:             //ATV0  回复方式 30 0D  ATV1 回复方式  OK
+ 328   2              strcpy(str_at,"ATV0");
+ 329   2              break;
+ 330   2              //0D 0A 54 43 33 35 0D 0A
+ 331   2            case   AT_CGMM:   //模块版型号
+ 332   2              strcpy(str_at,"AT+CGMM");
+ 333   2              break;
+ 334   2      
+ 335   2           case AT_CMGF1:     //SMS 接收方式,
+ 336   2              strcpy(str_at,"AT+CMGF=1");
+ 337   2              break;
+ 338   2          // AT_CNMI
+ 339   2            case AT_CNMI:    //   AT+CNMI=2,1
+ 340   2                strcpy(str_at,"AT+CNMI=2,1");
+ 341   2              break;
+ 342   2             case  AT_IPR:   // 波特率 9600
+ 343   2              strcpy(str_at,"AT+IPR=9600"); break;
+ 344   2      
+ 345   2              case SMS_CMGL:          //读所有短信
+ 346   2               strcpy(uart_buff,"AT+CMGL=\"ALL\"");
+ 347   2             // strcpy(str_at,"AT+CMGL=4");
+ 348   2            //  strcat(uart_buff,ptr);
+ 349   2              break;
+ 350   2      
+ 351   2            case SMS_CMGR:            //读一个短信
+ 352   2              strcpy(str_at,"AT+CMGR=");
+ 353   2              strcat(str_at,str_code);
+ 354   2              break;
+ 355   2      
+ 356   2             case SMS_CMGD:           //删除一个短信
+ 357   2              strcpy(str_at,"AT+CMGD=");
+ 358   2              strcat(str_at,str_code);
+ 359   2              break;
+ 360   2      
+ 361   2             case AT_CPMS:
+ 362   2               strcpy(str_at,"AT+CPMS=\x22SM\x22");
+ 363   2              break;  //AT_CPMS
+ 364   2      
+ 365   2                case SMS_CMGS:                //写一个短信
+C51 COMPILER V7.20   CHESHI                                                                03/14/2014 19:53:29 PAGE 7   
+
+ 366   2              strcpy(str_at,"AT+CMGS=");    //AT+CMGS= "13818120592"
+ 367   2              strcat(str_at,str_code);
+ 368   2      
+ 369   2              break;
+ 370   2           //----------------------------------------------------
+ 371   2               case  CMGS_MUB:    //发报警短信内容
+ 372   2              strcpy(str_at,str_code);
+ 373   2               break;
+ 374   2               //----------------------------------------------------------
+ 375   2      
+ 376   2           //-----------------------------------------------
+ 377   2            case AT_COMMAND:
+ 378   2              break;
+ 379   2            default:
+ 380   2              receive_count=0;
+ 381   2              return(TRUE);
+ 382   2          }
+ 383   1          ES=1;
+ 384   1          strcat(str_at,"\x0d\x00");//在命令后加入CR
+ 385   1          RI=0;                                       //清除接收标志
+ 386   1          TI=0;
+ 387   1         //------------------------------
+ 388   1          for(i=0;i<MAX_TM;i++)
+ 389   1              {       if(str_at[i]==0) break;
+ 390   2                      SBUF=str_at[i];
+ 391   2                      while(!TI);
+ 392   2                      TI=0;
+ 393   2              }
+ 394   1         //---------------------
+ 395   1         receive_count=0;
+ 396   1         str_at[0]=0; str_at[1]=0;str_at[2]=0;
+ 397   1         i=0; timer_1S_cnt=0;
+ 398   1         do{
+ 399   2             dmsec(3);
+ 400   2             if(receive_count>1)
+ 401   2             {   //   dmsec(50);
+ 402   3                  timercount=0; while(timercount<30);
+ 403   3                  break;
+ 404   3             }
+ 405   2      
+ 406   2          }while(timer_1S_cnt<3);
+ 407   1      
+ 408   1      
+ 409   1      
+ 410   1          return(TRUE);
+ 411   1      
+ 412   1      
+ 413   1      
+ 414   1      }
+ 415          
+ 416          
+ 417          /******************************************/
+ 418          void main(void)
+ 419          {
+ 420   1              uchar i;
+ 421   1               Sys_Init();
+ 422   1      
+ 423   1              Initialize_Model(uart_buff,para_temp);//进行初始化
+ 424   1              P0=1;
+ 425   1      
+ 426   1              receive_count=0;
+ 427   1              sms_tmp=0;
+C51 COMPILER V7.20   CHESHI                                                                03/14/2014 19:53:29 PAGE 8   
+
+ 428   1      
+ 429   1              i=0;
+ 430   1      
+ 431   1              while(1)
+ 432   1              {
+ 433   2                      //-----------查询1到20条中的短信,只要有短信就处理------------------------------------------
+ 434   2      
+ 435   2                if(i==0)
+ 436   2                {
+ 437   3                         Send_AT_Command(AT_CMGF1,uart_buff,0);
+ 438   3                              //AT+CMGS=   "13818120592"    >
+ 439   3                           strcpy(para_temp,"\"15922260566\"");
+ 440   3                                              Send_AT_Command(SMS_CMGS,uart_buff,para_temp);
+ 441   3                                  Send_AT_Command(CMGS_MUB,uart_buff,"SEND: OK!\x1a");
+ 442   3                        timer_S_cnt=0; while(timer_S_cnt<10);
+ 443   3                     i=1;
+ 444   3                }
+ 445   2      
+ 446   2      
+ 447   2      
+ 448   2      
+ 449   2      
+ 450   2      
+ 451   2              }
+ 452   1      
+ 453   1      
+ 454   1      }
+ 455          
+ 456          
+ 457          
+ 458          
+ 459          
+ 460          
+ 461          
+ 462          
+ 463          
+ 464          
+ 465          
+ 466          
+ 467          
+ 468          
+ 469          
+ 470          
+ 471          
+ 472          
+ 473          
+ 474          
+ 475          
+ 476          
+ 477          
+ 478          
+ 479          
+ 480          
+ 481          
+ 482          
+ 483          
+ 484          
+ 485          
+ 486          
+ 487          
+ 488          
+ 489          
+C51 COMPILER V7.20   CHESHI                                                                03/14/2014 19:53:29 PAGE 9   
+
+ 490          
+ 491          
+ 492          
+ 493          
+ 494          
+ 495          
+ 496          
+ 497          
+ 498          
+ 499          
+ 500          
+ 501          
+ 502          
+ 503          
+ 504          
+ 505          
+ 506          
+ 507          
+ 508          
+ 509          
+ 510          
+ 511          
+ 512          
+ 513          
+ 514          
+ 515          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1350    ----
+   CONSTANT SIZE    =    149    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     45      24
+   IDATA SIZE       =    101    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
