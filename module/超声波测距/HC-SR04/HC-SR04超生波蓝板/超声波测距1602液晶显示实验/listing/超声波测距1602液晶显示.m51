@@ -2,8 +2,8 @@ BL51 BANKED LINKER/LOCATER V6.22                                                
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
-D:\KEIL C51\C51\BIN\BL51.EXE ..\out\STARTUP.obj, ..\out\main.obj TO ..\out\≥¨…˘≤®≤‚æ‡1602“∫æßœ‘ æ PRINT (..\listing\≥¨…˘
->> ≤®≤‚æ‡1602“∫æßœ‘ æ.m51) RAMSIZE (256)
+D:\KEIL C51\C51\BIN\BL51.EXE ..\out\STARTUP.obj, ..\out\main.obj TO ..\out\Ë∂ÖÂ£∞Ê≥¢ÊµãË∑ù1602Ê∂≤Êô∂ÊòæÁ§∫ PRINT (..\listing\Ë∂ÖÂ£∞
+>> Ê≥¢ÊµãË∑ù1602Ê∂≤Êô∂ÊòæÁ§∫.m51) RAMSIZE (256)
 
 
 MEMORY MODEL: SMALL
@@ -22,7 +22,7 @@ INPUT MODULES INCLUDED:
   D:\KEIL C51\C51\LIB\C51S.LIB (?C?ULDIV)
 
 
-LINK MAP OF MODULE:  ..\out\≥¨…˘≤®≤‚æ‡1602“∫æßœ‘ æ (?C_STARTUP)
+LINK MAP OF MODULE:  ..\out\Ë∂ÖÂ£∞Ê≥¢ÊµãË∑ù1602Ê∂≤Êô∂ÊòæÁ§∫ (?C_STARTUP)
 
 
             TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
@@ -64,7 +64,7 @@ LINK MAP OF MODULE:  ..\out\≥¨…˘≤®≤‚æ‡1602“∫æßœ‘ æ (?C_STARTUP)
 
 
 
-OVERLAY MAP OF MODULE:   ..\out\≥¨…˘≤®≤‚æ‡1602“∫æßœ‘ æ (?C_STARTUP)
+OVERLAY MAP OF MODULE:   ..\out\Ë∂ÖÂ£∞Ê≥¢ÊµãË∑ù1602Ê∂≤Êô∂ÊòæÁ§∫ (?C_STARTUP)
 
 
 SEGMENT                             DATA_GROUP 
@@ -115,7 +115,7 @@ SEGMENT                             DATA_GROUP
 
 
 
-SYMBOL TABLE OF MODULE:  ..\out\≥¨…˘≤®≤‚æ‡1602“∫æßœ‘ æ (?C_STARTUP)
+SYMBOL TABLE OF MODULE:  ..\out\Ë∂ÖÂ£∞Ê≥¢ÊµãË∑ù1602Ê∂≤Êô∂ÊòæÁ§∫ (?C_STARTUP)
 
   VALUE           TYPE          NAME
   ----------------------------------
