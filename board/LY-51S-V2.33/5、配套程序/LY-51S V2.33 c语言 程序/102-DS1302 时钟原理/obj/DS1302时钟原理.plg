@@ -1,0 +1,16 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+D:\doc\朗译电子LY-51S开发板资料V2.33\LY-51S 开发板配套资料V2.33\5、配套程序\LY-51S V2.33 c语言 程序\102-DS1302 时钟原理\DS1302时钟原理.uvproj
+Project File Date:  <unknown>
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling DS1302.c...
+compiling main.c...
+linking...
+Program Size: data=37.1 xdata=0 code=968
+creating hex file from ".\obj\DS1302时钟原理"...
+".\obj\DS1302时钟原理" - 0 Error(s), 0 Warning(s).

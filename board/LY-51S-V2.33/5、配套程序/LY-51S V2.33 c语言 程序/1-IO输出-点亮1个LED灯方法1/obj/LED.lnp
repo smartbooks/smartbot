@@ -1,0 +1,3 @@
+".\obj\点亮1个led方法1.obj" 
+TO ".\obj\LED" 
+PRINT(".\obj\LED.m51") RAMSIZE(256) 

@@ -1,0 +1,3 @@
+".\obj\喇叭发声原理.obj" 
+TO ".\obj\喇叭发声原理" 
+PRINT(".\obj\喇叭发声原理.m51") RAMSIZE(256) 
