@@ -2,3 +2,6 @@ Thumbs.db
 .DS_Store
 ._*
 /module/NFR24L01-2.4G/二次开发文档资料/24L01_TEST_V1.1/2401_Test_Board_V1.1.PCBDOC.htm
+.eide
+.vscode
+*.code-workspace
