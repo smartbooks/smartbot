@@ -140,7 +140,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=SLJAPVED
 
 [Document7]
 DocumentPath=..\Library\Atmel系列单片机.SchLib
@@ -191,7 +191,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=RBYUREHG
 
 [Document10]
 DocumentPath=..\Library\FPC0.5.PcbLib
@@ -990,7 +990,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=QIAUELPC
 
 [Document57]
 DocumentPath=..\Library\继电器.PcbLib
@@ -1194,7 +1194,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=PACQKIPM
 
 [Document69]
 DocumentPath=..\Library\未分类器件.PcbLib
@@ -1314,10 +1314,6 @@ ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
-
-[GeneratedDocument1]
-DocumentPath=Project Outputs for CoreBoard\Design Rule Check - Core.html
-DItemRevisionGUID=
 
 [Configuration1]
 Name=Sources
