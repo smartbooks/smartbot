@@ -1143,7 +1143,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=AOIMBJFB
 
 [Document66]
 DocumentPath=..\Library\三极管.SchLib
@@ -1314,6 +1314,10 @@ ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
+
+[GeneratedDocument1]
+DocumentPath=Project Outputs for CoreBoard\Design Rule Check - Core-ascii.html
+DItemRevisionGUID=
 
 [Configuration1]
 Name=Sources
