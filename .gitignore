@@ -5,3 +5,4 @@ Thumbs.db
 .eide
 .vscode
 *.code-workspace
+/hardware/CoreBoard/Core-ascii.REP

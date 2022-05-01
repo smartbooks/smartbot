@@ -58,7 +58,7 @@ GenerateClassCluster=0
 DocumentUniqueId=HKDKSUSF
 
 [Document2]
-DocumentPath=Core-ascii.PcbDoc
+DocumentPath=Core.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
@@ -75,7 +75,7 @@ GenerateClassCluster=0
 DocumentUniqueId=ETEJITNY
 
 [Document3]
-DocumentPath=Core-ascii.SchDoc
+DocumentPath=Core.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
