@@ -106,7 +106,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=VGIPANID
 
 [Document5]
 DocumentPath=..\Library\74系列芯片.SchLib
@@ -123,7 +123,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=RITOMXLL
 
 [Document6]
 DocumentPath=..\Library\9001连接器.PcbLib
@@ -157,7 +157,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=HUCNRVYM
 
 [Document8]
 DocumentPath=..\Library\CD系列芯片.SchLib
@@ -174,7 +174,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=LKQGHMOF
 
 [Document9]
 DocumentPath=..\Library\DIP.PcbLib
@@ -191,7 +191,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=RBYUREHG
+DocumentUniqueId=MWVETRDW
 
 [Document10]
 DocumentPath=..\Library\FPC0.5.PcbLib
@@ -208,7 +208,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=GVRORUPC
 
 [Document11]
 DocumentPath=..\Library\FPC1.0.PcbLib
@@ -225,7 +225,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=BJHMPLQO
 
 [Document12]
 DocumentPath=..\Library\FPC1.25.PcbLib
@@ -242,7 +242,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=FLHRXRTL
 
 [Document13]
 DocumentPath=..\Library\FPC连接器.SchLib
@@ -259,7 +259,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=DFCOPWCG
 
 [Document14]
 DocumentPath=..\Library\IC芯片.SchLib
@@ -276,7 +276,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=SJTLRLHH
 
 [Document15]
 DocumentPath=..\Library\IDC2.54.PcbLib
@@ -293,7 +293,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=CAIRKSCO
 
 [Document16]
 DocumentPath=..\Library\KF接线端子.PcbLib
@@ -310,7 +310,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=DTGYQOSJ
 
 [Document17]
 DocumentPath=..\Library\LED.PcbLib
@@ -327,7 +327,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=FHPMWVTF
 
 [Document18]
 DocumentPath=..\Library\LED.SchLib
@@ -344,7 +344,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=ETNRRUNH
 
 [Document19]
 DocumentPath=..\Library\LOGO.PcbLib
@@ -361,7 +361,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=HELMSRTO
 
 [Document20]
 DocumentPath=..\Library\LQFP.PcbLib
@@ -378,7 +378,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=CPSBAKQC
 
 [Document21]
 DocumentPath=..\Library\MSOP.PcbLib
@@ -395,7 +395,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=CHMYEDAH
 
 [Document22]
 DocumentPath=..\Library\MX1.25.PcbLib
@@ -412,7 +412,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=LODLFHXA
 
 [Document23]
 DocumentPath=..\Library\PH2.0.PcbLib
@@ -429,7 +429,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=UKGEDIJR
 
 [Document24]
 DocumentPath=..\Library\PHB2.0.PcbLib
@@ -446,7 +446,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=CJJBJJIS
 
 [Document25]
 DocumentPath=..\Library\PHD2.0.PcbLib
@@ -463,7 +463,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=PLDYBMLM
 
 [Document26]
 DocumentPath=..\Library\QFN.PcbLib
@@ -480,7 +480,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=RUBJYRSG
 
 [Document27]
 DocumentPath=..\Library\SOP.PcbLib
@@ -497,7 +497,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=FCDQGNFM
 
 [Document28]
 DocumentPath=..\Library\SOT.PcbLib
@@ -514,7 +514,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=RKHVBMLR
 
 [Document29]
 DocumentPath=..\Library\SSOP.PcbLib
@@ -531,7 +531,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=LCIVBDDH
 
 [Document30]
 DocumentPath=..\Library\STM8系列单片机.SchLib
@@ -548,7 +548,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=KQNULELK
 
 [Document31]
 DocumentPath=..\Library\STM32系列单片机.SchLib
@@ -565,7 +565,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=GEGHWFTU
 
 [Document32]
 DocumentPath=..\Library\TO.PcbLib
@@ -582,7 +582,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=TDNCNWMQ
 
 [Document33]
 DocumentPath=..\Library\TQFP.PcbLib
@@ -599,7 +599,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=GNCDDCLQ
 
 [Document34]
 DocumentPath=..\Library\TSSOP.PcbLib
@@ -616,7 +616,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=SWECUNDC
 
 [Document35]
 DocumentPath=..\Library\TX1.25.PcbLib
@@ -633,7 +633,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=NKGAVNSN
 
 [Document36]
 DocumentPath=..\Library\VH3.96.PcbLib
@@ -650,7 +650,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=FVFBPPFM
 
 [Document37]
 DocumentPath=..\Library\XH2.54.PcbLib
@@ -667,7 +667,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=WEDICDQI
 
 [Document38]
 DocumentPath=..\Library\按键.PcbLib
@@ -684,7 +684,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=FQXJUNIJ
 
 [Document39]
 DocumentPath=..\Library\按键-开关.SchLib
@@ -701,7 +701,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=LBMWJQSR
 
 [Document40]
 DocumentPath=..\Library\保险丝.PcbLib
@@ -718,7 +718,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=CULPFOFR
 
 [Document41]
 DocumentPath=..\Library\保险丝-晶振.SchLib
@@ -735,7 +735,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=AFRGFNDB
 
 [Document42]
 DocumentPath=..\Library\变压器.PcbLib
@@ -752,7 +752,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=WXQUGXYX
 
 [Document43]
 DocumentPath=..\Library\变压器.SchLib
@@ -769,7 +769,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=DJGSYMQA
 
 [Document44]
 DocumentPath=..\Library\拨码开关.PcbLib
@@ -786,7 +786,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=OAXAHKXQ
 
 [Document45]
 DocumentPath=..\Library\场效应管-可控硅.SchLib
@@ -803,7 +803,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=VDGKRKJP
 
 [Document46]
 DocumentPath=..\Library\传感元件.PcbLib
@@ -820,7 +820,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=WGRPSAMH
 
 [Document47]
 DocumentPath=..\Library\传感元件.SchLib
@@ -837,7 +837,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=WUWEHDZD
 
 [Document48]
 DocumentPath=..\Library\电感.PcbLib
@@ -854,7 +854,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=NTIEWJMC
 
 [Document49]
 DocumentPath=..\Library\电容.PcbLib
@@ -871,7 +871,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=UHHYYYDN
 
 [Document50]
 DocumentPath=..\Library\电位器.PcbLib
@@ -888,7 +888,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=EBWXPCBD
 
 [Document51]
 DocumentPath=..\Library\电源接口.PcbLib
@@ -905,7 +905,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=CDRUPCEY
 
 [Document52]
 DocumentPath=..\Library\电阻.PcbLib
@@ -922,7 +922,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=RFQWERTA
 
 [Document53]
 DocumentPath=..\Library\电阻-电容-电感.SchLib
@@ -939,7 +939,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=GUSXFSIS
 
 [Document54]
 DocumentPath=..\Library\二极管-整流桥.PcbLib
@@ -956,7 +956,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=KACLGIDU
 
 [Document55]
 DocumentPath=..\Library\二极管-整流桥.SchLib
@@ -973,7 +973,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=QYYLZOWM
 
 [Document56]
 DocumentPath=..\Library\合泰单片机.SchLib
@@ -1007,7 +1007,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=XXXTBMJL
 
 [Document58]
 DocumentPath=..\Library\继电器.SchLib
@@ -1024,7 +1024,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=RZIOBIDK
 
 [Document59]
 DocumentPath=..\Library\接插件.SchLib
@@ -1041,7 +1041,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=NKSFXIVD
 
 [Document60]
 DocumentPath=..\Library\接口类.SchLib
@@ -1058,7 +1058,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=PUJPMJUS
 
 [Document61]
 DocumentPath=..\Library\晶振.PcbLib
@@ -1075,7 +1075,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=SXEYBTCI
 
 [Document62]
 DocumentPath=..\Library\开关.PcbLib
@@ -1092,7 +1092,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=VQOOXQIB
 
 [Document63]
 DocumentPath=..\Library\模块.PcbLib
@@ -1109,7 +1109,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=UIWCYOFD
 
 [Document64]
 DocumentPath=..\Library\模块.SchLib
@@ -1126,7 +1126,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=TFYAJUQZ
 
 [Document65]
 DocumentPath=..\Library\排针-排母.PcbLib
@@ -1160,7 +1160,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=KPXEATLW
 
 [Document67]
 DocumentPath=..\Library\天线.PcbLib
@@ -1177,7 +1177,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=FXJLKIEC
 
 [Document68]
 DocumentPath=..\Library\通讯接口.PcbLib
@@ -1194,7 +1194,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=PACQKIPM
+DocumentUniqueId=UNUEYTMY
 
 [Document69]
 DocumentPath=..\Library\未分类器件.PcbLib
@@ -1211,7 +1211,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=KVGPPJUA
 
 [Document70]
 DocumentPath=..\Library\未分类器件.SchLib
@@ -1228,7 +1228,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=WXBFLICG
 
 [Document71]
 DocumentPath=..\Library\显示器件.PcbLib
@@ -1245,7 +1245,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=HWOPTITR
 
 [Document72]
 DocumentPath=..\Library\显示器件.SchLib
@@ -1262,7 +1262,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=RYHISMHS
 
 [Document73]
 DocumentPath=..\Library\压敏电阻.PcbLib
@@ -1279,7 +1279,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=XXBGMBRW
 
 [Document74]
 DocumentPath=..\Library\音频接口.PcbLib
@@ -1296,7 +1296,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=AWQUBIUF
 
 [Document75]
 DocumentPath=project_sim_config.simcfg

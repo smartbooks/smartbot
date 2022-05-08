@@ -5,5 +5,6 @@ Thumbs.db
 .eide
 .vscode
 *.code-workspace
-/hardware/CoreBoard/Core-ascii.REP
+/hardware/*/*.REP
+/hardware/UsbTtlBoard/Project Logs for UsbTtlBoard
 /nimultisim/version
