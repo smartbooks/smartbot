@@ -1,0 +1,86 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dD:/work/smartbot/quartus/demo/simulation/qsim
+vdemo
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+r1
+!s85 0
+31
+!i10b 1
+!s100 B0FGCRMV5abKo=OYPm7X_0
+IJCMF]9z<aRAoC:ai<0zN51
+R0
+w1652897528
+8demo.vo
+Fdemo.vo
+L0 31
+Z2 OL;L;10.4;61
+!s108 1652897533.590000
+!s107 demo.vo|
+!s90 -work|work|demo.vo|
+!i113 0
+Z3 o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+vdemo_vlg_check_tst
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 NgUnI8zYo`YMTP<Z8D;R53
+IM1PQ2BS?4=Y5o`c3IKGS91
+R0
+Z4 w1652897526
+Z5 8Waveform.vwf.vt
+Z6 FWaveform.vwf.vt
+L0 59
+R2
+Z7 !s108 1652897534.650000
+Z8 !s107 Waveform.vwf.vt|
+Z9 !s90 -work|work|Waveform.vwf.vt|
+!i113 0
+R3
+vdemo_vlg_sample_tst
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 7`?IZo@AQ`k:k2mUUi1@I2
+I9oga[OWSWDZ6T]]?gY[F>1
+R0
+R4
+R5
+R6
+L0 29
+R2
+R7
+R8
+R9
+!i113 0
+R3
+vdemo_vlg_vec_tst
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 Ul[=_2d8:kbf^afXC;cJ_0
+IMjYT;m;9FVz`C9CUYgz8N1
+R0
+R4
+R5
+R6
+L0 158
+R2
+R7
+R8
+R9
+!i113 0
+R3
