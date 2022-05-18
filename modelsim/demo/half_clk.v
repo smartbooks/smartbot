@@ -1,0 +1,12 @@
+module half_clk(reset,clk_in,clk_out);
+input clk_in,reset;
+output clk_out;
+reg clk_out;
+always@(negedge clk_in)
+begin
+if(!reset)
+clk_out=0;
+else
+clk_out=~clk_out;
+end
+endmodule 

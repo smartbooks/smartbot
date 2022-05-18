@@ -1,0 +1,56 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dd:/tool/modeltech64_10.4/examples
+T_opt
+!s110 1652891887
+V^>ZEb8LA9gAnY_jg5KIlR1
+04 3 4 work top fast 0
+=1-54ee75d446a2-628520ee-29b-1a14
+o-quiet -auto_acc_if_foreign -work work +acc
+n@_opt
+OL;O;10.4;61
+vhalf_clk
+Z0 VDg1SIo80bB@j0V0VzS_@n1
+r1
+!s85 0
+31
+!i10b 1
+!s100 jme4Tb`m3kMm3Pl6BJd_G0
+IAUTO<]IoT7zLD`DcN?a<e1
+Z1 dD:/work/smartbot/modelsim/demo
+w1652890881
+8D:/work/smartbot/modelsim/demo/half_clk.v
+FD:/work/smartbot/modelsim/demo/half_clk.v
+L0 1
+Z2 OL;L;10.4;61
+!s108 1652891228.977000
+!s107 D:/work/smartbot/modelsim/demo/half_clk.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|D:/work/smartbot/modelsim/demo/half_clk.v|
+!i113 0
+Z3 o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+vtop
+R0
+r1
+!s85 0
+31
+!i10b 1
+!s100 AofQ]>9YX5ndFf9z0mm0h3
+IKNE=VZC6?X1Oj`F1C=IUe2
+R1
+w1652891013
+8D:/work/smartbot/modelsim/demo/clk_cycle.vt
+FD:/work/smartbot/modelsim/demo/clk_cycle.vt
+L0 5
+R2
+!s108 1652891227.901000
+!s107 D:/work/smartbot/modelsim/demo/clk_cycle.vt|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|D:/work/smartbot/modelsim/demo/clk_cycle.vt|
+!i113 0
+R3

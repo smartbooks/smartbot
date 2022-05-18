@@ -1,0 +1,15 @@
+D:/work/smartbot/modelsim/demo/clk_cycle.vt {1 {vlog -work work -vopt -stats=none D:/work/smartbot/modelsim/demo/clk_cycle.vt
+Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
+-- Compiling module top
+
+Top level modules:
+	top
+
+} {} {}} D:/work/smartbot/modelsim/demo/half_clk.v {1 {vlog -work work -vopt -stats=none D:/work/smartbot/modelsim/demo/half_clk.v
+Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
+-- Compiling module half_clk
+
+Top level modules:
+	half_clk
+
+} {} {}}
