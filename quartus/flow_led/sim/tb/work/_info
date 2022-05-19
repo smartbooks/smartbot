@@ -1,0 +1,48 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dD:/work/smartbot/quartus/flow_led/sim/tb
+vflow_led
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+r1
+!s85 0
+31
+!i10b 1
+!s100 EGDddEo1bZ8P1KBmQ_Nie2
+ILX<WDYOO:f6::VG>IQ^Fc3
+R0
+w1652979092
+8D:/work/smartbot/quartus/flow_led/rtl/flow_led.v
+FD:/work/smartbot/quartus/flow_led/rtl/flow_led.v
+L0 1
+Z2 OL;L;10.4;61
+!s108 1652979146.635000
+!s107 D:/work/smartbot/quartus/flow_led/rtl/flow_led.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|D:/work/smartbot/quartus/flow_led/rtl/flow_led.v|
+!i113 0
+Z3 o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+vflow_led_tb
+R1
+r1
+!s85 0
+31
+!i10b 1
+!s100 VAXo<aba6Ii:fQ>i7^onQ2
+Ik2;hRW;Mgca3Iz6UYVl_P0
+R0
+w1652978874
+8D:/work/smartbot/quartus/flow_led/rtl/flow_led_tb.v
+FD:/work/smartbot/quartus/flow_led/rtl/flow_led_tb.v
+L0 3
+R2
+!s108 1652979147.827000
+!s107 D:/work/smartbot/quartus/flow_led/rtl/flow_led_tb.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|D:/work/smartbot/quartus/flow_led/rtl/flow_led_tb.v|
+!i113 0
+R3
