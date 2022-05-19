@@ -1,0 +1,4 @@
+--cpu Cortex-M3 "..\output\startup_stm32f10x_hd.o" "..\output\core_cm3.o" "..\output\system_stm32f10x.o" "..\output\misc.o" "..\output\stm32f10x_adc.o" "..\output\stm32f10x_bkp.o" "..\output\stm32f10x_exti.o" "..\output\stm32f10x_flash.o" "..\output\stm32f10x_gpio.o" "..\output\stm32f10x_i2c.o" "..\output\stm32f10x_rcc.o" "..\output\stm32f10x_rtc.o" "..\output\stm32f10x_tim.o" "..\output\stm32f10x_usart.o" "..\output\main.o" "..\output\stm32f10x_it.o" "..\output\oled.o" "..\output\sys.o" "..\output\systic.o" "..\output\mpu6050.o" "..\output\led.o" "..\output\buzzer.o" "..\output\switch.o" "..\output\key.o" "..\output\motor.o" "..\output\usart.o" "..\output\tim.o" --strict --scatter "..\OUTPUT\自平衡小车.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\自平衡小车.map" -o "..\OUTPUT\自平衡小车.axf"

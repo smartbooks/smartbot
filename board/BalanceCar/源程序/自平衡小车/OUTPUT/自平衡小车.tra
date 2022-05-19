@@ -1,0 +1,45 @@
+*** Creating Trace Output File '..\OUTPUT\自平衡小车.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '"..\output\startup_stm32f10x_hd.o"'
+### List of Objects: adding '"..\output\core_cm3.o"'
+### List of Objects: adding '"..\output\system_stm32f10x.o"'
+### List of Objects: adding '"..\output\misc.o"'
+### List of Objects: adding '"..\output\stm32f10x_adc.o"'
+### List of Objects: adding '"..\output\stm32f10x_bkp.o"'
+### List of Objects: adding '"..\output\stm32f10x_exti.o"'
+### List of Objects: adding '"..\output\stm32f10x_flash.o"'
+### List of Objects: adding '"..\output\stm32f10x_gpio.o"'
+### List of Objects: adding '"..\output\stm32f10x_i2c.o"'
+### List of Objects: adding '"..\output\stm32f10x_rcc.o"'
+### List of Objects: adding '"..\output\stm32f10x_rtc.o"'
+### List of Objects: adding '"..\output\stm32f10x_tim.o"'
+### List of Objects: adding '"..\output\stm32f10x_usart.o"'
+### List of Objects: adding '"..\output\main.o"'
+### List of Objects: adding '"..\output\stm32f10x_it.o"'
+### List of Objects: adding '"..\output\oled.o"'
+### List of Objects: adding '"..\output\sys.o"'
+### List of Objects: adding '"..\output\systic.o"'
+### List of Objects: adding '"..\output\mpu6050.o"'
+### List of Objects: adding '"..\output\led.o"'
+### List of Objects: adding '"..\output\buzzer.o"'
+### List of Objects: adding '"..\output\switch.o"'
+### List of Objects: adding '"..\output\key.o"'
+### List of Objects: adding '"..\output\motor.o"'
+### List of Objects: adding '"..\output\usart.o"'
+### List of Objects: adding '"..\output\tim.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 "..\output\startup_stm32f10x_hd.o" "..\output\core_cm3.o" "..\output\system_stm32f10x.o" "..\output\misc.o" "..\output\stm32f10x_adc.o" "..\output\stm32f10x_bkp.o" "..\output\stm32f10x_exti.o" "..\output\stm32f10x_flash.o" "..\output\stm32f10x_gpio.o" "..\output\stm32f10x_i2c.o" "..\output\stm32f10x_rcc.o" "..\output\stm32f10x_rtc.o" "..\output\stm32f10x_tim.o" "..\output\stm32f10x_usart.o" "..\output\main.o" "..\output\stm32f10x_it.o" "..\output\oled.o" "..\output\sys.o" "..\output\systic.o" "..\output\mpu6050.o" "..\output\led.o" "..\output\buzzer.o" "..\output\switch.o" "..\output\key.o" "..\output\motor.o" "..\output\usart.o" "..\output\tim.o" --strict --scatter "..\OUTPUT\自平衡小车.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\自平衡小车.map" -o "..\OUTPUT\自平衡小车.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '..\OUTPUT\自平衡小车.axf'
+### ADS-LD Command File: '..\OUTPUT\自平衡小车.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '..\OUTPUT\自平衡小车.lnp', Handle=0x00000E38
+### Writing '.lnp' file
+### ADS-LD Command file '..\OUTPUT\自平衡小车.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.
