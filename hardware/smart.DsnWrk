@@ -1,0 +1,8 @@
+[ProjectGroup]
+Version=1.0
+[Project1]
+ProjectPath=UsbTtlBoard\UsbTtlBoard.PrjPcb
+[Project2]
+ProjectPath=CoreBoard\CoreBoard.PrjPcb
+[Project3]
+ProjectPath=Sim\Sim.PrjPcb
