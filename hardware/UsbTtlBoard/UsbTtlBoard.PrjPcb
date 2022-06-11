@@ -1299,7 +1299,7 @@ GenerateClassCluster=0
 DocumentUniqueId=
 
 [Document75]
-DocumentPath=USBTTL.PcbDoc
+DocumentPath=USBTTL-ASCII.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
