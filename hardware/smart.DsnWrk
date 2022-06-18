@@ -4,3 +4,5 @@ Version=1.0
 ProjectPath=ULN2003AN\ULN2003AN.PrjPcb
 [Project2]
 ProjectPath=UsbTtlBoard\UsbTtlBoard.PrjPcb
+[Project3]
+ProjectPath=DS1302\DS1302.PrjPcb

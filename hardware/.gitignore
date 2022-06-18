@@ -1,13 +1,22 @@
 */__Previews
 */History
 */Simulation
+
 */Project Logs for CoreBoard
 */Project Outputs for CoreBoard
+
 */Project Logs for UsbTtlBoard
 */Project Outputs for UsbTtlBoard
+
 */Project Outputs for Sim
 */Project Logs for Sim
+
 */Project Logs for ULN2003AN
+*/Project Outputs for ULN2003AN
+
+*/Project Logs for DS1302
+*/Project Outputs for DS1302
+
 */Core.REP
 *.PcbDoc.htm
 *.PrjPcbStructure
