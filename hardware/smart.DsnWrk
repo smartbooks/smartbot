@@ -2,3 +2,5 @@
 Version=1.0
 [Project1]
 ProjectPath=ULN2003AN\ULN2003AN.PrjPcb
+[Project2]
+ProjectPath=UsbTtlBoard\UsbTtlBoard.PrjPcb
