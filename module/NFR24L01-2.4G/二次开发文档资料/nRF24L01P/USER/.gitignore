@@ -1,0 +1,8 @@
+listing
+output
+*.uvopt
+*_uvopt.bak
+/nRF24L01P.plg
+/nRF24L01P.uvgui.BAT09_1
+/nRF24L01P.uvgui_BAT09_1.bak
+/nRF24L01P_uvproj.bak

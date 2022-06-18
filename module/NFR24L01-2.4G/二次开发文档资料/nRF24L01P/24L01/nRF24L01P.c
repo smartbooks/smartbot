@@ -123,14 +123,14 @@ void nRF24L01P_RX_Mode(void)
 {
 	CE = 0;
 	nRF24L01P_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);  // 接收设备接收通道0使用和发送设备相同的发送地址
-	nRF24L01P_Write_Reg(WRITE_REG + EN_AA, 0x01);               						// 使能接收通道0自动应答
-	nRF24L01P_Write_Reg(WRITE_REG + EN_RXADDR, 0x01);           						// 使能接收通道0
-	nRF24L01P_Write_Reg(WRITE_REG + RF_CH, 40);                 						// 选择射频通道0x40
-	nRF24L01P_Write_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);  						// 接收通道0选择和发送通道相同有效数据宽度
-	nRF24L01P_Write_Reg(WRITE_REG + RF_SETUP, 0x0f);            						// 数据传输率2Mbps，发射功率0dBm，低噪声放大器增益(nRF24L01+忽略该位）
-	nRF24L01P_Write_Reg(WRITE_REG + CONFIG, 0x0f);              						// CRC使能，16位CRC校验，上电，接收模式
-	nRF24L01P_Write_Reg(WRITE_REG + STATUS, 0xff);  												//清除所有的中断标志位
-	CE = 1;                                            											// 拉高CE启动接收设备
+	nRF24L01P_Write_Reg(WRITE_REG + EN_AA, 0x01);               			// 使能接收通道0自动应答
+	nRF24L01P_Write_Reg(WRITE_REG + EN_RXADDR, 0x01);           			// 使能接收通道0
+	nRF24L01P_Write_Reg(WRITE_REG + RF_CH, 40);                 			// 选择射频通道0x40
+	nRF24L01P_Write_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);  			// 接收通道0选择和发送通道相同有效数据宽度
+	nRF24L01P_Write_Reg(WRITE_REG + RF_SETUP, 0x0f);            			// 数据传输率2Mbps，发射功率0dBm，低噪声放大器增益(nRF24L01+忽略该位）
+	nRF24L01P_Write_Reg(WRITE_REG + CONFIG, 0x0f);              			// CRC使能，16位CRC校验，上电，接收模式
+	nRF24L01P_Write_Reg(WRITE_REG + STATUS, 0xff);  						// 清除所有的中断标志位
+	CE = 1;                                            						// 拉高CE启动接收设备
 }						
 
 
@@ -164,16 +164,16 @@ void nRF24L01P_TX_Mode(void)
 u8 nRF24L01P_RxPacket(u8 *rxbuf)
 {
 	u8 state;
-	state = nRF24L01P_Read_Reg(STATUS);  			                 //读取状态寄存器的值    	  
+	state = nRF24L01P_Read_Reg(STATUS);  			           //读取状态寄存器的值    	  
 	nRF24L01P_Write_Reg(WRITE_REG+STATUS,state);               //清除RX_DS中断标志
 
-	if(state & RX_DR)								                           //接收到数据
+	if(state & RX_DR)								           //接收到数据
 	{
-		nRF24L01P_Read_Buf(RD_RX_PLOAD,rxbuf,TX_PLOAD_WIDTH);     //读取数据
-		nRF24L01P_Write_Reg(FLUSH_RX,0xff);					              //清除RX FIFO寄存器
+		nRF24L01P_Read_Buf(RD_RX_PLOAD,rxbuf,TX_PLOAD_WIDTH);  //读取数据
+		nRF24L01P_Write_Reg(FLUSH_RX,0xff);					   //清除RX FIFO寄存器
 		return 0; 
 	}	   
-	return 1;                                                   //没收到任何数据
+	return 1;                                                  //没收到任何数据
 }
 
 
@@ -188,15 +188,15 @@ u8 nRF24L01P_TxPacket(u8 *txbuf)
 {
 	u8 state;
 	CE=0;																										//CE拉低，使能24L01配置
-  nRF24L01P_Write_Buf(WR_TX_PLOAD,txbuf,TX_PLOAD_WIDTH);	//写数据到TX FIFO,32个字节
+  nRF24L01P_Write_Buf(WR_TX_PLOAD,txbuf,TX_PLOAD_WIDTH);	 //写数据到TX FIFO,32个字节
  	CE=1;																										//CE置高，使能发送	   
 	
 	while(IRQ == 1);																				//等待发送完成
-	state=nRF24L01P_Read_Reg(STATUS);  											//读取状态寄存器的值	   
-	nRF24L01P_Write_Reg(WRITE_REG+STATUS,state); 						//清除TX_DS或MAX_RT中断标志
+	state=nRF24L01P_Read_Reg(STATUS);  						 //读取状态寄存器的值	   
+	nRF24L01P_Write_Reg(WRITE_REG+STATUS,state); 			 //清除TX_DS或MAX_RT中断标志
 	if(state&MAX_RT)																			  //达到最大重发次数
 	{
-		nRF24L01P_Write_Reg(FLUSH_TX,0xff);										//清除TX FIFO寄存器 
+		nRF24L01P_Write_Reg(FLUSH_TX,0xff);					 //清除TX FIFO寄存器 
 		return MAX_RT; 
 	}
 	if(state&TX_DS)																			    //发送完成

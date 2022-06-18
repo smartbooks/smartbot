@@ -1,5 +1,6 @@
 #include "nRF24L01P.h"
 #include "delay.h"
+
 //按键及指示灯管脚定义
 #define LED3		P16
 #define LED4		P35
@@ -62,4 +63,3 @@ void main(void)
 		
 	}
 }
-
