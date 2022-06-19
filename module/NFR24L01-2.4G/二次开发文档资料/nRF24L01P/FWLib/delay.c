@@ -19,6 +19,35 @@
 
 #include	"delay.h"
 
+void Delay1ms()		//@10.969MHz
+{
+	unsigned char i, j;
+
+	i = 4;
+	j = 225;
+	do
+	{
+		while (--j);
+	} while (--i);
+}
+
+
+void Delay1000ms()		//@10.969MHz
+{
+	unsigned char i, j, k;
+
+	i = 92;
+	j = 50;
+	k = 238;
+	do
+	{
+		do
+		{
+			while (--k);
+		} while (--j);
+	} while (--i);
+}
+
 
 
 //========================================================================
@@ -35,8 +64,12 @@ void  delay_ms(unsigned char ms)
      unsigned int i;
 	 do{
 	      i = MAIN_Fosc / 13000;
-		  while(--i)	;   //14T per loop
+	   while(--i)	;   //14T per loop
      }while(--ms);
+
+	 //do{
+	 //    Delay1ms();
+	 //}while(--ms);
 }
 
 

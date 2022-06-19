@@ -14,8 +14,9 @@
 
 /*********************************************************/
 
-#include	"STC15Fxxxx.H"
-#include	"typedef.h"
+#include   "STC15Fxxxx.H"    //STC15系列内置支持SPI
+//#include <STC90C5xAD.H>    //STC90系列芯片不支持SPI
+#include "typedef.h"
 
 /**************************************************************************/
 
