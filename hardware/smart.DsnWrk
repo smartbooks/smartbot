@@ -6,3 +6,5 @@ ProjectPath=ULN2003AN\ULN2003AN.PrjPcb
 ProjectPath=UsbTtlBoard\UsbTtlBoard.PrjPcb
 [Project3]
 ProjectPath=DS1302\DS1302.PrjPcb
+[Project4]
+ProjectPath=STC15\STC15.PrjPcb
