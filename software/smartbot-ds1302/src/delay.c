@@ -1,0 +1,46 @@
+#include "delay.h"
+#include <INTRINS.H>
+/*------------------------------------------------
+ uS延时函数，含有输入参数 unsigned char t，无返回值
+ unsigned char 是定义无符号字符变量，其值的范围是
+ 0~255 这里使用晶振12M，精确延时请使用汇编,大致延时
+ 长度如下 T=tx2+5 uS 
+------------------------------------------------*/
+void DelayUs2x(unsigned char t)
+{   
+ while(--t);
+}
+/*------------------------------------------------
+ mS延时函数，含有输入参数 unsigned char t，无返回值
+ unsigned char 是定义无符号字符变量，其值的范围是
+ 0~255 这里使用晶振12M，精确延时请使用汇编
+------------------------------------------------*/
+void DelayMs(unsigned char t)
+{
+     
+ while(t--)
+ {
+     //大致延时1mS
+     DelayUs2x(245);
+	 DelayUs2x(245);
+ }
+}
+
+
+void Delay1000ms()		//@11.0592MHz
+{
+	unsigned char i, j, k;
+
+	_nop_();
+	_nop_();
+	i = 43;
+	j = 6;
+	k = 203;
+	do
+	{
+		do
+		{
+			while (--k);
+		} while (--j);
+	} while (--i);
+}
