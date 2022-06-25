@@ -8,3 +8,8 @@ Thumbs.db
 /hardware/*/*.REP
 /hardware/UsbTtlBoard/Project Logs for UsbTtlBoard
 /nimultisim/version
+
+*_uvopt.bak
+*_uvproj.bak
+*.uvopt
+*.plg

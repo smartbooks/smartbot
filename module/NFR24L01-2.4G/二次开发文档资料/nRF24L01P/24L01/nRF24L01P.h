@@ -4,15 +4,23 @@
 #include "config.h"
 
 //nRF24L01+ PIN DEFINITION
-#define	MOSI      P13             // Master Out, Slave In pin (output)
-#define	MISO      P10             // Master In, Slave Out pin (input)
-#define	SCK       P12             // Serial Clock pin, (output)
-#define	CSN       P15             // Slave Select pin, (output to CSN)
-#define	CE        P14             // Chip Enable pin signal (output)
-#define	IRQ       P11             // Interrupt signal, from nRF24L01 (input)
+//#define	MOSI      P13             // Master Out, Slave In pin (output)
+//#define	MISO      P10             // Master In, Slave Out pin (input)
+//#define	SCK       P12             // Serial Clock pin, (output)
+//#define	CSN       P15             // Slave Select pin, (output to CSN)
+//#define	CE        P14             // Chip Enable pin signal (output)
+//#define	IRQ       P11             // Interrupt signal, from nRF24L01 (input)
 
-#define TX_ADR_WIDTH   5  				// 5字节宽度的发送/接收地址
-#define TX_PLOAD_WIDTH 32  				// 数据通道有效数据宽度
+#define	MOSI      P13             // OK Master Out, Slave In pin (output)
+#define	MISO      P14             // OK Master In, Slave Out pin (input)
+#define	SCK       P15             // OK Serial Clock pin, (output)
+#define	CSN       P12             // OK Slave Select pin, (output to CSN)
+												
+#define	CE        P05             // OK Chip Enable pin signal (output)
+#define	IRQ       P32             // OK Interrupt signal, from nRF24L01 (input)
+
+#define TX_ADR_WIDTH   5  		  // 5字节宽度的发送/接收地址
+#define TX_PLOAD_WIDTH 32  		  // 数据通道有效数据宽度
 
 //********************************************************************************************************************//
 // SPI(nRF24L01+) commands
