@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>nRF24L01P</TargetName>
+      <TargetName>STC15FXXX</TargetName>
       <ToolsetNumber>0x0</ToolsetNumber>
       <ToolsetName>MCS-51</ToolsetName>
       <TargetOption>
@@ -43,13 +43,13 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\output\</OutputDirectory>
-          <OutputName>nRF24L01P</OutputName>
+          <OutputName>uart-test</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>.\listing\</ListingPath>
+          <ListingPath>.\obj\</ListingPath>
           <HexFormatSelection>0</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -136,7 +136,7 @@
             <RestoreToolbox>1</RestoreToolbox>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>9</TargetSelection>
+          <TargetSelection>-1</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -150,7 +150,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>BIN\STCMON51.DLL</Driver>
+            <Driver></Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -294,7 +294,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\24L01;..\FWLib;D:\tool\Keil_v5_c51_stc\C51\INC</IncludePath>
+              <IncludePath>D:\tool\Keil_v5_c51_stc\C51\INC;.\src;D:\tool\Keil_v5_c51_stc\C51\INC\STC</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -344,72 +344,17 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>USER</GroupName>
-          <Files>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\uart.h</FilePath>
-            </File>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\uart.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>24L01</GroupName>
-          <Files>
-            <File>
-              <FileName>nRF24L01P.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\24L01\nRF24L01P.c</FilePath>
-            </File>
-            <File>
-              <FileName>nRF24L01P.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\24L01\nRF24L01P.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>FWLib</GroupName>
+          <GroupName>src</GroupName>
           <Files>
             <File>
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\FWLib\delay.c</FilePath>
+              <FilePath>.\src\delay.c</FilePath>
             </File>
             <File>
-              <FileName>delay.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\FWLib\delay.h</FilePath>
-            </File>
-            <File>
-              <FileName>config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\FWLib\config.h</FilePath>
-            </File>
-            <File>
-              <FileName>typedef.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\FWLib\typedef.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>README</GroupName>
-          <Files>
-            <File>
-              <FileName>README.txt</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\README.txt</FilePath>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\main.c</FilePath>
             </File>
           </Files>
         </Group>
