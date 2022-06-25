@@ -6,6 +6,4 @@
 
 void delay_ms(unsigned char ms);
 
-void Delay1000ms();
-
 #endif

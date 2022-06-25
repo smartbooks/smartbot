@@ -1,6 +1,8 @@
+
 #include "nRF24L01P.h"
 #include "delay.h"
 #include "uart.h"
+#include <stdio.h>
 
 //按键及指示灯管脚定义
 #define LED3		P01  //L_LED
@@ -21,9 +23,11 @@ char NRF24L01_Check(){
 
   CE=0;
 
-  nRF24L01P_Write_Buf(WRITE_REG+TX_ADDR, check_in_buf, TX_ADR_WIDTH);
+  printf("test nRF24L01 write %d\r\n", nRF24L01P_Write_Buf(WRITE_REG+TX_ADDR, check_in_buf, TX_ADR_WIDTH));
 
   nRF24L01P_Read_Buf(READ_REG+TX_ADDR, check_out_buf, 5);
+
+  printf("test nRF24L01 read %d %d %d %d %d\r\n", check_out_buf[0],check_out_buf[1], check_out_buf[2], check_out_buf[3], check_out_buf[4]);
 
   if((check_out_buf[0] == 0x11) &&
      (check_out_buf[1] == 0x22) &&
@@ -37,6 +41,12 @@ char NRF24L01_Check(){
 
 void main(void)
 {
+	delay_ms(255);delay_ms(255);delay_ms(255);
+
+    InitUART();
+
+	log("Welcome to nRF24L01P 2.4G无线通讯模块演示");
+
 	KEY1 = 1;
 	KEY2 = 1;
 	
@@ -49,14 +59,11 @@ void main(void)
 	//设置为默认关闭状态
 	LED3 = 0;
 	LED4 = 0;
-	
-	UartTestInit();
-	while(1) { delay_ms(250); UartTest();}
 
-	//ES = 1;  //打开串口中断
-	//SendStr("UART test");
-	
+	log("init led and key ...");
+
 	//检测NRF24L01是否存在，返回值：0存在，1不存在
+	/*
 	while(NRF24L01_Check() == 1) {
 
 	     LED3=1; LED4=1; LED5=1;
@@ -64,9 +71,8 @@ void main(void)
 
 		 LED3=0; LED4=0; LED5=0;
 		 delay_ms(250);
-
-		 //SendStr("UART NRF24L01_Check failure...");
-	}	
+	}
+	*/	
 
 	nRF24L01P_Init();
 	nRF24L01P_RX_Mode();
@@ -78,24 +84,35 @@ void main(void)
 		KEY2 = 1;
 
 		LED5=~LED5;
+
 		delay_ms(250);
 
 		if(!KEY1 || !KEY2)
 		{
 			delay_ms(10);
+
 			if(!KEY1)
 			{
+			    log("KEY1 send mode 0x55 begin");
+
 			    LED5 = 1;
 
 				buf[0] = 0x55;
+
 				nRF24L01P_TX_Mode();
+
 				nRF24L01P_TxPacket(buf);
+
 				delay_ms(200);
 
 				LED5 = 0;
+
+				log("KEY1 send mode 0x55 end");
 			}
+
 			if(!KEY2)
 			{
+				log("KEY2 send mode 0xAA begin");
 			    LED5 = 1;
 
 				buf[0] = 0xAA;
@@ -104,6 +121,7 @@ void main(void)
 				delay_ms(200);
 
 				LED5 = 0;
+				log("KEY2 send mode 0xAA end");
 			}
 			buf[0] = 0;
 			nRF24L01P_RX_Mode();
@@ -112,6 +130,8 @@ void main(void)
 		
 		if(!nRF24L01P_RxPacket(buf))
 		{
+		    printf("receive data %d\r\n", buf[0]);
+
 			switch(buf[0])
 			{
 				case 0x55:

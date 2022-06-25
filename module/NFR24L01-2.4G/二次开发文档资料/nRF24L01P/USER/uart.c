@@ -1,71 +1,98 @@
 
+#include <STC15F2K60S2.H>
+#include <stdio.h>
 #include "uart.h"
-#include "config.h"
 
-void InitUART(void)
+void uartSendData(char dat)
 {
-    SCON  = 0x50;    // SCON: 模式 1, 8-bit UART, 使能接收  
-    TMOD |= 0x20;    // TMOD: timer 1, mode 2, 8-bit 重装
-    TH1   = 0xFD;    // TH1:  重装值 9600 波特率 晶振 11.0592MHz  
-    TR1   = 1;       // TR1:  timer 1 打开                         
-    EA    = 1;       // 打开总中断
-}  
+    ES = 0;
 
-/*------------------------------------------------
-                    发送一个字节
-------------------------------------------------*/
-void SendByte(unsigned char dat)
-{
-   SBUF = dat;
-   while(!TI); TI = 0;
+	SBUF = dat;
+
+	while(TI!=1);
+
+	TI=0;
+
+	ES = 1;
 }
 
-/*------------------------------------------------
-                    发送一个字符串
-------------------------------------------------*/
-void SendStr(unsigned char *s)
+char putchar(char c)
 {
-  while(*s!='\0')  // \0 表示字符串结束标志，//通过检测是否字符串末尾
+	uartSendData(c);
+	    
+    return c;
+}
+
+void InitUART()
+{
+	SCON  = 0x50;		//8位数据,可变波特率
+	AUXR |= 0x40;		//定时器时钟1T模式
+	AUXR &= 0xFE;		//串口1选择定时器1为波特率发生器
+	TMOD &= 0x0F;		//设置定时器模式
+	TL1   = 0xE0;		//设置定时初始值
+	TH1   = 0xFE;		//设置定时初始值
+	ET1   = 0;		    //禁止定时器中断
+	TR1   = 1;		    //定时器1开始计时
+
+	OpenUARTReceive();
+}  
+
+void OpenUARTReceive(){
+	//串口接收配置
+	EA	  = 1;          //先打开总中断
+	ES    = 1;          //再打开串口接收中断
+}
+
+void CloseUARTReceive(){
+	//串口关闭接收配置
+	ES    = 0;          //关闭串口接收中断
+	EA	  = 0;          //关闭总中断	
+}
+
+void SendByte(unsigned char textByte)
+{
+   SBUF = textByte;
+   
+   while(!TI); 
+   
+   TI = 0;
+}
+
+
+void SendToUART(unsigned char *text)
+{
+  while(*text != '\0')
   {
-    SendByte(*s);
-    s++;
+    SendByte(*text);
+	
+    text++;
   }
 }
 
-/*
-void UART_SER(void) interrupt 1
+void log(unsigned char *text){
+
+	printf("%s\r\n", text);
+
+}
+
+void ReceiveUartData(void) interrupt 4   //串行中断服务程序
 {
-   //unsigned char Temp;
+	//定义临时变量
+	unsigned char tempReceiveData;
+	
+	//判断是接收中断产生
+	if(RI)
+	{
+		RI=0;                    //标志位清零
 
-   if(RI)
-   {
-      RI=0;
+		tempReceiveData = SBUF;  //读入缓冲区的值
 
-	  P00 = ~P00;
-	  //Temp=SBUF;
-	  //P1=Temp;
-      //SBUF=Temp;
-   }
+		SBUF = tempReceiveData;  //把接收到的值再发回电脑端
+	}
 
-   if(TI) TI=0;
-}
-*/
-
-void UartTestInit(){
-    TMOD = 0X20;
-	SM0 = 0;
-	SM1 = 1;
-	REN = 1;
-	PCON = 0;
-	TH1 = 0xFD;
-	TL1 = 0xFD;
-	TR1 =1;
-}
-
-void UartTest(){
-	P01  = SBUF; while(!RI); RI=0;
-	SBUF = 'A' ; while(!TI); TI=0;
-}
-
-
- 
+    //如果是发送标志位，清零
+	if(TI)
+	{
+		TI=0;
+	}
+} 

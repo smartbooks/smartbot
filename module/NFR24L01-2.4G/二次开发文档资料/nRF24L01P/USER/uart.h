@@ -2,12 +2,14 @@
 #ifndef __uart__
 #define __uart__
 
-void InitUART(void);
+void InitUART();
 
-void SendStr(unsigned char *s);
+void OpenUARTReceive();
 
-void UartTest();
+void CloseUARTReceive();
 
-void UartTestInit();
+void SendToUART(unsigned char *text);
+
+void log(unsigned char *text);
 
 #endif

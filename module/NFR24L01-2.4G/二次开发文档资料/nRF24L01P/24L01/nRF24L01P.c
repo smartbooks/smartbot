@@ -1,4 +1,7 @@
 #include "nRF24L01P.h"
+#include "uart.h"
+#include <stdio.h>
+
 
 u8 code TX_ADDRESS[TX_ADR_WIDTH] = {0x0A,0x01,0x07,0x0E,0x01};  // 定义一个静态发送地址
 
@@ -88,8 +91,11 @@ u8 nRF24L01P_Read_Reg(u8 reg)
  	u8 value;
 
 	CSN = 0;    
-  SPI_RW(reg);			
+    
+	SPI_RW(reg);			
+	
 	value = SPI_RW(0);
+	
 	CSN = 1;              
 
 	return(value);
@@ -144,6 +150,8 @@ void nRF24L01P_RX_Mode(void)
 *********************************************************/
 void nRF24L01P_TX_Mode(void)
 {
+    log("set tx mode");
+
 	CE = 0;
 	nRF24L01P_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);     // 写入发送地址
 	nRF24L01P_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);  // 为了应答接收设备，接收通道0地址和发送地址相同
@@ -189,23 +197,45 @@ u8 nRF24L01P_RxPacket(u8 *rxbuf)
 *********************************************************/
 u8 nRF24L01P_TxPacket(u8 *txbuf)
 {
+    
 	u8 state;
-	CE=0;																										//CE拉低，使能24L01配置
-  nRF24L01P_Write_Buf(WR_TX_PLOAD,txbuf,TX_PLOAD_WIDTH);	 //写数据到TX FIFO,32个字节
- 	CE=1;																										//CE置高，使能发送	   
+
+	log("send tx packet");
 	
-	while(IRQ == 1);										 //等待发送完成
-	state=nRF24L01P_Read_Reg(STATUS);  						 //读取状态寄存器的值	   
+	CE=0;																										//CE拉低，使能24L01配置
+    
+	nRF24L01P_Write_Buf(WR_TX_PLOAD,txbuf,TX_PLOAD_WIDTH);	 //写数据到TX FIFO,32个字节
+ 	
+	CE=1;
+	
+	log("wait send completion...");																										//CE置高，使能发送	   
+	
+	//while(IRQ == 1);										 //等待发送完成
+
+	state = nRF24L01P_Read_Reg(STATUS);                      //读取状态寄存器的值	   
+
+	printf("read reg state %d\r\n", state);
+	
 	nRF24L01P_Write_Reg(WRITE_REG+STATUS,state); 			 //清除TX_DS或MAX_RT中断标志
-	if(state&MAX_RT)										 //达到最大重发次数
+	
+	if(state & MAX_RT)
 	{
-		nRF24L01P_Write_Reg(FLUSH_TX,0xff);					 //清除TX FIFO寄存器 
+		nRF24L01P_Write_Reg(FLUSH_TX,0xff);					 //清除TX FIFO寄存器
+		
+		log("达到最大重发次数");
+		 
 		return MAX_RT; 
 	}
-	if(state&TX_DS)											 //发送完成
+	
+	if(state & TX_DS)
 	{
+		log("send success");
+
 		return TX_DS;
 	}
-	return 0XFF;											 //发送失败
+
+	log("send failure");
+
+	return 0XFF;											 
 }
 
