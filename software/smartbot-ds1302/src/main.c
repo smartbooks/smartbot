@@ -41,7 +41,16 @@ void displayTime()
 {
 
     //世纪 年-月-日 时:分:秒 星期
-    printf("%bu %bu-%bu-%bu %bu:%bu:%bu %bu\r\n",
+    printf("%bu %bu-%bu-%bu %bu:%bu:%bu %bu -> %bu %bu-%bu-%bu %bu:%bu:%bu %bu\r\n",
+		   time_buf[0],
+           time_buf[1],
+           time_buf[2],
+           time_buf[3],
+           time_buf[4],
+           time_buf[5],
+           time_buf[6],
+           time_buf[7],
+
            time_buf1[0],
            time_buf1[1],
            time_buf1[2],
