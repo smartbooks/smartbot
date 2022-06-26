@@ -7,47 +7,49 @@
 
 void displayTime();
 
-void main(){
-	
-	InitUART();
+void main()
+{
 
-	log("Welcome to DS1302 Demo");
+    InitUART();
 
-	DelayMs(250);
+    log("Welcome to DS1302 Demo");
 
-	log("ds1302 init");
+    DelayMs(250);
 
-	Ds1302_Init();
+    log("ds1302 init");
 
-	displayTime();
+    Ds1302_Init();
+
+    displayTime();
 
     log("ds1302 write time...\r\n世纪 年-月-日 时:分:秒 星期");
-	
-	Ds1302_Write_Time();
 
-	while(1){
+    Ds1302_Write_Time();
 
+    while(1)
+    {
 		Ds1302_Read_Time();
-		
-		Delay1000ms();
 
-		displayTime();
-	};
+        Delay1000ms();
+
+        displayTime();
+    };
 
 }
 
-void displayTime(){
+void displayTime()
+{
 
-	//空 年-月-日 时:分:秒 星期
-	printf("%bu %bu-%Bu-%Bu %Bu:%bu:%bu %bu\r\n", 
-				time_buf1[0],
-				time_buf1[1], 
-				time_buf1[2], 
-				time_buf1[3], 
-				time_buf1[4], 
-				time_buf1[5], 
-				time_buf1[6], 
-				time_buf1[7]);
+    //世纪 年-月-日 时:分:秒 星期
+    printf("%bu %bu-%bu-%bu %bu:%bu:%bu %bu\r\n",
+           time_buf1[0],
+           time_buf1[1],
+           time_buf1[2],
+           time_buf1[3],
+           time_buf1[4],
+           time_buf1[5],
+           time_buf1[6],
+           time_buf1[7]);
 
 }
 

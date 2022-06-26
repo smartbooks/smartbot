@@ -1,5 +1,6 @@
 
-#define mcu 89
+//设置MCU型号89、15
+#define mcu 15
 
 #include <INTRINS.H>
 #include "delay.h"
@@ -8,11 +9,11 @@
  uS延时函数，含有输入参数 unsigned char t，无返回值
  unsigned char 是定义无符号字符变量，其值的范围是
  0~255 这里使用晶振12M，精确延时请使用汇编,大致延时
- 长度如下 T=tx2+5 uS 
+ 长度如下 T=tx2+5 uS
 ------------------------------------------------*/
 void DelayUs2x(unsigned char t)
-{   
- while(--t);
+{
+    while(--t);
 }
 
 /*------------------------------------------------
@@ -22,13 +23,13 @@ void DelayUs2x(unsigned char t)
 ------------------------------------------------*/
 void DelayMs(unsigned char t)
 {
-     
- while(t--)
- {
-     //大致延时1mS
-     DelayUs2x(245);
-	 DelayUs2x(245);
- }
+
+    while(t--)
+    {
+        //大致延时1mS
+        DelayUs2x(245);
+        DelayUs2x(245);
+    }
 }
 
 void Delay1000ms()		//@11.0592MHz
@@ -36,36 +37,39 @@ void Delay1000ms()		//@11.0592MHz
 
 #if (mcu==15)
 
-	//STC15
-	unsigned char i, j, k;
-	_nop_();
-	_nop_();
-	i = 43;
-	j = 6;
-	k = 203;
-	do
-	{
-		do
-		{
-			while (--k);
-		} while (--j);
-	} while (--i);
+    //STC15
+    unsigned char i, j, k;
+    _nop_();
+    _nop_();
+    i = 43;
+    j = 6;
+    k = 203;
+    do
+    {
+        do
+        {
+            while(--k);
+        }
+        while(--j);
+    }
+    while(--i);
 
 #elif (mcu==89)
-
-	//STC89 
-	unsigned char i, j, k;
-	_nop_();
-	i = 8;
-	j = 1;
-	k = 243;
-	do
-	{
-		do
-		{
-			while (--k);
-		} while (--j);
-	} while (--i);
+    //STC89
+    unsigned char i, j, k;
+    _nop_();
+    i = 8;
+    j = 1;
+    k = 243;
+    do
+    {
+        do
+        {
+            while(--k);
+        }
+        while(--j);
+    }
+    while(--i);
 
 #endif
 

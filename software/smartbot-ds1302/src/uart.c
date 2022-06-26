@@ -1,11 +1,11 @@
 
-//设置型号89、15
-#define mcu 89
+//设置MCU型号89、15
+#define mcu 15
 
 //条件编译
 #if (mcu==15)
 	//STC15系列头文件
-	#include <STC15F2K60S2.H>
+	#include <STC15.H>
 
 #elif (mcu==89)
 
