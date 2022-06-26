@@ -1,6 +1,6 @@
 
-#ifndef __uart__
-#define __uart__
+#ifndef __UART_H__
+#define __UART_H__
 
 void InitUART();
 

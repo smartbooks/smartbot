@@ -1,5 +1,18 @@
 
-#include <STC15F2K60S2.H>
+//设置型号89、15
+#define mcu 89
+
+//条件编译
+#if (mcu==15)
+	//STC15系列头文件
+	#include <STC15F2K60S2.H>
+
+#elif (mcu==89)
+
+	//STC89系列头文件
+	#include <reg52.h>
+#endif
+
 #include <stdio.h>
 #include "uart.h"
 
@@ -26,14 +39,27 @@ char putchar(char c)
 void InitUART()
 {
 	SCON  = 0x50;		//8位数据,可变波特率
+
+#if (mcu==15)
+
+	//STC15系列串口初始化
 	AUXR |= 0x40;		//定时器时钟1T模式
 	AUXR &= 0xFE;		//串口1选择定时器1为波特率发生器
 	TMOD &= 0x0F;		//设置定时器模式
 	TL1   = 0xE0;		//设置定时初始值
 	TH1   = 0xFE;		//设置定时初始值
 	ET1   = 0;		    //禁止定时器中断
-	TR1   = 1;		    //定时器1开始计时
 
+#elif (mcu==89)
+
+	//STC89系列串口初始化
+	TMOD |= 0x20;       // TMOD: timer 1, mode 2, 8-bit 重装
+    TH1   = 0xFD;       // TH1:  重装值 9600 波特率 晶振 11.0592MHz
+
+#endif
+
+    TR1   = 1;		    //定时器1开始计时
+	
 	OpenUARTReceive();
 }  
 

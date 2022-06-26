@@ -1,5 +1,9 @@
-#include "delay.h"
+
+#define mcu 89
+
 #include <INTRINS.H>
+#include "delay.h"
+
 /*------------------------------------------------
  uS延时函数，含有输入参数 unsigned char t，无返回值
  unsigned char 是定义无符号字符变量，其值的范围是
@@ -10,6 +14,7 @@ void DelayUs2x(unsigned char t)
 {   
  while(--t);
 }
+
 /*------------------------------------------------
  mS延时函数，含有输入参数 unsigned char t，无返回值
  unsigned char 是定义无符号字符变量，其值的范围是
@@ -26,11 +31,13 @@ void DelayMs(unsigned char t)
  }
 }
 
-
 void Delay1000ms()		//@11.0592MHz
 {
-	unsigned char i, j, k;
 
+#if (mcu==15)
+
+	//STC15
+	unsigned char i, j, k;
 	_nop_();
 	_nop_();
 	i = 43;
@@ -43,4 +50,23 @@ void Delay1000ms()		//@11.0592MHz
 			while (--k);
 		} while (--j);
 	} while (--i);
+
+#elif (mcu==89)
+
+	//STC89 
+	unsigned char i, j, k;
+	_nop_();
+	i = 8;
+	j = 1;
+	k = 243;
+	do
+	{
+		do
+		{
+			while (--k);
+		} while (--j);
+	} while (--i);
+
+#endif
+
 }

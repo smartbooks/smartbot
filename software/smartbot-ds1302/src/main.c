@@ -7,8 +7,6 @@
 
 void displayTime();
 
-
-
 void main(){
 	
 	InitUART();
@@ -23,17 +21,14 @@ void main(){
 
 	displayTime();
 
-    log("ds1302 write time...");
+    log("ds1302 write time...\r\n世纪 年-月-日 时:分:秒 星期");
 	
 	Ds1302_Write_Time();
 
 	while(1){
 
-		Delay1000ms();
-
 		Ds1302_Read_Time();
 		
-		Delay1000ms();
 		Delay1000ms();
 
 		displayTime();
@@ -43,9 +38,16 @@ void main(){
 
 void displayTime(){
 
-	printf("%bd %bd %bd %bd %bd %bd %bd\r\n", time_buf1[1], time_buf1[2], time_buf1[3], time_buf1[4], time_buf1[5], time_buf1[6], time_buf1[7]);
-
-	//printf("%bd %bd %bd %bd\r\n", time_buf1[4], time_buf1[5], time_buf1[6], time_buf1[7]);
+	//空 年-月-日 时:分:秒 星期
+	printf("%bu %bu-%Bu-%Bu %Bu:%bu:%bu %bu\r\n", 
+				time_buf1[0],
+				time_buf1[1], 
+				time_buf1[2], 
+				time_buf1[3], 
+				time_buf1[4], 
+				time_buf1[5], 
+				time_buf1[6], 
+				time_buf1[7]);
 
 }
 

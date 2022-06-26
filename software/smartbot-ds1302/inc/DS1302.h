@@ -3,11 +3,11 @@
 #define __DS1302_H__
 
 #include <reg52.h>
-#include<intrins.h>
+#include <intrins.h>
 
-sbit SCK=P2^7;    //SCLK		
-sbit SDA=P2^6;    //DATA
-sbit RST=P2^5;	  //REST
+sbit SCK=P0^2;    //SCLK		
+sbit SDA=P0^1;    //DATA
+sbit RST=P0^0;	  //REST
 
 //∏¥ŒªΩ≈
 #define RST_CLR	RST=0//µÁ∆Ω÷√µÕ
