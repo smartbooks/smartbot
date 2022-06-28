@@ -1,5 +1,0 @@
-"NRF_24L01.obj",
-"UART.obj",
-"MAIN.obj" 
-TO "NRF_24L01_BASE" 
-RAMSIZE(256) 

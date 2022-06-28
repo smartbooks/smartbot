@@ -1,5 +1,0 @@
-"..\out\STARTUP.obj",
-"..\out\main.obj",
-"..\out\nRF24L01.obj" 
-TO "..\out\nRF24L01" 
-PRINT("..\listing\nRF24L01.m51") RAMSIZE(256) 
