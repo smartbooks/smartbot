@@ -1,0 +1,15 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: nRF24LU1+ Reference PCB Layout_rev1_0.PcbDoc   12.11.2008  20:23:50
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : nRF24LU1+ Reference PCB Layout_rev1_0.TXT
+EIA File   : nRF24LU1+ Reference PCB Layout_rev1_0.DRL
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        16mil (0.4064mm)         Round          41               4.67 Inch (118.66 mm)
+---------------------------------------------------------------------------
+Totals                                            41               4.67 Inch (118.66 mm)
+
+Total Processing Time (hh:mm:ss) : 00:00:00
